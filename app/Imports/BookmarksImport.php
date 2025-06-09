@@ -36,8 +36,9 @@ class BookmarksImport implements ToModel, WithHeadingRow, OnEachRow
         return new Bookmark([
             'title' => $row['title'],
             'url' => $row['url'],
-            'tags' => $row['tags'] ? $this->getCleanTags($row['tags']) : null,
+            'tags' => $row['tags'] && $row['tags'] !== '' ? $this->getCleanTags($row['tags']) : null,
             'checked' => !$row['tags'] || !$this->containsTagsToRemove($row['tags']),
+            'created_at' => date("Y-m-d H:i:s", $row['time_added']),
         ]);
     }
 
