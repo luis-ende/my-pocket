@@ -58,11 +58,11 @@ class BookmarksImport implements ToModel, WithHeadingRow, OnEachRow
         return false;
     }
 
-    private function getCleanTags(string $tags): string
+    private function getCleanTags(string $tags): ?string
     {
         $sourceTags = explode('|', $tags);
         $cleanTags = array_diff($sourceTags, $this->tagsToRemove);
 
-        return implode('|', $cleanTags);
+        return count($cleanTags) > 0 ? implode('|', $cleanTags) : null;
     }
 }
