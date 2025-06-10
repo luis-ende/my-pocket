@@ -10,4 +10,9 @@ class DashboardController extends Controller
     {
 
     }
+
+    protected function getBookmarksToRead()
+    {
+
+    }
 }

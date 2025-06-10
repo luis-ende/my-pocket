@@ -2,20 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { DataTableTags } from '@/components/datatable-tags';
-import CardBookmark from '@/components/card-bookmark';
+import GridBookmarks from '@/components/grid-bookmarks';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'SearchByTags',
-        href: '/tags',
+        href: '/search-by-tags',
     },
 ];
 
 export default function SearchByTags() {
     const [tags, setTags] = useState([]);
-    const [bookmarks, setBookmarks] = useState([]);
+    const [initialBookmarks, setInitialBookmarks] = useState([])
+    const [bookmarks, setBookmarks] = useState([])
     const [rowSelection, setRowSelection] = React.useState({})
 
     const loadTags = () => {
@@ -30,7 +31,6 @@ export default function SearchByTags() {
 
     const loadBookmarks = () => {
         if (!tags || tags.length === 0 || Object.entries(rowSelection).length === 0) {
-            setBookmarks([]);
             return
         }
 
@@ -38,17 +38,18 @@ export default function SearchByTags() {
         const params = new URLSearchParams();
         selectedTags.forEach(tag => params.append('tags[]', tag));
         const queryString = params.toString();
-        const url = `/tags/bookmarks?${queryString}`;
+        const url = `/search-by-tags?${queryString}`;
 
-        console.log('url', url)
-
-        fetch(url)
-            .then(res => {
-                if (!res.ok) throw new Error('Failed to load bookmarks');
-                return res.json();
-            })
-            .then(data => setBookmarks(data.bookmarks))
-            .catch(() => setBookmarks([]));
+        router.visit(url, {
+            method: 'get',
+            preserveState: true,
+            only: ['bookmarks'],
+            onSuccess: ({ props })=> {
+                props.bookmarks['tagsQueryString'] = queryString;
+                setInitialBookmarks(props.bookmarks)
+                setBookmarks(props.bookmarks.data)
+            }
+        });
     };
 
     useEffect(() => {
@@ -56,13 +57,9 @@ export default function SearchByTags() {
     }, [])
 
     useEffect(() => {
-        console.log('Value changed:', rowSelection);
+        setBookmarks([])
         loadBookmarks();
     }, [rowSelection, tags]);
-
-    useEffect(() => {
-        console.log('bookmarks', bookmarks)
-    }, [bookmarks])
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -72,23 +69,14 @@ export default function SearchByTags() {
                     <div className="border-sidebar-border/70 dark:border-sidebar-border relative overflow-auto rounded-xl border">
                         <DataTableTags data={tags} rowSelection={rowSelection} setRowSelection={setRowSelection} />
                     </div>
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative overflow-auto rounded-xl border">
-                        <div className="flex flex-row flex-wrap gap-6">
-                            {bookmarks.map((bookmark) => {
-                                const url = new URL(bookmark.url);
-                                const domain = url.hostname;
-                                return (
-                                    <CardBookmark
-                                        key={bookmark.id}
-                                        title={bookmark.title}
-                                        description={domain}
-                                        url={url}
-                                        tags={bookmark.tags}
-                                    />
-                                );
-                            })}
-                        </div>
-                    </div>
+
+                    {bookmarks && bookmarks.length > 0 && (
+                        <GridBookmarks
+                            initialBookmarks={initialBookmarks}
+                            bookmarks={bookmarks}
+                            setBookmarks={setBookmarks}
+                        />
+                    )}
                 </div>
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />

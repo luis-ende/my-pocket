@@ -15,11 +15,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
     Route::get('bookmarks', [BookmarksController::class, 'index'])->name('bookmarks');
-    Route::get('search-by-tags', function () {
-        return Inertia::render('search-by-tags');
-    })->name('search-by-tags');
+    Route::get('search-by-tags', [TagsController::class, 'getBookmarksByTags'])->name('search-by-tags');
     Route::get('tags/index', [TagsController::class, 'getTags'])->name('tags.index');
-    Route::get('tags/bookmarks', [TagsController::class, 'getBookmarksByTags'])->name('tags.bookmarks');
+    //Route::get('tags/bookmarks', [TagsController::class, 'getBookmarksByTags'])->name('tags.bookmarks');
 });
 
 require __DIR__.'/settings.php';

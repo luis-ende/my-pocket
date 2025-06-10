@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Bookmark;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class TagsController extends Controller
 {
@@ -37,7 +38,9 @@ class TagsController extends Controller
         $tags = $request->input('tags', []);
 
         if (empty($tags)) {
-            return [];
+            return Inertia::render('search-by-tags', [
+                'bookmarks' => [],
+            ]);
         }
 
         $pgArray = 'ARRAY[' . collect($tags)
@@ -50,14 +53,12 @@ class TagsController extends Controller
             )");
 
         if (in_array('not-tagged', $tags)) {
-            $bookmarksQuery->orWhereNull('tags');
+            $bookmarksQuery = $bookmarksQuery->orWhereNull('tags');
         }
 
-        $bookmarksQuery->orderBy('created_at', 'desc');
+        $bookmarks = $bookmarksQuery->latest()->cursorPaginate(5);
 
-        $bookmarks = $bookmarksQuery->get();
-
-        return response()->json([
+        return Inertia::render('search-by-tags', [
             'bookmarks' => $bookmarks,
         ]);
     }

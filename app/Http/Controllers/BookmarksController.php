@@ -10,9 +10,9 @@ class BookmarksController extends Controller
 {
     public function index()
     {
-        $bookmarks = Bookmark::limit(100)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $bookmarks = Bookmark::query()
+            ->latest()
+            ->cursorPaginate(5);
 
         return Inertia::render('bookmarks', [
             'bookmarks' => $bookmarks,
