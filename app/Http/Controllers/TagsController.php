@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class TagsController extends Controller
 {
-    public function loadTags()
+    public function getTags()
     {
         $tags = DB::table(DB::raw('(
                 SELECT unnest(string_to_array(tags, \'|\')) AS tag
@@ -32,7 +32,7 @@ class TagsController extends Controller
         ]);
     }
 
-    public function loadBookmarksByTags(Request $request)
+    public function getBookmarksByTags(Request $request)
     {
         $tags = $request->input('tags', []);
 
@@ -52,6 +52,8 @@ class TagsController extends Controller
         if (in_array('not-tagged', $tags)) {
             $bookmarksQuery->orWhereNull('tags');
         }
+
+        $bookmarksQuery->orderBy('created_at', 'desc');
 
         $bookmarks = $bookmarksQuery->get();
 
