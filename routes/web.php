@@ -15,6 +15,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
     Route::get('bookmarks', [BookmarksController::class, 'index'])->name('bookmarks');
+    Route::post('bookmarks', [BookmarksController::class, 'store'])->name('bookmarks.store');
     Route::get('search-by-tags', [TagsController::class, 'getBookmarksByTags'])->name('search-by-tags');
     Route::get('tags/index', [TagsController::class, 'getTags'])->name('tags.index');
     //Route::get('tags/bookmarks', [TagsController::class, 'getBookmarksByTags'])->name('tags.bookmarks');

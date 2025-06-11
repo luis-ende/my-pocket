@@ -1,0 +1,126 @@
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+    DialogClose,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useForm } from '@inertiajs/react';
+import { Textarea } from "@/components/ui/textarea"
+import CreatableSelect from 'react-select/creatable';
+import { colourOptions } from './docs/data';
+import React, { useState } from 'react';
+import { Checkbox } from '@/components/ui/checkbox';
+
+export default function FormBookmark({ open, onClose, }) {
+    const { data, setData, post, processing, errors, reset } = useForm({
+        url: '',
+        tags: '',
+        notes: '',
+        read: true,
+    });
+
+    const [selectedOptions, setSelectedOptions] = useState([]);
+
+    const handleChange = (selected) => {
+        setSelectedOptions(selected);
+
+        // Get new items (not in original options)
+        /*const originalValues = new Set(colourOptions.map((opt) => opt.value));
+        const newItems = selected?.filter((opt) => !originalValues.has(opt.value)) || [];*/
+
+        setData('tags', selected.map(o => o.value).join('|'));
+
+        /*console.log('New items created:', newItems);*/
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        post('/bookmarks', {
+            onSuccess: () => {
+                reset();
+                onClose();
+            },
+        });
+    };
+
+    const handleDialogOpenChange = (value : boolean) => {
+        reset();
+        setSelectedOptions([]);
+        return !value && onClose();
+    }
+
+    return (
+        <Dialog open={open} onOpenChange={handleDialogOpenChange}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Add Bookmark</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <Label htmlFor="name">URL</Label>
+                        <Input
+                            id="url"
+                            type="url"
+                            placeholder="Save a URL https://..."
+                            value={data.url}
+                            onChange={(e) => setData('url', e.target.value)}
+                        />
+                        {errors.url && (
+                            <p className="text-sm text-red-500">{errors.url}</p>
+                        )}
+                    </div>
+                    <div>
+                        <Label htmlFor="tags">Tags</Label>
+                        <CreatableSelect
+                            isClearable
+                            isMulti
+                            options={colourOptions}
+                            onChange={handleChange}
+                            value={selectedOptions}
+                        />
+                        {errors.tags && (
+                            <p className="text-sm text-red-500">{errors.tags}</p>
+                        )}
+                    </div>
+                    <div>
+                        <Label htmlFor="notes">Notes</Label>
+                        <Textarea
+                            id="notes"
+                            value={data.notes}
+                            onChange={(e) => setData('notes', e.target.value)}
+                        />
+                        {errors.notes && (
+                            <p className="text-sm text-red-500">{errors.notes}</p>
+                        )}
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <Checkbox
+                            id="read"
+                            defaultChecked
+                            onCheckedChange={(e) => setData('read', e)}
+                        />
+                        <Label htmlFor="read">Mark as read</Label>
+                        {errors.read && (
+                            <p className="text-sm text-red-500">{errors.read}</p>
+                        )}
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button type="button" variant="outline">
+                                Cancel
+                            </Button>
+                        </DialogClose>
+                        <Button type="submit" disabled={processing}>
+                            Save
+                        </Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
+}
