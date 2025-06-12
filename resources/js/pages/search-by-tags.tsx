@@ -8,7 +8,7 @@ import GridBookmarks from '@/components/grid-bookmarks';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'SearchByTags',
+        title: 'Tags',
         href: '/search-by-tags',
     },
 ];

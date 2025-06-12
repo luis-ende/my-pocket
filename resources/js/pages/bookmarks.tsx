@@ -6,7 +6,7 @@ import GridBookmarks from '@/components/grid-bookmarks';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'My Bookmarks',
+        title: 'Saves',
         href: '/bookmarks',
     },
 ];
