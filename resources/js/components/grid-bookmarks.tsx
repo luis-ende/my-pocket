@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
-import CardBookmark from '@/components/card-bookmark';
 import { router } from '@inertiajs/react';
+import CardBookmark from '@/components/card-bookmark';
+import AlertDialogDelete from '@/components/alert-dialog-delete';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -18,6 +19,57 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [positionDropDown, setPositionDropDown] = useState({ x: 0, y: 0 });
+    const [currentBookmarkId, setCurrentBookmarkId] = useState(null);
+
+    const [dialogDeleteState, setDialogDeleteState] = useState({
+        isOpen: false,
+        bookmark: null,
+        isDeleting: false
+    });
+
+    const openDeleteDialog = (bookmark) => {
+        setDialogDeleteState({
+            isOpen: true,
+            bookmark: bookmark,
+            isDeleting: false
+        });
+    };
+
+    const closeDeleteDialog = () => {
+        if (!dialogDeleteState.isDeleting) {
+            setDialogDeleteState({
+                isOpen: false,
+                bookmark: null,
+                isDeleting: false
+            });
+            setTimeout(() => {
+                setDropdownOpen(false);
+            }, 300)
+        }
+    };
+
+    const handleDeleteConfirm = () => {
+        if (!dialogDeleteState.bookmark) return;
+
+        setDialogDeleteState(prev => ({ ...prev, isDeleting: true }));
+
+        router.delete(route('bookmarks.destroy', dialogDeleteState.bookmark), {
+            onSuccess: () => {
+                closeDeleteDialog()
+                const index = bookmarks.findIndex(item => item.id == currentBookmarkId);
+                if (index !== -1) {
+                    bookmarks.splice(index, 1);
+                }
+            },
+            onError: (errors) => {
+                setDialogDeleteState(prev => ({ ...prev, isDeleting: false }));
+                console.error('Delete failed:', errors);
+            },
+            onFinish: () => {
+                // This runs regardless of success/error
+            }
+        });
+    };
 
     const loadMore = () => {
         if (!nextPage || loading) return;
@@ -48,6 +100,7 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
     }
 
     const handleOpenDropDown = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setCurrentBookmarkId(event.currentTarget.dataset.bookmarkId);
         const rect = event.currentTarget.getBoundingClientRect()
         const scrollTop = event.currentTarget.scrollTop || 0
         const scrollLeft = event.currentTarget.scrollLeft || 0
@@ -64,7 +117,7 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
                 alert(key)
                 break;
             case 'delete':
-                alert(key)
+                openDeleteDialog(currentBookmarkId)
                 break;
             case 'fav':
                 alert(key)
@@ -80,7 +133,6 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
 
     return (
         <div className="border-sidebar-border/70 dark:border-sidebar-border relative overflow-auto rounded-xl border">
-            {/* Hidden positioned dropdown */}
             <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
                 <DropdownMenuTrigger asChild>
                     <div
@@ -105,12 +157,25 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
                         />
                         Edit
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleDropDownItemClick('delete')}>
-                        <Icon iconNode={Trash2}
-                              className="size-5 opacity-90 group-hover:opacity-100"
-                        />
-                        Delete
-                    </DropdownMenuItem>
+
+                    <AlertDialogDelete
+                        onClose={closeDeleteDialog}
+                        onConfirm={handleDeleteConfirm}
+                        isDeleting={dialogDeleteState.isDeleting}
+                        title="Delete Bookmark"
+                        description="This will permanently delete the bookmark and all associated data."
+                        trigger={
+                            <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                                onClick={() => handleDropDownItemClick('delete')}
+                            >
+                                <Icon iconNode={Trash2}
+                                      className="size-5 opacity-90 group-hover:opacity-100"
+                                />
+                                Delete
+                            </DropdownMenuItem>
+                        }
+                    />
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => handleDropDownItemClick('fav')}>
                         <Icon iconNode={Star}

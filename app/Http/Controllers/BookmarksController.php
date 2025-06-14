@@ -39,4 +39,11 @@ class BookmarksController extends Controller
 
         return redirect()->back()->with('success', 'Bookmark created.');
     }
+
+    public function destroy(Bookmark $bookmark)
+    {
+        $result = $bookmark->delete();
+
+        return redirect()->back()->with('success', 'Bookmark removed.');
+    }
 }
