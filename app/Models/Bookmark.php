@@ -10,6 +10,7 @@ class Bookmark extends Model
         'title',
         'url',
         'tags',
-        'checked'
+        'checked',
+        'is_fav'
     ];
 }

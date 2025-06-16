@@ -8,7 +8,7 @@ import {
     DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator,
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { Trash2, SquarePen, Star, Copy, ListPlus } from 'lucide-react';
+import { Trash2, SquarePen, Star, Copy, ListPlus, StarOff } from 'lucide-react';
 import { Icon } from '@/components/icon';
 
 export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks}) {
@@ -19,7 +19,7 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [positionDropDown, setPositionDropDown] = useState({ x: 0, y: 0 });
-    const [currentBookmarkId, setCurrentBookmarkId] = useState(null);
+    const [currentBookmark, setCurrentBookmark] = useState(null);
 
     const [dialogDeleteState, setDialogDeleteState] = useState({
         isOpen: false,
@@ -53,13 +53,14 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
 
         setDialogDeleteState(prev => ({ ...prev, isDeleting: true }));
 
-        router.delete(route('bookmarks.destroy', dialogDeleteState.bookmark), {
+        router.delete(route('bookmarks.destroy', dialogDeleteState.bookmark.id), {
             onSuccess: () => {
                 closeDeleteDialog()
-                const index = bookmarks.findIndex(item => item.id == currentBookmarkId);
+                const index = bookmarks.findIndex(item => item.id == currentBookmark.id);
                 if (index !== -1) {
                     bookmarks.splice(index, 1);
                 }
+                setCurrentBookmark(null)
             },
             onError: (errors) => {
                 setDialogDeleteState(prev => ({ ...prev, isDeleting: false }));
@@ -70,6 +71,16 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
             }
         });
     };
+
+    const handleSaveFav = (bookmark) => {
+        router.put(route('bookmarks.favs', bookmark.id),
+            { is_fav: !bookmark.is_fav },
+            {
+                onSuccess: () => {
+                    bookmark.is_fav = !bookmark.is_fav;
+            }
+        });
+    }
 
     const loadMore = () => {
         if (!nextPage || loading) return;
@@ -100,7 +111,12 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
     }
 
     const handleOpenDropDown = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setCurrentBookmarkId(event.currentTarget.dataset.bookmarkId);
+        const selectedBookmark = bookmarks.find(b => b.id == event.currentTarget.dataset.bookmarkId)
+        if (!selectedBookmark) {
+             return;
+        }
+
+        setCurrentBookmark(selectedBookmark);
         const rect = event.currentTarget.getBoundingClientRect()
         const scrollTop = event.currentTarget.scrollTop || 0
         const scrollLeft = event.currentTarget.scrollLeft || 0
@@ -117,10 +133,10 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
                 alert(key)
                 break;
             case 'delete':
-                openDeleteDialog(currentBookmarkId)
+                openDeleteDialog(currentBookmark)
                 break;
             case 'fav':
-                alert(key)
+                handleSaveFav(currentBookmark)
                 break;
             case 'addToCol':
                 alert(key)
@@ -178,10 +194,16 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
                     />
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => handleDropDownItemClick('fav')}>
-                        <Icon iconNode={Star}
-                              className="size-5 opacity-90 group-hover:opacity-100"
-                        />
-                        Favorite
+                        {currentBookmark?.is_fav ?
+                            <Icon iconNode={StarOff}
+                                  className="size-5 opacity-90 group-hover:opacity-100 bg"
+                            />
+                            :
+                            <Icon iconNode={Star}
+                                  className="size-5 opacity-90 group-hover:opacity-100 bg"
+                            />
+                        }
+                        {currentBookmark?.is_fav ? "Un-Favorite" : "Favorite"}
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => handleDropDownItemClick('addToCol')}>
                         <Icon iconNode={ListPlus}

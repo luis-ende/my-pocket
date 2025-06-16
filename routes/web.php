@@ -16,6 +16,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
     Route::get('bookmarks', [BookmarksController::class, 'index'])->name('bookmarks');
     Route::post('bookmarks', [BookmarksController::class, 'store'])->name('bookmarks.store');
+    Route::put('bookmarks/favs/{bookmarkId}/favorite', [BookmarksController::class, 'saveFav'])->name('bookmarks.favs');
     Route::delete('bookmarks/{bookmark}', [BookmarksController::class, 'destroy'])->name('bookmarks.destroy');
     Route::get('search-by-tags', [TagsController::class, 'getBookmarksByTags'])->name('search-by-tags');
     Route::get('tags/index', [TagsController::class, 'getTags'])->name('tags.index');
