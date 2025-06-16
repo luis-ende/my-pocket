@@ -9,7 +9,7 @@ use Inertia\Inertia;
 
 class TagsController extends Controller
 {
-    public function getTags()
+    public function getTagsByCount()
     {
         $tags = DB::table(DB::raw('(
                 SELECT unnest(string_to_array(tags, \'|\')) AS tag
@@ -27,6 +27,24 @@ class TagsController extends Controller
             'title' => 'Not Tagged',
             'count' => Bookmark::whereNull('tags')->count(),
         ]);
+
+        return response()->json([
+            'tags' => $tags,
+        ]);
+    }
+
+    public function getAllTags()
+    {
+        $tags = DB::table(DB::raw('(
+                SELECT unnest(string_to_array(tags, \'|\')) AS tag
+                FROM bookmarks
+                WHERE tags IS NOT NULL
+            ) AS sub'))
+            ->selectRaw('DISTINCT(TRIM(tag)) AS tag')
+            ->where('tag', '<>', '')
+            ->groupBy('tag')
+            ->orderBy('tag')
+            ->get();
 
         return response()->json([
             'tags' => $tags,

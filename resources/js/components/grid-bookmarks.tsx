@@ -14,7 +14,7 @@ import FormEditBookmark from '@/components/form-edit-bookmark';
 
 export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks}) {
     const [nextPage, setNextPage] = useState(initialBookmarks.next_page_url);
-    const [tags] = useState(initialBookmarks.tagsQueryString);
+    const [tagsQueryString] = useState(initialBookmarks.tagsQueryString);
     const [loading, setLoading] = useState(false);
     const lastItemRef = useRef<HTMLDivElement | null>(null);
 
@@ -28,7 +28,19 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
         isDeleting: false
     });
 
-    const [open, setOpen] = React.useState(false);
+    const [dialogEditOpen, setDialogEditOpen] = useState(false);
+
+    const [tags, setTags] = useState([]);
+
+    useEffect(() => {
+        fetch('/tags/all')
+            .then(res => {
+                if (!res.ok) throw new Error('Failed to load tags');
+                return res.json();
+            })
+            .then(data => setTags(data.tags))
+            .catch(() => setTags([]));
+    }, []);
 
     const openDeleteDialog = (bookmark) => {
         setDialogDeleteState({
@@ -91,8 +103,8 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
         setLoading(true);
 
         let fullNextPageUrl = nextPage;
-        if (tags && tags.length > 0) {
-            fullNextPageUrl += '&' + tags;
+        if (tagsQueryString && tagsQueryString.length > 0) {
+            fullNextPageUrl += '&' + tagsQueryString;
         }
 
         router.visit(fullNextPageUrl, {
@@ -133,7 +145,7 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
     const handleDropDownItemClick = (key: string) => {
         switch (key) {
             case 'edit':
-                setOpen(true)
+                setDialogEditOpen(true)
                 break;
             case 'delete':
                 openDeleteDialog(currentBookmark)
@@ -231,11 +243,12 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
             </DropdownMenu>
 
             <FormEditBookmark
-                open={open}
+                open={dialogEditOpen}
                 bookmark={currentBookmark}
                 onClose={() => {
-                    setOpen(false)
+                    setDialogEditOpen(false)
                 }}
+                tags={tags}
             />
 
             <div className="px-10 py-10 grid md:grid-cols-3 sm:grid-cols-1 gap-6 sm:gap-3">

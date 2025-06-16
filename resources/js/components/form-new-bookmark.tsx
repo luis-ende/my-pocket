@@ -12,11 +12,10 @@ import { Label } from '@/components/ui/label';
 import { useForm } from '@inertiajs/react';
 import { Textarea } from "@/components/ui/textarea"
 import CreatableSelect from 'react-select/creatable';
-import { colourOptions } from './docs/data';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 
-export default function FormNewBookmark({ open, onClose, }) {
+export default function FormNewBookmark({ open, onClose, tags }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         url: '',
         tags: '',
@@ -25,6 +24,18 @@ export default function FormNewBookmark({ open, onClose, }) {
     });
 
     const [selectedOptions, setSelectedOptions] = useState([]);
+
+    const [tagsOptions, setTagsOptions] = useState([]);
+
+    useEffect(() => {
+        setTagsOptions([]);
+        if (tags && tags.length > 0) {
+            const options = tags.map(t => (
+                { label: t.tag, value: t.tag, color: '#00B8D9' }
+            ));
+            setTagsOptions(options);
+        }
+    }, [tags]);
 
     const handleChange = (selected) => {
         setSelectedOptions(selected);
@@ -73,7 +84,7 @@ export default function FormNewBookmark({ open, onClose, }) {
                             id="tags"
                             isClearable
                             isMulti
-                            options={colourOptions}
+                            options={tagsOptions}
                             onChange={handleChange}
                             value={selectedOptions}
                         />

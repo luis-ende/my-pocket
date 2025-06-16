@@ -12,11 +12,10 @@ import { Label } from '@/components/ui/label';
 import { useForm } from '@inertiajs/react';
 import { Textarea } from "@/components/ui/textarea"
 import CreatableSelect from 'react-select/creatable';
-import { colourOptions } from './docs/data';
 import React, { useState, useRef, useEffect } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 
-export default function FormEditBookmark({ open, onClose, bookmark }) {
+export default function FormEditBookmark({ open, onClose, bookmark, tags }) {
     const { data, setData, patch, processing, errors, reset } = useForm({
         url: '',
         tags: '',
@@ -26,6 +25,17 @@ export default function FormEditBookmark({ open, onClose, bookmark }) {
 
     const [selectedOptions, setSelectedOptions] = useState([]);
     const inputRef = useRef(null);
+    const [tagsOptions, setTagsOptions] = useState([]);
+
+    useEffect(() => {
+        setTagsOptions([]);
+        if (tags && tags.length > 0) {
+            const options = tags.map(t => (
+                { label: t.tag, value: t.tag, color: '#00B8D9' }
+            ));
+            setTagsOptions(options);
+        }
+    }, [tags]);
 
     const handleChange = (selected) => {
         setSelectedOptions(selected);
@@ -84,7 +94,7 @@ export default function FormEditBookmark({ open, onClose, bookmark }) {
                             autoFocus
                             isClearable
                             isMulti
-                            options={colourOptions}
+                            options={tagsOptions}
                             onChange={handleChange}
                             value={selectedOptions}
                         />

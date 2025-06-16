@@ -14,7 +14,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { BookmarkPlus, House, Menu, Search, SquarePen } from 'lucide-react';
 import AppLogoIcon from './app-logo-icon';
 import FormNewBookmark from '@/components/form-new-bookmark';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const mainNavItems: NavItem[] = [
     {
@@ -49,6 +49,18 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const getInitials = useInitials();
     const [modalOpen, setModalOpen] = useState(false);
 
+    const [tags, setTags] = useState([]);
+
+    useEffect(() => {
+        fetch('/tags/all')
+            .then(res => {
+                if (!res.ok) throw new Error('Failed to load tags');
+                return res.json();
+            })
+            .then(data => setTags(data.tags))
+            .catch(() => setTags([]));
+    }, []);
+
     const onMenuButtonClick = (key: string) => {
         switch (key) {
             case 'Add Bookmark':
@@ -58,7 +70,11 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
 
     return (
         <>
-            <FormNewBookmark open={modalOpen} onClose={() => setModalOpen(false)} />
+            <FormNewBookmark
+                open={modalOpen}
+                onClose={() => setModalOpen(false)}
+                tags={tags}
+            />
 
             <div className="border-sidebar-border/80 border-b">
                 <div className="mx-auto flex h-16 items-center px-4 md:max-w-7xl">
