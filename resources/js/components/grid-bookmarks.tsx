@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { router } from '@inertiajs/react';
 import CardBookmark from '@/components/card-bookmark';
 import AlertDialogDelete from '@/components/alert-dialog-delete';
@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Trash2, SquarePen, Star, Copy, ListPlus, StarOff } from 'lucide-react';
 import { Icon } from '@/components/icon';
+import FormEditBookmark from '@/components/form-edit-bookmark';
 
 export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks}) {
     const [nextPage, setNextPage] = useState(initialBookmarks.next_page_url);
@@ -26,6 +27,8 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
         bookmark: null,
         isDeleting: false
     });
+
+    const [open, setOpen] = React.useState(false);
 
     const openDeleteDialog = (bookmark) => {
         setDialogDeleteState({
@@ -73,7 +76,7 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
     };
 
     const handleSaveFav = (bookmark) => {
-        router.put(route('bookmarks.favs', bookmark.id),
+        router.patch(route('bookmarks.favs', bookmark.id),
             { is_fav: !bookmark.is_fav },
             {
                 onSuccess: () => {
@@ -130,7 +133,7 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
     const handleDropDownItemClick = (key: string) => {
         switch (key) {
             case 'edit':
-                alert(key)
+                setOpen(true)
                 break;
             case 'delete':
                 openDeleteDialog(currentBookmark)
@@ -151,23 +154,30 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
         <div className="border-sidebar-border/70 dark:border-sidebar-border relative overflow-auto rounded-xl border">
             <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
                 <DropdownMenuTrigger asChild>
-                    <div
+                    <button
+                        aria-label="Open actions"
                         style={{
                             position: 'fixed',
                             left: positionDropDown.x,
                             top: positionDropDown.y,
                             width: '1px',
                             height: '1px',
-                            opacity: 0,
-                            pointerEvents: 'none',
-                            zIndex: 50
-                        }}
-                    />
+                            padding: '0',
+                            border: 'none',
+                            background: 'none'
+                        }}>
+                    </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" side="bottom" align="start">
                     <DropdownMenuLabel>Bookmark Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => handleDropDownItemClick('edit')}>
+                    <DropdownMenuItem
+                        onSelect={(e) => {
+                            e.preventDefault();
+                            setDropdownOpen(false)
+                        }}
+                        onClick={() => handleDropDownItemClick('edit')}
+                    >
                         <Icon iconNode={SquarePen}
                               className="size-5 opacity-90 group-hover:opacity-100"
                         />
@@ -219,6 +229,14 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
+
+            <FormEditBookmark
+                open={open}
+                bookmark={currentBookmark}
+                onClose={() => {
+                    setOpen(false)
+                }}
+            />
 
             <div className="px-10 py-10 grid md:grid-cols-3 sm:grid-cols-1 gap-6 sm:gap-3">
                 {bookmarks.map((bookmark, index) => {

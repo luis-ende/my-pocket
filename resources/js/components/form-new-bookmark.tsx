@@ -16,7 +16,7 @@ import { colourOptions } from './docs/data';
 import React, { useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 
-export default function FormBookmark({ open, onClose, }) {
+export default function FormNewBookmark({ open, onClose, }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         url: '',
         tags: '',
@@ -28,14 +28,7 @@ export default function FormBookmark({ open, onClose, }) {
 
     const handleChange = (selected) => {
         setSelectedOptions(selected);
-
-        // Get new items (not in original options)
-        /*const originalValues = new Set(colourOptions.map((opt) => opt.value));
-        const newItems = selected?.filter((opt) => !originalValues.has(opt.value)) || [];*/
-
         setData('tags', selected.map(o => o.value).join('|'));
-
-        /*console.log('New items created:', newItems);*/
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -61,8 +54,8 @@ export default function FormBookmark({ open, onClose, }) {
                     <DialogTitle>Add Bookmark</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <Label htmlFor="name">URL</Label>
+                    <fieldset>
+                        <Label htmlFor="url">URL</Label>
                         <Input
                             id="url"
                             type="url"
@@ -73,10 +66,11 @@ export default function FormBookmark({ open, onClose, }) {
                         {errors.url && (
                             <p className="text-sm text-red-500">{errors.url}</p>
                         )}
-                    </div>
-                    <div>
+                    </fieldset>
+                    <fieldset>
                         <Label htmlFor="tags">Tags</Label>
                         <CreatableSelect
+                            id="tags"
                             isClearable
                             isMulti
                             options={colourOptions}
@@ -86,8 +80,8 @@ export default function FormBookmark({ open, onClose, }) {
                         {errors.tags && (
                             <p className="text-sm text-red-500">{errors.tags}</p>
                         )}
-                    </div>
-                    <div>
+                    </fieldset>
+                    <fieldset>
                         <Label htmlFor="notes">Notes</Label>
                         <Textarea
                             id="notes"
@@ -97,8 +91,8 @@ export default function FormBookmark({ open, onClose, }) {
                         {errors.notes && (
                             <p className="text-sm text-red-500">{errors.notes}</p>
                         )}
-                    </div>
-                    <div className="flex items-center gap-3">
+                    </fieldset>
+                    <fieldset className="flex items-center gap-3">
                         <Checkbox
                             id="read"
                             defaultChecked
@@ -108,7 +102,7 @@ export default function FormBookmark({ open, onClose, }) {
                         {errors.read && (
                             <p className="text-sm text-red-500">{errors.read}</p>
                         )}
-                    </div>
+                    </fieldset>
                     <DialogFooter>
                         <DialogClose asChild>
                             <Button type="button" variant="outline">

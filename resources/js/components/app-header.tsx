@@ -13,7 +13,7 @@ import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { BookmarkPlus, House, Menu, Search, SquarePen } from 'lucide-react';
 import AppLogoIcon from './app-logo-icon';
-import FormBookmark from '@/components/form-bookmark';
+import FormNewBookmark from '@/components/form-new-bookmark';
 import { useState } from 'react';
 
 const mainNavItems: NavItem[] = [
@@ -58,7 +58,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
 
     return (
         <>
-            <FormBookmark open={modalOpen} onClose={() => setModalOpen(false)} />
+            <FormNewBookmark open={modalOpen} onClose={() => setModalOpen(false)} />
 
             <div className="border-sidebar-border/80 border-b">
                 <div className="mx-auto flex h-16 items-center px-4 md:max-w-7xl">

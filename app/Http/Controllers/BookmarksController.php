@@ -40,6 +40,26 @@ class BookmarksController extends Controller
         return redirect()->back()->with('success', 'Bookmark created.');
     }
 
+    public function update(Request $request, Bookmark $bookmark)
+    {
+        $validated = $request->validate([
+            'tags' => 'required|max:300',
+            'read' => 'boolean',
+            //'notes' => 'string|max:300',
+        ]);
+
+        try {
+            Bookmark::where('id', $bookmark->id)->update([
+                'tags' => $validated['tags'],
+                'checked' => $validated['read'] ?? true,
+            ]);
+
+            return redirect()->back()->with('success', 'Bookmark updated.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to delete bookmark.');
+        }
+    }
+
     public function saveFav(Request $request, int $bookmarkId)
     {
         $validated = $request->validate([
