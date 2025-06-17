@@ -73,6 +73,7 @@ export default function FormNewBookmark({ open, onClose, tags }) {
                             placeholder="Save a URL https://..."
                             value={data.url}
                             onChange={(e) => setData('url', e.target.value)}
+                            required
                         />
                         {errors.url && (
                             <p className="text-sm text-red-500">{errors.url}</p>
