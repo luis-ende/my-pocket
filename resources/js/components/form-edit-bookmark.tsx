@@ -78,7 +78,7 @@ export default function FormEditBookmark({ open, onClose, bookmark, tags }) {
             <DialogContent forceMount>
                 <DialogHeader>
                     <DialogTitle>Edit Bookmark</DialogTitle>
-                    <DialogDescription>Bookmark data</DialogDescription>
+                    <DialogDescription>{bookmark?.title}</DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <fieldset>
