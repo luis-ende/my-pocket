@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import CardBookmark from '@/components/card-bookmark';
 import AlertDialogDelete from '@/components/alert-dialog-delete';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ import { Icon } from '@/components/icon';
 import FormEditBookmark from '@/components/form-edit-bookmark';
 
 export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks}) {
+    const { url } = usePage();
     const [nextPage, setNextPage] = useState(initialBookmarks.next_page_url);
     const [tagsQueryString] = useState(initialBookmarks.tagsQueryString);
     const [loading, setLoading] = useState(false);
@@ -71,10 +72,7 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
         router.delete(route('bookmarks.destroy', dialogDeleteState.bookmark.id), {
             onSuccess: () => {
                 closeDeleteDialog()
-                const index = bookmarks.findIndex(item => item.id == currentBookmark.id);
-                if (index !== -1) {
-                    bookmarks.splice(index, 1);
-                }
+                removeBookmark(currentBookmark.id);
                 setCurrentBookmark(null)
             },
             onError: (errors) => {
@@ -91,10 +89,22 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
         router.patch(route('bookmarks.favs', bookmark.id),
             { is_fav: !bookmark.is_fav },
             {
+                preserveScroll: true,
                 onSuccess: () => {
                     bookmark.is_fav = !bookmark.is_fav;
+                    if (url.includes('/favorites')) {
+                        removeBookmark(bookmark.id);
+                        setCurrentBookmark(null);
+                    }
             }
         });
+    }
+
+    const removeBookmark = (bookmarkId: number) => {
+        const index = bookmarks.findIndex(item => item.id == bookmarkId);
+        if (index !== -1) {
+            bookmarks.splice(index, 1);
+        }
     }
 
     const loadMore = () => {

@@ -58,9 +58,13 @@ export default function FormEditBookmark({ open, onClose, bookmark, tags }) {
         if (bookmark) {
             setData('url', bookmark.url);
             setData('tags', bookmark.tags);
-            setSelectedOptions(bookmark.tags
-                .split('|')
-                .map((t: string) => ({ label: t, value: t, color: '#00B8D9' })));
+            if (bookmark.tags) {
+                setSelectedOptions(bookmark?.tags
+                    .split('|')
+                    .map((t: string) => ({ label: t, value: t, color: '#00B8D9' })));
+            } else {
+                setSelectedOptions([]);
+            }
             setData('notes', bookmark.notes);
             setData('read', bookmark.checked);
         }

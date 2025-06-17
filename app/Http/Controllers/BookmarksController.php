@@ -20,6 +20,18 @@ class BookmarksController extends Controller
         ]);
     }
 
+    public function getFavorites()
+    {
+        $bookmarks = Bookmark::query()
+            ->where('is_fav', true)
+            ->latest()
+            ->cursorPaginate(5);
+
+        return Inertia::render('favorites', [
+            'bookmarks' => $bookmarks,
+        ]);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -43,7 +55,7 @@ class BookmarksController extends Controller
     public function update(Request $request, Bookmark $bookmark)
     {
         $validated = $request->validate([
-            'tags' => 'required|max:300',
+            'tags' => 'max:300',
             'read' => 'boolean',
             //'notes' => 'string|max:300',
         ]);

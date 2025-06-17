@@ -22,6 +22,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('search-by-tags', [TagsController::class, 'getBookmarksByTags'])->name('search-by-tags');
     Route::get('tags/index', [TagsController::class, 'getTagsByCount'])->name('tags.index');
     Route::get('tags/all', [TagsController::class, 'getAllTags'])->name('tags.all');
+    Route::get('favorites', [BookmarksController::class, 'getFavorites'])->name('favorites');
 });
 
 require __DIR__.'/settings.php';
