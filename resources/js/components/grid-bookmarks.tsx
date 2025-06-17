@@ -8,7 +8,7 @@ import {
     DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator,
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { Trash2, SquarePen, Star, Copy, ListPlus, StarOff } from 'lucide-react';
+import { Trash2, SquarePen, Star, Copy, ListPlus, StarOff, Glasses, BookOpenCheck } from 'lucide-react';
 import { Icon } from '@/components/icon';
 import FormEditBookmark from '@/components/form-edit-bookmark';
 
@@ -94,10 +94,25 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
                     bookmark.is_fav = !bookmark.is_fav;
                     if (url.includes('/favorites')) {
                         removeBookmark(bookmark.id);
-                        setCurrentBookmark(null);
                     }
+                    setCurrentBookmark(null);
             }
         });
+    }
+
+    const handleSaveRead = (bookmark) => {
+        router.patch(route('bookmarks.reads', bookmark.id),
+            { read: !bookmark.checked },
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    bookmark.checked = !bookmark.checked;
+                    if (url.includes('/dashboard')) {
+                        removeBookmark(bookmark.id);
+                    }
+                    setCurrentBookmark(null);
+                }
+            });
     }
 
     const removeBookmark = (bookmarkId: number) => {
@@ -162,6 +177,9 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
                 break;
             case 'fav':
                 handleSaveFav(currentBookmark)
+                break;
+            case 'read':
+                handleSaveRead(currentBookmark)
                 break;
             case 'addToCol':
                 alert(key)
@@ -237,6 +255,19 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
                         }
                         {currentBookmark?.is_fav ? "Un-Favorite" : "Favorite"}
                     </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleDropDownItemClick('read')}>
+                        {currentBookmark?.checked ?
+                            <Icon iconNode={Glasses}
+                                  className="size-5 opacity-90 group-hover:opacity-100 bg"
+                            />
+                            :
+                            <Icon iconNode={BookOpenCheck}
+                                  className="size-5 opacity-90 group-hover:opacity-100 bg"
+                            />
+                        }
+                        {currentBookmark?.checked ? "Mark as not read" : "Mark as read"}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => handleDropDownItemClick('addToCol')}>
                         <Icon iconNode={ListPlus}
                               className="size-5 opacity-90 group-hover:opacity-100"

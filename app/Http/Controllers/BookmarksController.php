@@ -83,6 +83,15 @@ class BookmarksController extends Controller
         return redirect()->back();
     }
 
+    public function saveRead(Request $request, int $bookmarkId)
+    {
+        $validated = $request->validate([
+            'read' => 'required|boolean'
+        ]);
+
+        Bookmark::where('id', $bookmarkId)->update(['checked' => $validated['read']]);
+    }
+
     public function destroy(Bookmark $bookmark)
     {
         try {
