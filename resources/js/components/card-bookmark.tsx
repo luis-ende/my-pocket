@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { type PropsWithChildren } from 'react';
+import { type PropsWithChildren, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Icon } from '@/components/icon';
 import { Button } from '@/components/ui/button';
@@ -23,7 +23,11 @@ export default function CardBookmark({ id,
     handleActionsClick?: any;
 }>) {
     return (
-        <Card key={id} className="rounded-xl h-65" ref={parentRef}>
+        <Card
+            key={id}
+            className="rounded-xl h-65 bg-neutral-50"
+            ref={parentRef}
+        >
             <CardHeader className="px-3 pb-0 text-center">
                 <a href={url} target="_blank" rel="noopener noreferrer"  title={title}>
                     <CardTitle className="text-md h-20 text-left">

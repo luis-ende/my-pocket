@@ -18,10 +18,6 @@ export default function Dashboard() {
     const { bookmarks: initialBookmarks } = usePage().props;
     const [toReadBookmarks, setToReadBookmarks] = useState(initialBookmarks.data)
 
-    useEffect(() => {
-        console.log(initialBookmarks)
-    }, [initialBookmarks]);
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -31,7 +27,7 @@ export default function Dashboard() {
                         <Icon iconNode={Glasses}
                               className="size-10 opacity-70 group-hover:opacity-100 bg"
                         />
-                        <div className="pl-3">
+                        <div className="pl-3 pb-3">
                             <h1 className="text-xl font-bold">To Read</h1>
                             <h2 className="text-l text-gray-600">Your pending reads</h2>
                         </div>
