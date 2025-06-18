@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BookmarksController;
+use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TagsController;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('tags/index', [TagsController::class, 'getTagsByCount'])->name('tags.index');
     Route::get('tags/all', [TagsController::class, 'getAllTags'])->name('tags.all');
     Route::get('favorites', [BookmarksController::class, 'getFavorites'])->name('favorites');
+    Route::get('collections', [CollectionController::class, 'index'])->name('collections');
+    Route::get('collections/{collectionId}/bookmarks', [CollectionController::class, 'getCollectionBookmarks'])->name('collections.bookmarks');
 });
 
 require __DIR__.'/settings.php';

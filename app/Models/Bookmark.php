@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Bookmark extends Model
 {
@@ -13,4 +14,9 @@ class Bookmark extends Model
         'checked',
         'is_fav'
     ];
+
+    public function collections(): BelongsToMany
+    {
+        return $this->belongsToMany(Collection::class);
+    }
 }

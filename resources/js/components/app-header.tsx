@@ -52,14 +52,16 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const [tags, setTags] = useState([]);
 
     useEffect(() => {
-        fetch('/tags/all')
-            .then(res => {
-                if (!res.ok) throw new Error('Failed to load tags');
-                return res.json();
-            })
-            .then(data => setTags(data.tags))
-            .catch(() => setTags([]));
-    }, []);
+        if (modalOpen) {
+            fetch('/tags/all')
+                .then(res => {
+                    if (!res.ok) throw new Error('Failed to load tags.');
+                    return res.json();
+                })
+                .then(data => setTags(data.tags))
+                .catch(() => setTags([]));
+        }
+    }, [modalOpen]);
 
     const onMenuButtonClick = (key: string) => {
         switch (key) {
