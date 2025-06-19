@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Collection extends Model
 {
+    protected $fillable = [
+        'name',
+        'description',
+    ];
+
     /**
      * Get the bookmarks in the collection.
      */

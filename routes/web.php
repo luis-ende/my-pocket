@@ -24,6 +24,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('tags/all', [TagsController::class, 'getAllTags'])->name('tags.all');
     Route::get('favorites', [BookmarksController::class, 'getFavorites'])->name('favorites');
     Route::get('collections', [CollectionController::class, 'index'])->name('collections');
+    Route::post('collections', [CollectionController::class, 'store'])->name('collections');
     Route::get('collections/{collectionId}/bookmarks', [CollectionController::class, 'getCollectionBookmarks'])->name('collections.bookmarks');
 });
 

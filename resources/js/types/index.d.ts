@@ -41,3 +41,18 @@ export interface User {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+export interface Bookmark {
+    id: number;
+    title: string;
+    url: string;
+    tags: string;
+    checked: boolean;
+    is_fav: boolean;
+}
+
+export interface Collection {
+    id: number;
+    name: string;
+    description: string;
+}
