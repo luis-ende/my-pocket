@@ -24,8 +24,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('tags/all', [TagsController::class, 'getAllTags'])->name('tags.all');
     Route::get('favorites', [BookmarksController::class, 'getFavorites'])->name('favorites');
     Route::get('collections', [CollectionController::class, 'index'])->name('collections');
+    Route::get('collections/list', [CollectionController::class, 'list'])->name('collections.list');
     Route::post('collections', [CollectionController::class, 'store'])->name('collections');
     Route::get('collections/{collectionId}/bookmarks', [CollectionController::class, 'getCollectionBookmarks'])->name('collections.bookmarks');
+    Route::post('bookmarks/add-to-collection', [BookmarksController::class, 'addToCollection'])->name('bookmarks.addToCollection');
+    Route::get('bookmarks/{bookmarkId}/collections', [BookmarksController::class, 'getCollections'])->name('bookmarks.collections');
 });
 
 require __DIR__.'/settings.php';

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Bookmark;
 use App\Services\FetchUrlTitleService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class BookmarksController extends Controller
@@ -103,5 +104,37 @@ class BookmarksController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to delete bookmark.');
         }
+    }
+
+    public function addToCollection(Request $request)
+    {
+        $validated = $request->validate([
+            'bookmarkId' => 'required|integer|exists:bookmarks,id',
+            'collectionId' => 'required|integer|exists:collections,id'
+        ]);
+
+        DB::delete('DELETE FROM bookmark_collection WHERE bookmark_id = ?',
+            [$validated['bookmarkId']]);
+        DB::table('bookmark_collection')->insert([
+            'bookmark_id' => $validated['bookmarkId'],
+            'collection_id' => $validated['collectionId'],
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return redirect()->back()->with('success', 'Bookmark was added to collection.');
+    }
+
+    public function getCollections(int $bookmarkId)
+    {
+        $collectionId = Bookmark::findOrFail($bookmarkId)
+            ->collections()
+            ->select('collections.id')
+            ->first()?->id;
+
+        return response()->json([
+            'bookmarkId' => $bookmarkId,
+            'collectionId' => $collectionId
+        ]);
     }
 }

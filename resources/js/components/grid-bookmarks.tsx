@@ -11,6 +11,7 @@ import {
 import { Trash2, SquarePen, Star, Copy, ListPlus, StarOff, Glasses, BookOpenCheck } from 'lucide-react';
 import { Icon } from '@/components/icon';
 import FormEditBookmark from '@/components/form-edit-bookmark';
+import FormBookmarkCollectionAdd from '@/components/form-bookmark-collection-add';
 
 export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks}) {
     const { url } = usePage();
@@ -30,6 +31,7 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
     });
 
     const [dialogEditOpen, setDialogEditOpen] = useState(false);
+    const [dialogCollectionsOpen, setDialogCollectionsOpen] = useState(false);
 
     const [tags, setTags] = useState([]);
 
@@ -182,7 +184,7 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
                 handleSaveRead(currentBookmark)
                 break;
             case 'addToCol':
-                alert(key)
+                setDialogCollectionsOpen(true)
                 break;
             case 'copy':
                 alert(key)
@@ -268,7 +270,13 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
                         {currentBookmark?.checked ? "Mark as not read" : "Mark as read"}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => handleDropDownItemClick('addToCol')}>
+                    <DropdownMenuItem
+                        onSelect={(e) => {
+                            e.preventDefault();
+                            setDropdownOpen(false)
+                        }}
+                        onClick={() => handleDropDownItemClick('addToCol')}
+                    >
                         <Icon iconNode={ListPlus}
                               className="size-5 opacity-90 group-hover:opacity-100"
                         />
@@ -290,6 +298,14 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
                     setDialogEditOpen(false)
                 }}
                 tags={tags}
+            />
+
+            <FormBookmarkCollectionAdd
+                open={dialogCollectionsOpen}
+                bookmark={currentBookmark}
+                onClose={() => {
+                    setDialogCollectionsOpen(false)
+                }}
             />
 
             <div className="px-10 py-10 grid md:grid-cols-3 sm:grid-cols-1 gap-6 sm:gap-3">

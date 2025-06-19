@@ -23,6 +23,18 @@ class CollectionController extends Controller
         ]);
     }
 
+    public function list()
+    {
+        $collections = Collection::query()
+            ->select('id', 'name')
+            ->orderBy('name')
+            ->get();
+
+        return response()->json([
+            'collections' => $collections,
+        ]);
+    }
+
     public function getCollectionBookmarks(int $collectionId)
     {
         $collection = Collection::query()
@@ -31,7 +43,7 @@ class CollectionController extends Controller
 
         $bookmarks = Bookmark::query()
             ->select('bookmarks.id', 'title', 'url', 'tags', 'checked', 'is_fav')
-            ->whereRelation('collections', 'bookmark_collection.id', $collectionId)
+            ->whereRelation('collections', 'bookmark_collection.collection_id', $collectionId)
             ->latest()
             ->cursorPaginate(5);
 
