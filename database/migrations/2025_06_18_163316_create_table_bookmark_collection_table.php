@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('collection_id');
             $table->timestamps();
 
+            $table->unique(['bookmark_id', 'collection_id']);
             $table->foreign('bookmark_id')->references('id')->on('bookmarks')->onDelete('cascade');
             $table->foreign('collection_id')->references('id')->on('collections')->onDelete('cascade');;
         });
