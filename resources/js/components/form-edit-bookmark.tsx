@@ -58,6 +58,8 @@ export default function FormEditBookmark({ open, onClose, bookmark, tags }) {
         if (bookmark) {
             setData('url', bookmark.url);
             setData('tags', bookmark.tags);
+            setData('notes', bookmark.notes);
+            setData('read', bookmark.checked);
             if (bookmark.tags) {
                 setSelectedOptions(bookmark?.tags
                     .split('|')
@@ -65,8 +67,6 @@ export default function FormEditBookmark({ open, onClose, bookmark, tags }) {
             } else {
                 setSelectedOptions([]);
             }
-            setData('notes', bookmark.notes);
-            setData('read', bookmark.checked);
         }
     }, [bookmark]);
 

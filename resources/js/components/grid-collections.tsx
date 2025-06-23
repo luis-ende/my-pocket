@@ -11,6 +11,7 @@ import {
 import { Icon } from '@/components/icon';
 import { SquarePen, Trash2 } from 'lucide-react';
 import AlertDialogDelete from '@/components/alert-dialog-delete';
+import FormEditCollection from '@/components/form-edit-collection';
 
 export default function GridCollections() {
     const { collections } = usePage().props;
@@ -25,6 +26,8 @@ export default function GridCollections() {
         isDeleting: false
     });
 
+    const [dialogEditOpen, setDialogEditOpen] = useState(false);
+
     const openDeleteDialog = (collection) => {
         setDialogDeleteState({
             isOpen: true,
@@ -36,7 +39,7 @@ export default function GridCollections() {
     const handleDropDownItemClick = (key: string) => {
         switch (key) {
             case 'edit':
-                // setDialogEditOpen(true)
+                setDialogEditOpen(true)
                 break;
             case 'delete':
                 openDeleteDialog(currentCollection)
@@ -156,6 +159,14 @@ export default function GridCollections() {
                     />
                 </DropdownMenuContent>
             </DropdownMenu>
+
+            <FormEditCollection
+                open={dialogEditOpen}
+                collection={currentCollection}
+                onClose={() => {
+                    setDialogEditOpen(false)
+                }}
+            />
 
             {collections.map((collection) => {
                 return (

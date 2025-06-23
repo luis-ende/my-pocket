@@ -65,6 +65,26 @@ class CollectionController extends Controller
         return redirect()->back()->with('success', 'Collection created.');
     }
 
+    public function update(Request $request, Collection $collection)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:100',
+            'description' => 'string|max:200',
+        ]);
+
+        try {
+            Collection::where('id', $collection->id)->update([
+                'name' => $validated['name'],
+                'description' => $validated['description'] ?? true,
+            ]);
+
+            return redirect()->back()->with('success', 'Collection updated.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to delete collection.');
+        }
+    }
+
+
     public function destroy(Collection $collection)
     {
         try {
