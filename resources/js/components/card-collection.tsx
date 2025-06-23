@@ -8,11 +8,13 @@ export default function CardCollection({ id,
                                        name,
                                        description,
                                        bookmarksCount,
+                                       handleActionsClick,
                                      }: PropsWithChildren<{
     id: number;
     name?: string;
     description?: string;
     bookmarksCount?: number;
+    handleActionsClick?: any;
 }>) {
     return (
         <Card
@@ -43,6 +45,7 @@ export default function CardCollection({ id,
                         <Button
                             variant="outline"
                             className="h-[34px] w-[34px]"
+                            onClick={handleActionsClick}
                             data-collection-id={id}
                         >
                             <Icon iconNode={Ellipsis}

@@ -64,4 +64,17 @@ class CollectionController extends Controller
 
         return redirect()->back()->with('success', 'Collection created.');
     }
+
+    public function destroy(Collection $collection)
+    {
+        try {
+            if  ($collection->delete() === 1) {
+                return redirect()->back()->with('success', 'Collection removed.');
+            }
+
+            return redirect()->back()->with('error', 'Collection could not be removed.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to delete collection.');
+        }
+    }
 }
