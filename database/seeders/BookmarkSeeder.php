@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Imports\BookmarksImport;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 
 class BookmarkSeeder extends Seeder
@@ -13,9 +14,11 @@ class BookmarkSeeder extends Seeder
      */
     public function run(): void
     {
-        $path = base_path('database/data/imports/part_000000.csv');
         $import = new BookmarksImport();
-
-        Excel::import($import, $path);
+        $files = File::files(base_path('database/data/imports/bookmarks'));
+        foreach ($files as $file) {
+            Excel::import($import,
+                base_path('database/data/imports/bookmarks/' . $file->getFilename()));
+        }
     }
 }
