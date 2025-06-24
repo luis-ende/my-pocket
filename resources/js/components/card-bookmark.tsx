@@ -1,15 +1,16 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { type PropsWithChildren, useState } from 'react';
+import { type PropsWithChildren } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Icon } from '@/components/icon';
 import { Button } from '@/components/ui/button';
-import { Ellipsis } from 'lucide-react';
+import { Ellipsis, Unlink } from 'lucide-react';
 
 export default function CardBookmark({ id,
                                        title,
                                        description,
                                        url,
                                        tags,
+                                       isBrokenLink,
                                        parentRef,
                                        handleActionsClick,
                                      }: PropsWithChildren<{
@@ -19,6 +20,7 @@ export default function CardBookmark({ id,
     description?: string;
     url?: string;
     tags?: string;
+    isBrokenLink: boolean;
     parentRef?: any;
     handleActionsClick?: any;
 }>) {
@@ -44,6 +46,10 @@ export default function CardBookmark({ id,
             <CardFooter className="px-10">
                 <div className="flex flex-row w-full">
                     <div className="basis-2/3">
+                        {isBrokenLink &&
+                            <Icon iconNode={Unlink}
+                              className="text-red-500 size-5 stroke-3 opacity-80" />
+                        }
                     </div>
                     <div className="basis-1/3  text-right">
                         <Button
