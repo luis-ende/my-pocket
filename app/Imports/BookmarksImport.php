@@ -33,18 +33,22 @@ class BookmarksImport implements ToModel, WithHeadingRow, OnEachRow
     */
     public function model(array $row)
     {
+        $createdAt = \DateTime::createFromFormat('Y-m-d\TH:i:s', $row['time_added']);
+        if ($createdAt === false) {
+            $createdAt = date("Y-m-d H:i:s", $row['time_added']);
+        }
+
         return new Bookmark([
             'title' => $row['title'],
             'url' => $row['url'],
             'tags' => $row['tags'] && $row['tags'] !== '' ? $this->getCleanTags($row['tags']) : null,
             'checked' => !$row['tags'] || !$this->containsTagsToRemove($row['tags']),
-            'created_at' => date("Y-m-d H:i:s", $row['time_added']),
+            'created_at' => $createdAt,
         ]);
     }
 
     public function onRow(Row $row)
     {
-        // TODO: Implement onRow() method.
     }
 
     private function containsTagsToRemove(string $tags): bool
