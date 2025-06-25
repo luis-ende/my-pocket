@@ -7,25 +7,30 @@ use DOMDocument;
 
 class FetchUrlTitleService
 {
+    public function __construct(
+        public ?string $htmlBody = null,
+    )
+    {}
+
     public function getTitle(string $url): ?string
     {
         try {
-            $response = Http::timeout(10)->get($url);
+            if (empty($this->htmlBody)) {
+                $response = Http::timeout(10)->get($url);
 
-            if (!$response->successful()) {
-                return null;
+                if (!$response->successful()) {
+                    return null;
+                }
+
+                $this->htmlBody = $response->body();
             }
 
-            $html = $response->body();
-
-            // Attempt to extract title using regex
-            $regexTitle = $this->extractTitleWithRegex($html);
+            $regexTitle = $this->extractTitleWithRegex($this->htmlBody);
             if ($regexTitle !== null) {
                 return $regexTitle;
             }
 
-            // Fallback: use DOMDocument
-            return $this->extractTitleWithDom($html);
+            return $this->extractTitleWithDom($this->htmlBody);
 
         } catch (\Exception $e) {
             return null;

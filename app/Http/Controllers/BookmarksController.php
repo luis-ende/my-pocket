@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Bookmark;
 use App\Services\FetchUrlTitleService;
+use App\Services\LinkPreviewImageExtractor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -33,7 +34,9 @@ class BookmarksController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request,
+                          FetchUrlTitleService $fetchUrlTitleService,
+                          LinkPreviewImageExtractor $linkPreviewImageExtractor)
     {
         $validated = $request->validate([
             'url' => 'required|url|max:900',
@@ -41,16 +44,29 @@ class BookmarksController extends Controller
             'read' => 'boolean'
         ]);
 
-        $title = (new FetchUrlTitleService)->getTitle($validated['url']);
+        $title = $fetchUrlTitleService->getTitle($validated['url']);
         if (empty($title)) {
             $title = 'Page title not found';
         }
+
         $validated['title'] = $title;
         $validated['checked'] = $validated['read'] ?? true;
 
-        Bookmark::create($validated);
+        DB::transaction(function () use ($fetchUrlTitleService, $linkPreviewImageExtractor, $title, $validated) {
+            $bookmark = Bookmark::create($validated);
 
-        return redirect()->back()->with('success', 'Bookmark created.');
+            if (!empty($fetchUrlTitleService->htmlBody)) {
+                $linkPreviewImageExtractor->htmlBody = $fetchUrlTitleService->htmlBody;
+                $imageUrl = $linkPreviewImageExtractor->extractPreviewImage($validated['url']);
+                if (!empty($imageUrl)) {
+                    $bookmark->addMediaFromUrl($imageUrl)->toMediaCollection('preview');
+                }
+            }
+
+            return redirect()->back()->with('success', 'Bookmark created.');
+        });
+
+        return redirect()->back()->with('error', 'Bookmark couldn\'t be created.');
     }
 
     public function update(Request $request, Bookmark $bookmark)

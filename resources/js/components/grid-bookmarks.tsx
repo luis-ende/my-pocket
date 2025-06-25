@@ -322,6 +322,7 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
                             url={bookmark.url}
                             tags={bookmark.tags}
                             isBrokenLink={bookmark.is_broken_link}
+                            previewImageUrl={bookmark.preview_image_url}
                             handleActionsClick={handleOpenDropDown}
                         />
                     );
