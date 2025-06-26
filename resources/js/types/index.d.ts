@@ -49,6 +49,8 @@ export interface Bookmark {
     tags: string;
     checked: boolean;
     is_fav: boolean;
+    is_broken_link: boolean;
+    preview_image_url?: string;
 }
 
 export interface Collection {

@@ -4,53 +4,52 @@ import { Badge } from '@/components/ui/badge';
 import { Icon } from '@/components/icon';
 import { Button } from '@/components/ui/button';
 import { Bookmark, Ellipsis, Unlink } from 'lucide-react';
+import { type Bookmark as BookmarkType } from '@/types';
 
-export default function CardBookmark({ id,
-                                       title,
-                                       description,
-                                       url,
-                                       tags,
-                                       isBrokenLink,
-                                       previewImageUrl,
+export default function CardBookmark({ bookmark,
                                        parentRef,
                                        handleActionsClick,
                                      }: PropsWithChildren<{
-    id: number;
-    name?: string;
-    title?: string;
-    description?: string;
-    url?: string;
-    tags?: string;
-    isBrokenLink: boolean;
-    previewImageUrl?: string;
+    bookmark: BookmarkType;
     parentRef?: any;
     handleActionsClick?: any;
 }>) {
+
+    const url = new URL(bookmark.url);
+    const cardDescription = url.hostname;
+
     return (
-        <Card key={id} className="h-80 rounded-xl bg-neutral-50" ref={parentRef}>
+        <Card key={bookmark.id} className="h-80 rounded-xl bg-neutral-50" ref={parentRef}>
             <CardHeader className="px-3 pb-0 text-center">
-                <a href={url} target="_blank" rel="noopener noreferrer" title={title}>
-                    {previewImageUrl ?
+                <a href={bookmark.url} target="_blank" rel="noopener noreferrer" title={bookmark.title}>
+                    {bookmark.preview_image_url ?
                         <img
-                            alt={title}
+                            alt={bookmark.title}
                             className="mx-auto h-20 w-full object-cover"
-                            src={previewImageUrl}
+                            src={bookmark.preview_image_url}
                         />
                         :
                         <div className="h-20">
                             <Icon iconNode={Bookmark} className="size-7 opacity-80 group-hover:opacity-100" />
                         </div>
                     }
-                    <CardTitle className="text-md h-16 text-left">{title}</CardTitle>
+                    <CardTitle className="text-md h-16 text-left">{bookmark.title}</CardTitle>
                 </a>
-                <CardDescription className="text-left text-xs">{description}</CardDescription>
+                <CardDescription className="text-left text-xs">
+                    {cardDescription}
+                </CardDescription>
             </CardHeader>
-            <CardContent className="px-10">{tags?.split('|').map((tag) => <Badge>{tag}</Badge>)}</CardContent>
+            <CardContent className="px-10">
+                {bookmark.tags?.split('|').map((tag) => <Badge>{tag}</Badge>)}
+            </CardContent>
             <CardFooter className="px-10">
                 <div className="flex w-full flex-row">
-                    <div className="basis-2/3">{isBrokenLink && <Icon iconNode={Unlink} className="size-5 stroke-3 text-red-500 opacity-80" />}</div>
+                    <div className="basis-2/3">
+                        {bookmark.is_broken_link &&
+                            <Icon iconNode={Unlink} className="size-5 stroke-3 text-red-500 opacity-80" />}
+                    </div>
                     <div className="basis-1/3 text-right">
-                        <Button variant="outline" className="h-[34px] w-[34px]" onClick={handleActionsClick} data-bookmark-id={id}>
+                        <Button variant="outline" className="h-[34px] w-[34px]" onClick={handleActionsClick} data-bookmark-id={bookmark.id}>
                             <Icon iconNode={Ellipsis} className="size-7 opacity-80 group-hover:opacity-100" />
                         </Button>
                     </div>

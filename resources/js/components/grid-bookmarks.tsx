@@ -310,19 +310,11 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
 
             <div className="px-10 py-10 grid md:grid-cols-4 sm:grid-cols-1 gap-6 sm:gap-3">
                 {bookmarks.map((bookmark, index) => {
-                    const url = new URL(bookmark.url);
-                    const domain = url.hostname;
                     return (
                         <CardBookmark
                             parentRef={index === bookmarks.length - 1 ? lastItemRef : null}
                             key={bookmark.id}
-                            id={bookmark.id}
-                            title={bookmark.title}
-                            description={domain}
-                            url={bookmark.url}
-                            tags={bookmark.tags}
-                            isBrokenLink={bookmark.is_broken_link}
-                            previewImageUrl={bookmark.preview_image_url}
+                            bookmark={bookmark}
                             handleActionsClick={handleOpenDropDown}
                         />
                     );
