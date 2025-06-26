@@ -308,7 +308,7 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
                 }}
             />
 
-            <div className="px-10 py-10 grid md:grid-cols-3 sm:grid-cols-1 gap-6 sm:gap-3">
+            <div className="px-10 py-10 grid md:grid-cols-4 sm:grid-cols-1 gap-6 sm:gap-3">
                 {bookmarks.map((bookmark, index) => {
                     const url = new URL(bookmark.url);
                     const domain = url.hostname;
