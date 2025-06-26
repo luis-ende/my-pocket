@@ -47,6 +47,11 @@ class LinkPreviewImageExtractor
         }
     }
 
+    public function clearContent(): void
+    {
+        $this->htmlBody = null;
+    }
+
     protected function parseMetaTags(string $html, string $baseUrl): array
     {
         $dom = new DOMDocument();
@@ -107,19 +112,6 @@ class LinkPreviewImageExtractor
             }
         }
 
-        // Favicon
-        $favicons = $xpath->query('//link[@rel="icon" or @rel="shortcut icon" or @rel="apple-touch-icon"]/@href');
-        foreach ($favicons as $favicon) {
-            $imageUrl = $this->resolveUrl($favicon->nodeValue, $baseUrl);
-            if ($imageUrl) {
-                $images[] = [
-                    'type' => 'favicon',
-                    'url' => $imageUrl,
-                    'priority' => 5
-                ];
-            }
-        }
-
         // If no meta images found, try to find large images in content
         if (empty($images)) {
             $contentImages = $this->findContentImages($xpath, $baseUrl);
@@ -129,7 +121,7 @@ class LinkPreviewImageExtractor
         return $images;
     }
 
-    protected function findContentImages(string $xpath, string $baseUrl): array
+    protected function findContentImages(DOMXPath $xpath, string $baseUrl): array
     {
         $images = [];
         $imgTags = $xpath->query('//img[@src]');
@@ -172,7 +164,7 @@ class LinkPreviewImageExtractor
         $altLower = strtolower($alt);
 
         foreach ($skipPatterns as $pattern) {
-            if (strpos($altLower, $pattern) !== false) {
+            if (str_contains($altLower, $pattern)) {
                 return false;
             }
         }
@@ -192,7 +184,7 @@ class LinkPreviewImageExtractor
         }
 
         // Protocol relative URL
-        if (strpos($url, '//') === 0) {
+        if (str_starts_with($url, '//')) {
             $parsedBase = parse_url($baseUrl);
             return $parsedBase['scheme'] . ':' . $url;
         }
@@ -203,7 +195,7 @@ class LinkPreviewImageExtractor
         $baseHost = $parsedBase['host'] ?? '';
         $basePath = $parsedBase['path'] ?? '';
 
-        if (strpos($url, '/') === 0) {
+        if (str_starts_with($url, '/')) {
             // Absolute path
             return $baseScheme . '://' . $baseHost . $url;
         } else {
@@ -225,19 +217,5 @@ class LinkPreviewImageExtractor
         });
 
         return $images[0];
-    }
-
-    protected function getImageExtension(string $contentType): ?string
-    {
-        $extensions = [
-            'image/jpeg' => 'jpg',
-            'image/jpg' => 'jpg',
-            'image/png' => 'png',
-            'image/gif' => 'gif',
-            'image/webp' => 'webp',
-            'image/svg+xml' => 'svg'
-        ];
-
-        return $extensions[$contentType] ?? 'jpg';
     }
 }
