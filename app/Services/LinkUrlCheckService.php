@@ -2,40 +2,42 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class LinkUrlCheckService
 {
     public function isLinkBroken(string $url): bool
     {
-        if (preg_match('#^(https?://)?(www\.)?(youtube\.com/watch|youtu\.be/)#i', $url)) {
-            return $this->isYouTubeLinkUnavailable($url);
+        try {
+            if (preg_match('#^(https?://)?(www\.)?(youtube\.com/watch|youtu\.be/)#i', $url)) {
+                return $this->isYouTubeLinkUnavailable($url);
+            }
+
+            $response = Http::timeout(30)->get($url);
+            if ($response->failed()) return true;
+
+            return $response->getStatusCode() >= 300;
+        } catch (\Throwable $e) {
+            Log::error("LinkUrlCheckService connection error ({$e->getMessage()})");
+            return true;
         }
-
-        $headers = @get_headers($url);
-        if (!$headers) return true;
-        $statusCode = substr($headers[0], 9, 3);
-
-        return intval($statusCode) >= 300;
     }
 
     protected function isYouTubeLinkUnavailable(string $url): bool
     {
-        try {
-            $response = Http::timeout(10)
-                ->withHeaders([
-                    'User-Agent' => 'Mozilla/5.0 (compatible; LinkChecker/1.0)'
-                ])
-                ->get($url);
+        $response = Http::timeout(30)
+            ->withHeaders([
+                'User-Agent' => 'Mozilla/5.0 (compatible; LinkChecker/1.0)'
+            ])
+            ->get($url);
 
-            if ($response->failed()) {
-                return true;
-            }
-            $body = $response->body();
-
-            return str_contains($body, 'unavailable_video.png');
-        } catch (\Exception $e) {
+        if ($response->failed()) {
             return true;
         }
+        $body = $response->body();
+
+        return str_contains($body, 'unavailable_video.png');
     }
 }
