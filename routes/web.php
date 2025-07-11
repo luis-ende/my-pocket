@@ -15,9 +15,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('bookmarks', [BookmarksController::class, 'index'])->name('bookmarks');
     Route::post('bookmarks', [BookmarksController::class, 'store'])->name('bookmarks.store');
+    Route::get('archive', [BookmarksController::class, 'indexArchive'])->name('bookmarks.archive');
     Route::patch('bookmarks/{bookmark}', [BookmarksController::class, 'update'])->name('bookmarks.update');
-    Route::patch('bookmarks/favs/{bookmarkId}/favorite', [BookmarksController::class, 'saveFav'])->name('bookmarks.favs');
-    Route::patch('bookmarks/favs/{bookmarkId}/reads', [BookmarksController::class, 'saveRead'])->name('bookmarks.reads');
+    Route::patch('bookmarks/{bookmarkId}/favorite', [BookmarksController::class, 'saveFav'])->name('bookmarks.favs');
+    Route::patch('bookmarks/{bookmarkId}/reads', [BookmarksController::class, 'saveRead'])->name('bookmarks.reads');
+    Route::patch('bookmarks/{bookmarkId}/archive', [BookmarksController::class, 'saveArchive'])->name('bookmarks.archive');
     Route::delete('bookmarks/{bookmark}', [BookmarksController::class, 'destroy'])->name('bookmarks.destroy');
     Route::get('search-by-tags', [TagsController::class, 'getBookmarksByTags'])->name('search-by-tags');
     Route::get('tags/index', [TagsController::class, 'getTagsByCount'])->name('tags.index');

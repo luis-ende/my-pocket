@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\BookmarkNotArchivedScope;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 
+#[ScopedBy([BookmarkNotArchivedScope::class])]
 class Bookmark extends Model implements HasMedia
 {
     use InteractsWithMedia;

@@ -3,7 +3,7 @@ import { NavMain } from '@/components/nav-main';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { House, Bookmark, LibraryBig, Star, Tags } from 'lucide-react';
+import { House, Bookmark, LibraryBig, Star, Tags, Archive } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -31,6 +31,11 @@ const mainNavItems: NavItem[] = [
         title: 'Tags',
         href: '/search-by-tags',
         icon: Tags,
+    },
+    {
+        title: 'Archive',
+        href: '/archive',
+        icon: Archive,
     },
 ];
 

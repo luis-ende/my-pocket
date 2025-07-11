@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bookmark;
+use App\Models\Scopes\BookmarkNotArchivedScope;
 use App\Services\FetchUrlTitleService;
 use App\Services\LinkPreviewImageExtractor;
 use Illuminate\Http\Request;
@@ -18,6 +19,19 @@ class BookmarksController extends Controller
             ->cursorPaginate(5);
 
         return Inertia::render('bookmarks', [
+            'bookmarks' => $bookmarks,
+        ]);
+    }
+
+    public function indexArchive()
+    {
+        $bookmarks = Bookmark::query()
+            ->where('is_archived', true)
+            ->latest()
+            ->withoutGlobalScope(BookmarkNotArchivedScope::class)
+            ->cursorPaginate(5);
+
+        return Inertia::render('archive', [
             'bookmarks' => $bookmarks,
         ]);
     }
@@ -78,7 +92,8 @@ class BookmarksController extends Controller
         ]);
 
         try {
-            Bookmark::where('id', $bookmark->id)->update([
+            Bookmark::withoutGlobalScopes()
+            ->where('id', $bookmark->id)->update([
                 'tags' => $validated['tags'],
                 'checked' => $validated['read'] ?? true,
             ]);
@@ -95,7 +110,10 @@ class BookmarksController extends Controller
             'is_fav' => 'required|boolean'
         ]);
 
-        Bookmark::where('id', $bookmarkId)->update(['is_fav' => $validated['is_fav']]);
+        Bookmark::withoutGlobalScopes()
+        ->where('id', $bookmarkId)->update([
+            'is_fav' => $validated['is_fav']
+        ]);
 
         return redirect()->back();
     }
@@ -106,7 +124,28 @@ class BookmarksController extends Controller
             'read' => 'required|boolean'
         ]);
 
-        Bookmark::where('id', $bookmarkId)->update(['checked' => $validated['read']]);
+        Bookmark::withoutGlobalScopes()
+        ->where('id', $bookmarkId)->update([
+            'checked' => $validated['read']
+        ]);
+    }
+
+    public function saveArchive(Request $request, int $bookmarkId)
+    {
+        $validated = $request->validate([
+            'archive' => 'required|boolean'
+        ]);
+
+        Bookmark::withoutGlobalScopes()
+        ->where('id', $bookmarkId)->update([
+            'is_archived' => $validated['archive']
+        ]);
+
+        if ($validated['archive'] === true) {
+            return redirect()->back()->with('success', 'Bookmark archived.');
+        } else {
+            return redirect()->back()->with('success', 'Bookmark un-archived.');
+        }
     }
 
     public function destroy(Bookmark $bookmark)

@@ -8,7 +8,7 @@ import {
     DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator,
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { Trash2, SquarePen, Star, Copy, ListPlus, StarOff, Glasses, BookOpenCheck } from 'lucide-react';
+import { Trash2, SquarePen, Star, Copy, ListPlus, StarOff, Glasses, BookOpenCheck, Archive, ArchiveRestore } from 'lucide-react';
 import { Icon } from '@/components/icon';
 import FormEditBookmark from '@/components/form-edit-bookmark';
 import FormBookmarkCollectionAdd from '@/components/form-bookmark-collection-add';
@@ -117,6 +117,18 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
             });
     }
 
+    const handleArchive = (bookmark) => {
+        router.patch(route('bookmarks.archive', bookmark.id),
+            { archive: !bookmark.is_archived },
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    removeBookmark(bookmark.id);
+                    setCurrentBookmark(null);
+                }
+            });
+    }
+
     const removeBookmark = (bookmarkId: number) => {
         const index = bookmarks.findIndex(item => item.id == bookmarkId);
         if (index !== -1) {
@@ -188,6 +200,9 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
                 break;
             case 'copy':
                 alert(key)
+                break;
+            case 'archive':
+                handleArchive(currentBookmark)
                 break;
         }
     }
@@ -287,6 +302,21 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
                               className="size-5 opacity-90 group-hover:opacity-100"
                         />
                         Copy Link
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                        onClick={() => handleDropDownItemClick('archive')}
+                    >
+                        {currentBookmark?.is_archived ?
+                            <Icon iconNode={ArchiveRestore}
+                                  className="size-5 opacity-90 group-hover:opacity-100"
+                            />
+                            :
+                            <Icon iconNode={Archive}
+                                  className="size-5 opacity-90 group-hover:opacity-100"
+                            />
+                        }
+                        {currentBookmark?.is_archived ? "Un-Archive" : "Archive"}
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
