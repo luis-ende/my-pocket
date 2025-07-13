@@ -36,6 +36,7 @@ export default function Dashboard() {
                         initialBookmarks={initialBookmarks}
                         bookmarks={toReadBookmarks}
                         setBookmarks={setToReadBookmarks}
+                        infiniteScroll={true}
                         />)
                     }
                 </div>

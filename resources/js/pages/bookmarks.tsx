@@ -18,7 +18,12 @@ export default function Bookmarks() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="My Bookmarks" />
-            <GridBookmarks initialBookmarks={initialBookmarks} bookmarks={bookmarks} setBookmarks={setBookmarks} />
+            <GridBookmarks
+                initialBookmarks={initialBookmarks}
+                bookmarks={bookmarks}
+                setBookmarks={setBookmarks}
+                infiniteScroll={true}
+            />
         </AppLayout>
     );
 }

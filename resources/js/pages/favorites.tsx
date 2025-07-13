@@ -22,6 +22,7 @@ export default function Favorites() {
                 initialBookmarks={initialBookmarks}
                 bookmarks={bookmarks}
                 setBookmarks={setBookmarks}
+                infiniteScroll={true}
             />
         </AppLayout>
     );

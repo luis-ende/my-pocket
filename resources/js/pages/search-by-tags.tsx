@@ -75,6 +75,7 @@ export default function SearchByTags() {
                             initialBookmarks={initialBookmarks}
                             bookmarks={bookmarks}
                             setBookmarks={setBookmarks}
+                            infiniteScroll={true}
                         />
                     )}
                 </div>

@@ -22,6 +22,7 @@ export default function Archive() {
                 initialBookmarks={initialBookmarks}
                 bookmarks={bookmarks}
                 setBookmarks={setBookmarks}
+                infiniteScroll={true}
             />}
         </AppLayout>
     );

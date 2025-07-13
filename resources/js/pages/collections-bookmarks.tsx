@@ -27,6 +27,7 @@ export default function Collections() {
                 initialBookmarks={initialBookmarks}
                 bookmarks={bookmarks}
                 setBookmarks={setBookmarks}
+                infiniteScroll={true}
             />
         </AppLayout>
     );
