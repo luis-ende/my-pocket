@@ -12,6 +12,7 @@ import { Trash2, SquarePen, Star, Copy, ListPlus, StarOff, Glasses, BookOpenChec
 import { Icon } from '@/components/icon';
 import FormEditBookmark from '@/components/form-edit-bookmark';
 import FormBookmarkCollectionAdd from '@/components/form-bookmark-collection-add';
+import { Toaster, toast } from 'sonner';
 
 export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks, infiniteScroll}) {
     const { url } = usePage();
@@ -192,6 +193,22 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
         setDropdownOpen(true)
     }
 
+    const handleCopyLink = (bookmark) => {
+        navigator.clipboard.writeText(bookmark.url)
+            .then(() => {
+                toast("Bookmark", {
+                    description: "Link address copied to clipboard!",
+                    action: {
+                        label: "Close",
+                        onClick: () => console.log("Close"),
+                    },
+                })
+            })
+            .catch(err => {
+                console.error("Failed to copy: ", err);
+            });
+    }
+
     const handleDropDownItemClick = (key: string) => {
         switch (key) {
             case 'edit':
@@ -210,7 +227,7 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
                 setDialogCollectionsOpen(true);
                 break;
             case 'copy':
-                alert(key)
+                handleCopyLink(currentBookmark);
                 break;
             case 'archive':
                 handleArchive(currentBookmark);
@@ -223,6 +240,7 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
 
     return (
         <div className="border-sidebar-border/70 dark:border-sidebar-border relative overflow-auto rounded-xl border">
+            <Toaster />
             <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
                 <DropdownMenuTrigger asChild>
                     <button
