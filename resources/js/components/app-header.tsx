@@ -2,6 +2,7 @@ import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Icon } from '@/components/icon';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList, navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -15,6 +16,7 @@ import { BookmarkPlus, House, Menu, Search, SquarePen } from 'lucide-react';
 import AppLogoIcon from './app-logo-icon';
 import FormNewBookmark from '@/components/form-new-bookmark';
 import { useEffect, useState } from 'react';
+import { router } from '@inertiajs/react';
 
 const mainNavItems: NavItem[] = [
     {
@@ -51,6 +53,10 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
 
     const [tags, setTags] = useState([]);
 
+    const params = new URLSearchParams(window.location.search);
+    const searchTermParam = params.get('query') ?? '';
+    const [searchTerm, setSearchTerm] = useState(decodeURIComponent(searchTermParam));
+
     useEffect(() => {
         if (modalOpen) {
             fetch('/tags/all')
@@ -68,6 +74,12 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
             case 'Add Bookmark':
                 setModalOpen(true);
         }
+    }
+
+    const onSearchClick = () => {
+        router.visit(route('bookmarks.search', {
+            query: encodeURIComponent(searchTerm),
+        }))
     }
 
     return (
@@ -150,7 +162,16 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
 
                     <div className="ml-auto flex items-center space-x-2">
                         <div className="relative flex items-center space-x-1">
-                            <Button variant="ghost" size="icon" className="group h-9 w-9 cursor-pointer">
+                            <Input
+                                id="search"
+                                name="search"
+                                type="search"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                placeholder="Search..."
+                                onKeyDown={(e) => e.key === 'Enter' ? onSearchClick() : '' }
+                            />
+                            <Button variant="ghost" size="icon" className="group h-9 w-9 cursor-pointer" onClick={onSearchClick}>
                                 <Search className="!size-5 opacity-80 group-hover:opacity-100" />
                             </Button>
                             <div className="hidden lg:flex">

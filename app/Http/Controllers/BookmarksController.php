@@ -36,6 +36,33 @@ class BookmarksController extends Controller
         ]);
     }
 
+    public function indexSearch(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'query' => 'string|required|max:255',
+            ]);
+            $searchTerm = $validated['query'];
+        } catch (\Throwable $e) {
+            $searchTerm = '';
+        }
+
+        $bookmarks = [];
+        if (!empty($searchTerm)) {
+            $bookmarks = Bookmark::search($searchTerm)
+                ->query(function ($query) {
+                    // Also include archived bookmarks
+                    $query->withoutGlobalScope(BookmarkNotArchivedScope::class);
+                })
+                ->latest()
+                ->paginate(8);
+        }
+
+        return Inertia::render('search', [
+            'bookmarks' => $bookmarks,
+        ]);
+    }
+
     public function getFavorites()
     {
         $bookmarks = Bookmark::query()
@@ -146,6 +173,18 @@ class BookmarksController extends Controller
         } else {
             return redirect()->back()->with('success', 'Bookmark un-archived.');
         }
+    }
+
+    public function saveBrokenLink(Request $request, int $bookmarkId)
+    {
+        $validated = $request->validate([
+            'is_broken_link' => 'required|boolean'
+        ]);
+
+        Bookmark::withoutGlobalScopes()
+            ->where('id', $bookmarkId)->update([
+                'is_broken_link' => $validated['is_broken_link']
+            ]);
     }
 
     public function destroy(Bookmark $bookmark)

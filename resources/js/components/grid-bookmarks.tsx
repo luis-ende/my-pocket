@@ -8,12 +8,12 @@ import {
     DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator,
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { Trash2, SquarePen, Star, Copy, ListPlus, StarOff, Glasses, BookOpenCheck, Archive, ArchiveRestore } from 'lucide-react';
+import { Trash2, SquarePen, Star, Copy, ListPlus, StarOff, Glasses, BookOpenCheck, Archive, ArchiveRestore, Link } from 'lucide-react';
 import { Icon } from '@/components/icon';
 import FormEditBookmark from '@/components/form-edit-bookmark';
 import FormBookmarkCollectionAdd from '@/components/form-bookmark-collection-add';
 
-export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks}) {
+export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks, infiniteScroll}) {
     const { url } = usePage();
     const [nextPage, setNextPage] = useState(initialBookmarks.next_page_url);
     const [tagsQueryString] = useState(initialBookmarks.tagsQueryString);
@@ -129,6 +129,17 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
             });
     }
 
+    const handleRestoreBrokenLink = (bookmark) => {
+        router.patch(route('bookmarks.broken-link', bookmark.id),
+            { is_broken_link: false },
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    bookmark.is_broken_link = false;
+                }
+            });
+    }
+
     const removeBookmark = (bookmarkId: number) => {
         const index = bookmarks.findIndex(item => item.id == bookmarkId);
         if (index !== -1) {
@@ -184,25 +195,28 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
     const handleDropDownItemClick = (key: string) => {
         switch (key) {
             case 'edit':
-                setDialogEditOpen(true)
+                setDialogEditOpen(true);
                 break;
             case 'delete':
-                openDeleteDialog(currentBookmark)
+                openDeleteDialog(currentBookmark);
                 break;
             case 'fav':
-                handleSaveFav(currentBookmark)
+                handleSaveFav(currentBookmark);
                 break;
             case 'read':
-                handleSaveRead(currentBookmark)
+                handleSaveRead(currentBookmark);
                 break;
             case 'addToCol':
-                setDialogCollectionsOpen(true)
+                setDialogCollectionsOpen(true);
                 break;
             case 'copy':
                 alert(key)
                 break;
             case 'archive':
-                handleArchive(currentBookmark)
+                handleArchive(currentBookmark);
+                break;
+            case 'restore-broken-link':
+                handleRestoreBrokenLink(currentBookmark);
                 break;
         }
     }
@@ -304,6 +318,15 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
                         Copy Link
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
+                    {currentBookmark?.is_broken_link && <DropdownMenuItem
+                        onClick={() => handleDropDownItemClick('restore-broken-link')}
+                    >
+                        <Icon iconNode={Link}
+                              className="size-5 opacity-90 group-hover:opacity-100"
+                        />
+                        Restore broken link
+                        </DropdownMenuItem>
+                    }
                     <DropdownMenuItem
                         onClick={() => handleDropDownItemClick('archive')}
                     >
@@ -351,7 +374,7 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
                 })}
             </div>
 
-            {nextPage && (
+            {infiniteScroll && nextPage && (
                 <div className="mb-6 text-center">
                     <Button
                         className="w-60"
