@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Bookmark;
+use App\Models\Scopes\BookmarkNotArchivedScope;
 use App\Services\LinkPreviewImageExtractor;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +15,7 @@ class ExtractLinkPreviewImage extends Command
      *
      * @var string
      */
-    protected $signature = 'my-pocket:extract-links-previews';
+    protected $signature = 'my-pocket:extract-links-previews {--start-id=1} {--limit=0}';
 
     /**
      * The console command description.
@@ -29,11 +30,17 @@ class ExtractLinkPreviewImage extends Command
     public function handle(LinkPreviewImageExtractor $linkPreviewImageExtractor)
     {
         $bookmarks = Bookmark::query()
-            ->select('id', 'url', 'is_broken_link')
-            ->where('is_broken_link', false)
-            ->orWhereNull('is_broken_link')
-            ->orderByDesc('created_at')
-            ->limit(20)
+            ->select('id', 'url', 'is_broken_link', 'is_archived')
+            ->where(function ($query) {
+                $query->where('is_broken_link', '<>', true)
+                      ->orWhereNull('is_broken_link');
+            })
+            ->where('id', '>=', $this->option('start-id'))
+            ->when($this->option('limit') > 0, function ($query) {
+                $query->limit($this->option('limit'));
+            })
+            ->orderBy('id')
+            ->withoutGlobalScope(BookmarkNotArchivedScope::class)
             ->get();
 
         $this->info("Extracting preview images for {$bookmarks->count()} bookmarks.");

@@ -5,6 +5,7 @@ namespace App\Services;
 use DOMDocument;
 use DOMXPath;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class LinkPreviewImageExtractor
 {
@@ -36,6 +37,7 @@ class LinkPreviewImageExtractor
 
             return $this->parseMetaTags($this->htmlBody, $url);
         } catch (\Exception $e) {
+            Log::error("LinkPreviewImageExtractor exception ({$url}): " . $e->getMessage());
             return null;
         }
     }
@@ -98,7 +100,7 @@ class LinkPreviewImageExtractor
 
     protected function findContentImages(DOMXPath $xpath, string $baseUrl): ?string
     {
-        $imgTags = $xpath->query('//img[@src]');
+        $imgTags = $xpath->query("//img[not(contains(translate(@src, 'GIF', 'gif'), '.gif'))]");
 
         foreach ($imgTags as $img) {
             $src = $img->getAttribute('src');
@@ -106,7 +108,22 @@ class LinkPreviewImageExtractor
             $width = $img->getAttribute('width');
             $height = $img->getAttribute('height');
 
+            if (!$src) {
+                continue;
+            }
+
             $imageUrl = $this->resolveUrl($src, $baseUrl);
+
+            if (!$width || !$height) {
+                $size = @getimagesize($imageUrl);
+                if ($size !== false) {
+                    $width = $size[0];
+                    $height = $size[1];
+                } else {
+                    continue;
+                }
+            }
+
             if ($imageUrl && $this->isLikelyPreviewImage($alt, $width, $height)) {
                 return $imageUrl;
             }
