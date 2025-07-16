@@ -80,11 +80,14 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
             },
             onError: (errors) => {
                 setDialogDeleteState(prev => ({ ...prev, isDeleting: false }));
-                console.error('Delete failed:', errors);
+                toast("Bookmark couldn't be deleted!", {
+                    description: errors.toString(),
+                    action: {
+                        label: "Close",
+                        onClick: () => console.log("Close"),
+                    },
+                })
             },
-            onFinish: () => {
-                // This runs regardless of success/error
-            }
         });
     };
 
