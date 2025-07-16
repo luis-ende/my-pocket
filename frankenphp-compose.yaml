@@ -1,0 +1,54 @@
+services:
+  php:
+    build:
+      dockerfile: ./FrankenPHPDockerfile
+    image: dunglas/frankenphp
+    restart: always
+    ports:
+      - "8080:80" # HTTP
+      - "8443:443" # HTTPS
+      - "8443:443/udp" # HTTP/3
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - mypocket
+    depends_on:
+      - pgsql
+
+  pgsql:
+    image: 'postgres:17'
+    ports:
+      - '${FORWARD_DB_PORT:-5432}:5432'
+    environment:
+      PGPASSWORD: '${DB_PASSWORD:-secret}'
+      POSTGRES_DB: '${DB_DATABASE}'
+      POSTGRES_USER: '${DB_USERNAME}'
+      POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+    volumes:
+      - 'mypocket-pgsql:/var/lib/postgresql/data'
+      - './backups/my_pocket_db.sql:/docker-entrypoint-initdb.d/my_pocket_db.sql'
+    networks:
+      - mypocket
+    healthcheck:
+      test:
+        - CMD
+        - pg_isready
+        - '-q'
+        - '-d'
+        - '${DB_DATABASE}'
+        - '-U'
+        - '${DB_USERNAME}'
+      retries: 3
+      timeout: 5s
+
+networks:
+  mypocket:
+    driver: bridge
+
+# Volumes needed for Caddy certificates and configuration
+volumes:
+  caddy_data:
+  caddy_config:
+  mypocket-pgsql:
+      driver: local

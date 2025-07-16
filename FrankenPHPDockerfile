@@ -1,0 +1,19 @@
+FROM dunglas/frankenphp
+
+# Install PostgreSQL PDO extension
+RUN apt-get update && apt-get install -y libpq-dev \
+    && docker-php-ext-install pdo_pgsql
+
+# Optionally clean up to reduce image size
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Be sure to replace "your-domain-name.example.com" by your domain name
+ENV SERVER_NAME=my-pocket.test
+# If you want to disable HTTPS, use this value instead:
+ENV SERVER_NAME=:80
+
+# Enable PHP production settings
+RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
+# Copy the PHP files of your project in the public directory
+COPY . /app
