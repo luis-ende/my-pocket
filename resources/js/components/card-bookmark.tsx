@@ -19,23 +19,29 @@ export default function CardBookmark({ bookmark,
     const cardDescription = url.hostname;
 
     return (
-        <Card key={bookmark.id} className="h-80 rounded-xl bg-neutral-50" ref={parentRef}>
-            <CardHeader className="px-3 pb-0 text-center">
+        <Card key={bookmark.id}
+              className="h-80 rounded-xl bg-neutral-50 pt-0"
+              ref={parentRef}
+        >
+            <CardHeader className="px-0 pb-0 text-center">
                 <a href={bookmark.url} target="_blank" rel="noopener noreferrer" title={bookmark.title}>
                     {bookmark.preview_image_url ?
                         <img
                             alt={bookmark.title}
-                            className="mx-auto h-20 w-full object-cover"
+                            className="mx-auto h-20 w-full object-cover rounded-t-xl"
                             src={bookmark.preview_image_url}
                         />
                         :
-                        <div className="h-20">
-                            <Icon iconNode={Bookmark} className="size-7 opacity-80 group-hover:opacity-100" />
+                        <div className="h-20 px-3">
+                            <Icon
+                                iconNode={Bookmark}
+                                className="size-7 h-20 opacity-80 group-hover:opacity-100"
+                            />
                         </div>
                     }
-                    <CardTitle className="text-md h-16 text-left">{bookmark.title}</CardTitle>
+                    <CardTitle className="text-md h-16 text-left px-3">{bookmark.title}</CardTitle>
                 </a>
-                <CardDescription className="text-left text-xs">
+                <CardDescription className="text-left text-xs px-3">
                     {cardDescription}
                 </CardDescription>
             </CardHeader>
