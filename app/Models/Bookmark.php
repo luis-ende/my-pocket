@@ -26,6 +26,10 @@ class Bookmark extends Model implements HasMedia
         'is_fav'
     ];
 
+    protected $hidden = [
+        'media',
+    ];
+
     protected $appends = [
         'preview_image_url',
     ];
