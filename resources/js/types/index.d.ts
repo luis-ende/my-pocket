@@ -51,7 +51,53 @@ export interface Bookmark {
     is_fav: boolean;
     is_broken_link: boolean;
     preview_image_url?: string;
+    is_archived?: boolean;
 }
+
+export interface Tag {
+    id: number;
+    title: string;
+    count?: number;
+}
+
+export interface Collection {
+    id: number;
+    name: string;
+    description: string;
+    bookmarks_count: number;
+}
+
+export type CursorPaginatedData<T> = {
+    data: T[];
+    path: string;
+    per_page: number;
+    next_cursor: string;
+    next_page_url: string;
+    prev_cursor: string;
+    prev_page_url: string;
+    tagsQueryString?: string;
+}
+
+export type PaginatedData<T> = {
+    current_page: number;
+    data: T[];
+    first_page_url: string;
+    from: number;
+    last_page: number;
+    last_page_url: string;
+    links: {
+        url: null | string;
+        label: string;
+        active: boolean;
+    }[];
+    next_page_url: string;
+    path: string;
+    per_page: number;
+    prev_page_url: string;
+    to: number;
+    total: number;
+    tagsQueryString?: string;
+};
 
 export interface Collection {
     id: number;

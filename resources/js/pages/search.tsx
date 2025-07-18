@@ -1,4 +1,4 @@
-import type { BreadcrumbItem } from '@/types';
+import type { BreadcrumbItem, PaginatedData, Bookmark } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import GridBookmarks from '@/components/grid-bookmarks';
@@ -12,7 +12,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Search() {
-    const { bookmarks } = usePage().props;
+    const { bookmarks } = usePage<{ bookmarks: PaginatedData<Bookmark> }>().props;
 
     const params = new URLSearchParams(window.location.search);
     const searchTermParam = params.get('query') ?? '';
@@ -23,7 +23,7 @@ export default function Search() {
         const last = bookmarks.last_page;
         const delta = 2; // Number of pages to show on each side of current page
 
-        const pages = [];
+        const pages: (string | number)[] = [];
 
         // Always show first page
         if (current > delta + 1) {
@@ -49,7 +49,7 @@ export default function Search() {
         return pages;
     }, [bookmarks.current_page, bookmarks.last_page]);
 
-    const getPageUrl = (page) => {
+    const getPageUrl = (page: string) => {
         const url = new URL(window.location.href);
         url.searchParams.set('page', page);
         return url.pathname + url.search;
@@ -81,11 +81,11 @@ export default function Search() {
                         </Link>
                     )}
 
-                    {pageNumbers.map((page, index) => (
+                    {pageNumbers.map((page: string | number, index) => (
                         <React.Fragment key={index}>
                             {page !== '...' ? (
                                 <Link
-                                    href={getPageUrl(page)}
+                                    href={getPageUrl(String(page))}
                                     className={`px-3 py-2 rounded transition-colors ${
                                         page === bookmarks.current_page
                                             ? 'bg-gray-600 text-white'
@@ -114,7 +114,7 @@ export default function Search() {
             {/* Search results */}
             {bookmarks?.data?.length > 0 ?
                 <GridBookmarks
-                    initialBookmarks={bookmarks.data}
+                    initialBookmarks={bookmarks}
                     bookmarks={bookmarks.data}
                     setBookmarks={null}
                     infiniteScroll={false}

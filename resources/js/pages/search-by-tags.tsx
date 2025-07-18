@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import { type BreadcrumbItem, Bookmark, CursorPaginatedData, Tag } from '@/types';
 import { Head, router } from '@inertiajs/react';
 import { DataTableTags } from '@/components/datatable-tags';
 import GridBookmarks from '@/components/grid-bookmarks';
@@ -14,10 +14,10 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function SearchByTags() {
-    const [tags, setTags] = useState([]);
-    const [initialBookmarks, setInitialBookmarks] = useState([])
-    const [bookmarks, setBookmarks] = useState([])
-    const [rowSelection, setRowSelection] = React.useState({})
+    const [tags, setTags] = useState<Tag[]>([]);
+    const [initialBookmarks, setInitialBookmarks] = useState<CursorPaginatedData<Bookmark> | null>(null)
+    const [bookmarks, setBookmarks] = useState<Bookmark[]>([])
+    const [rowSelection, setRowSelection] = useState({})
 
     const loadTags = () => {
         fetch('/tags/index')
@@ -34,9 +34,9 @@ export default function SearchByTags() {
             return
         }
 
-        const selectedTags = Object.keys(rowSelection).map(r => tags[r].id);
+        const selectedTags = Object.keys(rowSelection).map(r => tags[Number(r)].id);
         const params = new URLSearchParams();
-        selectedTags.forEach(tag => params.append('tags[]', tag));
+        selectedTags.forEach(tagId => params.append('tags[]', tagId.toString()));
         const queryString = params.toString();
         const url = `/search-by-tags?${queryString}`;
 
@@ -45,9 +45,10 @@ export default function SearchByTags() {
             preserveState: true,
             only: ['bookmarks'],
             onSuccess: ({ props })=> {
-                props.bookmarks['tagsQueryString'] = queryString;
-                setInitialBookmarks(props.bookmarks)
-                setBookmarks(props.bookmarks.data)
+                const bookmarks = props.bookmarks as CursorPaginatedData<Bookmark>;
+                bookmarks.tagsQueryString = queryString;
+                setInitialBookmarks(bookmarks)
+                setBookmarks(bookmarks.data)
             }
         });
     };
@@ -70,7 +71,7 @@ export default function SearchByTags() {
                         <DataTableTags data={tags} rowSelection={rowSelection} setRowSelection={setRowSelection} />
                     </div>
 
-                    {bookmarks && bookmarks.length > 0 && (
+                    {initialBookmarks && bookmarks && bookmarks.length > 0 && (
                         <GridBookmarks
                             initialBookmarks={initialBookmarks}
                             bookmarks={bookmarks}

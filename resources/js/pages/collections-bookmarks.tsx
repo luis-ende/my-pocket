@@ -1,4 +1,4 @@
-import type { BreadcrumbItem, Collection } from '@/types';
+import type { Bookmark, BreadcrumbItem, Collection, CursorPaginatedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import React, { useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
@@ -13,7 +13,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Collections() {
     const { collection } = usePage<{ collection: Collection }>().props;
-    const { bookmarks: initialBookmarks } = usePage().props;
+    const { bookmarks: initialBookmarks } = usePage<{
+        bookmarks: CursorPaginatedData<Bookmark>;
+    }>().props;
     const [bookmarks, setBookmarks] = useState(initialBookmarks.data)
 
     return (

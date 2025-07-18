@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, type PropsWithChildren } from 'react';
 import { router, usePage } from '@inertiajs/react';
 import CardBookmark from '@/components/card-bookmark';
 import AlertDialogDelete from '@/components/alert-dialog-delete';
@@ -13,8 +13,19 @@ import { Icon } from '@/components/icon';
 import FormEditBookmark from '@/components/form-edit-bookmark';
 import FormBookmarkCollectionAdd from '@/components/form-bookmark-collection-add';
 import { Toaster, toast } from 'sonner';
+import { Bookmark, CursorPaginatedData, PaginatedData } from '@/types';
 
-export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks, infiniteScroll}) {
+type GridBookmarksProps = {
+    initialBookmarks: CursorPaginatedData<Bookmark> | PaginatedData<Bookmark>;
+    bookmarks: Bookmark[];
+    setBookmarks?: any;
+    infiniteScroll: boolean;
+}
+export default function GridBookmarks({ initialBookmarks,
+                                        bookmarks,
+                                        setBookmarks,
+                                        infiniteScroll
+}: PropsWithChildren<GridBookmarksProps>){
     const { url } = usePage();
     const [nextPage, setNextPage] = useState(initialBookmarks.next_page_url);
     const [tagsQueryString] = useState(initialBookmarks.tagsQueryString);
@@ -23,9 +34,13 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [positionDropDown, setPositionDropDown] = useState({ x: 0, y: 0 });
-    const [currentBookmark, setCurrentBookmark] = useState(null);
+    const [currentBookmark, setCurrentBookmark] = useState<Bookmark | null>(null);
 
-    const [dialogDeleteState, setDialogDeleteState] = useState({
+    const [dialogDeleteState, setDialogDeleteState] = useState<{
+        isOpen: boolean;
+        bookmark: Bookmark | null;
+        isDeleting: boolean;
+    }>({
         isOpen: false,
         bookmark: null,
         isDeleting: false
@@ -46,7 +61,7 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
             .catch(() => setTags([]));
     }, []);
 
-    const openDeleteDialog = (bookmark) => {
+    const openDeleteDialog = (bookmark: Bookmark) => {
         setDialogDeleteState({
             isOpen: true,
             bookmark: bookmark,
@@ -75,7 +90,7 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
         router.delete(route('bookmarks.destroy', dialogDeleteState.bookmark.id), {
             onSuccess: () => {
                 closeDeleteDialog()
-                removeBookmark(currentBookmark.id);
+                if (currentBookmark) removeBookmark(currentBookmark.id);
                 setCurrentBookmark(null)
             },
             onError: (errors) => {
@@ -91,7 +106,7 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
         });
     };
 
-    const handleSaveFav = (bookmark) => {
+    const handleSaveFav = (bookmark: Bookmark) => {
         router.patch(route('bookmarks.favs', bookmark.id),
             { is_fav: !bookmark.is_fav },
             {
@@ -106,7 +121,7 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
         });
     }
 
-    const handleSaveRead = (bookmark) => {
+    const handleSaveRead = (bookmark: Bookmark) => {
         router.patch(route('bookmarks.reads', bookmark.id),
             { read: !bookmark.checked },
             {
@@ -121,7 +136,7 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
             });
     }
 
-    const handleArchive = (bookmark) => {
+    const handleArchive = (bookmark: Bookmark) => {
         router.patch(route('bookmarks.archive', bookmark.id),
             { archive: !bookmark.is_archived },
             {
@@ -133,7 +148,7 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
             });
     }
 
-    const handleRestoreBrokenLink = (bookmark) => {
+    const handleRestoreBrokenLink = (bookmark: Bookmark) => {
         router.patch(route('bookmarks.broken-link', bookmark.id),
             { is_broken_link: false },
             {
@@ -180,7 +195,8 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
     }
 
     const handleOpenDropDown = (event: React.MouseEvent<HTMLButtonElement>) => {
-        const selectedBookmark = bookmarks.find(b => b.id == event.currentTarget.dataset.bookmarkId)
+        const selectedBookmark =
+            bookmarks.find(b => b.id.toString() === event.currentTarget.dataset.bookmarkId)
         if (!selectedBookmark) {
              return;
         }
@@ -196,7 +212,7 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
         setDropdownOpen(true)
     }
 
-    const handleCopyLink = (bookmark) => {
+    const handleCopyLink = (bookmark: Bookmark) => {
         navigator.clipboard.writeText(bookmark.url)
             .then(() => {
                 toast("Bookmark", {
@@ -213,6 +229,8 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
     }
 
     const handleDropDownItemClick = (key: string) => {
+        if (!currentBookmark) return;
+
         switch (key) {
             case 'edit':
                 setDialogEditOpen(true);
@@ -383,7 +401,7 @@ export default function GridBookmarks({initialBookmarks, bookmarks, setBookmarks
             />
 
             <div className="px-10 py-10 grid md:grid-cols-4 sm:grid-cols-1 gap-6 sm:gap-3">
-                {bookmarks.map((bookmark, index) => {
+                {bookmarks.map((bookmark: Bookmark, index: number) => {
                     return (
                         <CardBookmark
                             parentRef={index === bookmarks.length - 1 ? lastItemRef : null}

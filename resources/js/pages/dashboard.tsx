@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import type { Bookmark, BreadcrumbItem, CursorPaginatedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import GridBookmarks from '@/components/grid-bookmarks';
 import { Glasses } from 'lucide-react';
@@ -15,7 +15,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Dashboard() {
-    const { bookmarks: initialBookmarks } = usePage().props;
+    const { bookmarks: initialBookmarks } = usePage<{
+        bookmarks: CursorPaginatedData<Bookmark>;
+    }>().props;
     const [toReadBookmarks, setToReadBookmarks] = useState(initialBookmarks.data)
 
     return (

@@ -12,15 +12,20 @@ import { Icon } from '@/components/icon';
 import { SquarePen, Trash2 } from 'lucide-react';
 import AlertDialogDelete from '@/components/alert-dialog-delete';
 import FormEditCollection from '@/components/form-edit-collection';
+import type { Collection } from '@/types';
 
 export default function GridCollections() {
-    const { collections } = usePage().props;
+    const { collections } = usePage<{ collections: Collection[] }>().props;
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [positionDropDown, setPositionDropDown] = useState({ x: 0, y: 0 });
-    const [currentCollection, setCurrentCollection] = useState(null);
+    const [currentCollection, setCurrentCollection] = useState<Collection | null>(null);
 
-    const [dialogDeleteState, setDialogDeleteState] = useState({
+    const [dialogDeleteState, setDialogDeleteState] = useState<{
+        isOpen: boolean,
+        collection: Collection | null,
+        isDeleting: boolean,
+    }>({
         isOpen: false,
         collection: null,
         isDeleting: false
@@ -28,7 +33,7 @@ export default function GridCollections() {
 
     const [dialogEditOpen, setDialogEditOpen] = useState(false);
 
-    const openDeleteDialog = (collection) => {
+    const openDeleteDialog = (collection: Collection) => {
         setDialogDeleteState({
             isOpen: true,
             collection: collection,
@@ -37,6 +42,8 @@ export default function GridCollections() {
     };
 
     const handleDropDownItemClick = (key: string) => {
+        if (!currentCollection) return;
+
         switch (key) {
             case 'edit':
                 setDialogEditOpen(true)
@@ -48,7 +55,8 @@ export default function GridCollections() {
     }
 
     const handleOpenDropDown = (event: React.MouseEvent<HTMLButtonElement>) => {
-        const selectedCollection = collections.find(b => b.id == event.currentTarget.dataset.collectionId)
+        const selectedCollection =
+            collections.find(b => b.id.toString() === event.currentTarget.dataset.collectionId)
         if (!selectedCollection) {
             return;
         }
@@ -85,7 +93,7 @@ export default function GridCollections() {
         router.delete(route('collections.destroy', dialogDeleteState.collection.id), {
             onSuccess: () => {
                 closeDeleteDialog()
-                removeCollection(currentCollection.id);
+                if (currentCollection) removeCollection(currentCollection.id);
                 setCurrentCollection(null)
             },
             onError: (errors) => {
@@ -168,7 +176,7 @@ export default function GridCollections() {
                 }}
             />
 
-            {collections.map((collection) => {
+            {collections.map(collection => {
                 return (
                     <CardCollection
                         key={collection.id}
