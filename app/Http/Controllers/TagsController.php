@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bookmark;
+use App\Models\Scopes\BookmarkNotArchivedScope;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -74,7 +75,10 @@ class TagsController extends Controller
             $bookmarksQuery = $bookmarksQuery->orWhereNull('tags');
         }
 
-        $bookmarks = $bookmarksQuery->latest()->cursorPaginate(5);
+        $bookmarks = $bookmarksQuery
+            ->latest()
+            ->withoutGlobalScope(BookmarkNotArchivedScope::class)
+            ->cursorPaginate(5);
 
         return Inertia::render('search-by-tags', [
             'bookmarks' => $bookmarks,
