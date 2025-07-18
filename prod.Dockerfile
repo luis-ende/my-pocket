@@ -1,11 +1,11 @@
 FROM dunglas/frankenphp
 
-# Install PostgreSQL PDO extension
-RUN apt-get update && apt-get install -y libpq-dev \
-    && docker-php-ext-install pdo_pgsql
-
-# Optionally clean up to reduce image size
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN install-php-extensions \
+	pdo_mysql \
+	gd \
+	intl \
+	zip \
+	opcache
 
 # Be sure to replace "your-domain-name.example.com" by your domain name
 ENV SERVER_NAME=mypocket.ensoo.com.mx

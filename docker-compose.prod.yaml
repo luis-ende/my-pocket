@@ -1,7 +1,7 @@
 services:
   php:
     build:
-      dockerfile: ./FrankenPHPDockerfile
+      dockerfile: prod.Dockerfile
     image: dunglas/frankenphp
     restart: always
     ports:
