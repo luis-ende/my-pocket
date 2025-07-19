@@ -39,7 +39,7 @@ export default function CardBookmark({ bookmark,
                             />
                         </div>
                     }
-                    <CardTitle className="text-md h-16 text-left px-3">{bookmark.title}</CardTitle>
+                    <CardTitle className="text-sm h-16 text-left pt-1 px-3 line-clamp-3">{bookmark.title}</CardTitle>
                 </a>
                 <CardDescription className="text-left text-xs px-3 h-5">
                     {cardDescription}

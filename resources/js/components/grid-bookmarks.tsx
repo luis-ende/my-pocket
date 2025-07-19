@@ -260,7 +260,7 @@ export default function GridBookmarks({ initialBookmarks,
     }
 
     return (
-        <div className="border-sidebar-border/70 dark:border-sidebar-border relative overflow-auto rounded-xl border">
+        <div className="relative overflow-auto">
             <Toaster />
             <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
                 <DropdownMenuTrigger asChild>
@@ -400,7 +400,7 @@ export default function GridBookmarks({ initialBookmarks,
                 }}
             />
 
-            <div className="px-10 py-10 grid md:grid-cols-4 sm:grid-cols-1 gap-6 sm:gap-3">
+            <div className="px-10 py-10 grid xl:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-6 sm:gap-3">
                 {bookmarks.map((bookmark: Bookmark, index: number) => {
                     return (
                         <CardBookmark

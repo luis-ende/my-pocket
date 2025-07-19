@@ -66,19 +66,25 @@ export default function SearchByTags() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap- 4 rounded-xl p-4">
-                <div className="grid auto-rows-min gap-4 grid-cols-[25%_75%]">
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative overflow-auto rounded-xl border">
-                        <DataTableTags data={tags} rowSelection={rowSelection} setRowSelection={setRowSelection} />
+                <div className="flex flex-col md:flex-row">
+                    <div className="md:flex-1/6 relative overflow-auto">
+                        <DataTableTags
+                            data={tags}
+                            rowSelection={rowSelection}
+                            setRowSelection={setRowSelection}
+                        />
                     </div>
 
-                    {initialBookmarks && bookmarks && bookmarks.length > 0 && (
-                        <GridBookmarks
-                            initialBookmarks={initialBookmarks}
-                            bookmarks={bookmarks}
-                            setBookmarks={setBookmarks}
-                            infiniteScroll={true}
-                        />
-                    )}
+                    <div className="md:flex-5/6">
+                        {initialBookmarks && bookmarks && bookmarks.length > 0 && (
+                            <GridBookmarks
+                                initialBookmarks={initialBookmarks}
+                                bookmarks={bookmarks}
+                                setBookmarks={setBookmarks}
+                                infiniteScroll={true}
+                            />
+                        )}
+                    </div>
                 </div>
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
