@@ -23,7 +23,7 @@ export default function CardBookmark({ bookmark,
               className="h-80 rounded-xl bg-neutral-50 pt-0"
               ref={parentRef}
         >
-            <CardHeader className="px-0 pb-0 text-center">
+            <CardHeader className="px-0 pb-0 text-center h-40">
                 <a href={bookmark.url} target="_blank" rel="noopener noreferrer" title={bookmark.title}>
                     {bookmark.preview_image_url ?
                         <img
@@ -41,12 +41,16 @@ export default function CardBookmark({ bookmark,
                     }
                     <CardTitle className="text-md h-16 text-left px-3">{bookmark.title}</CardTitle>
                 </a>
-                <CardDescription className="text-left text-xs px-3">
+                <CardDescription className="text-left text-xs px-3 h-5">
                     {cardDescription}
                 </CardDescription>
             </CardHeader>
-            <CardContent className="px-10">
-                {bookmark.tags?.split('|').map((tag) => <Badge>{tag}</Badge>)}
+            <CardContent className="px-3 pt-0 mt-0">
+                <div className="h-14 flex flex-row flex-wrap gap-x-0.5 gap-y-0.5 items-center">
+                    {bookmark.tags?.split('|').map((tag) =>
+                        <Badge className="text-center h-5 pt-0 bg-gray-900">{tag}</Badge>)
+                    }
+                </div>
             </CardContent>
             <CardFooter className="px-10">
                 <div className="flex w-full flex-row">
