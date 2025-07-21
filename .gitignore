@@ -25,3 +25,4 @@ yarn-error.log
 /database/data/imports/bookmarks/*
 /public/media
 /backups
+/.github
