@@ -72,7 +72,7 @@ export default function Dashboard() {
                             <div className="text-sm font-bold mt-1">{stats.favorites_count}</div>
                             <div>Favorites</div>
                         </div>
-                        <div className="flex flex-col items-center border border-gray-200 rounded-lg p-5 h-28 w-28">
+                        <div className="flex flex-col items-center border border-gray-200 rounded-lg p-5 h-28 w-28 mb-5">
                             <Icon iconNode={Archive}
                                   className="size-6 opacity-70"
                             />

@@ -70,7 +70,7 @@ export default function Search() {
             </div>)}
 
             {/* Pagination */}
-            <div className="flex justify-center text-xs">
+            <div className="flex justify-center text-xs mb-4">
                 {bookmarks?.data?.length > 0 && <nav className="flex items-center space-x-2">
                     {bookmarks.prev_page_url && (
                         <Link
