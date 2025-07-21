@@ -99,6 +99,15 @@ export type PaginatedData<T> = {
     tagsQueryString?: string;
 };
 
+export type Stats = {
+    bookmarks_count: number;
+    tags_count: number;
+    collections_count: number;
+    to_read_count: number;
+    favorites_count: number;
+    archived_count: number;
+}
+
 export interface Collection {
     id: number;
     name: string;
