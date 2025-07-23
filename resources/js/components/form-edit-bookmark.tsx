@@ -45,6 +45,7 @@ export default function FormEditBookmark({ open, onClose, bookmark, tags }) {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         patch(route('bookmarks.update', bookmark.id), {
+            preserveScroll: true,
             onSuccess: () => {
                 bookmark.tags = data.tags
                 reset();

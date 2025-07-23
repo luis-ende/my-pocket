@@ -1,15 +1,29 @@
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { usePage } from '@inertiajs/react';
-
+import { toast } from 'sonner';
+import { CheckCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
 export default function FlashMessage() {
     const { flash } = usePage().props;
+    const [message, setMessage] = useState(null);
 
-    if (!flash?.success) return null;
+    useEffect(() => {
+        setMessage(null);
+        if (flash?.success) {
+            setMessage(flash.success);
+        }
+    }, [flash])
+
+    if (!message) return null;
 
     return (
-        <Alert className="bg-green-100 border-green-400 text-green-800">
-            <AlertTitle>Success</AlertTitle>
-            <AlertDescription>{flash?.success}</AlertDescription>
-        </Alert>
+        toast("Success", {
+            icon: <CheckCircle className="w-6 h-6 text-green-500" />,
+            description: flash?.success,
+            onAutoClose: () => setMessage(null),
+            action: {
+                label: "Close",
+                onClick: () => setMessage(null),
+            },
+        })
     );
 }
