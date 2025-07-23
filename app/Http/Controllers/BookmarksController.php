@@ -81,7 +81,7 @@ class BookmarksController extends Controller
     {
         $validated = $request->validate([
             'url' => 'required|url|max:900',
-            'tags' => 'required|max:300',
+            'tags' => 'max:300',
             'read' => 'boolean'
         ]);
 
@@ -121,7 +121,7 @@ class BookmarksController extends Controller
         try {
             Bookmark::withoutGlobalScopes()
             ->where('id', $bookmark->id)->update([
-                'tags' => $validated['tags'],
+                'tags' => empty($validated['tags']) ? null : $validated['tags'],
                 'checked' => $validated['read'] ?? true,
             ]);
 

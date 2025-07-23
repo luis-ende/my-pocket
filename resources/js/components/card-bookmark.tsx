@@ -47,7 +47,7 @@ export default function CardBookmark({ bookmark,
             </CardHeader>
             <CardContent className="px-3 pt-0 mt-0">
                 <div className="h-14 flex flex-row flex-wrap gap-x-0.5 gap-y-0.5 items-center">
-                    {bookmark.tags?.split('|').map((tag) =>
+                    {bookmark.tags !== '' && bookmark.tags?.split('|').map((tag) =>
                         <Badge className="text-center h-5 pt-0 bg-gray-900">{tag}</Badge>)
                     }
                 </div>
