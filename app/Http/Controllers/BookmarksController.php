@@ -6,6 +6,7 @@ use App\Models\Bookmark;
 use App\Models\Scopes\BookmarkNotArchivedScope;
 use App\Services\FetchUrlTitleService;
 use App\Services\LinkPreviewImageExtractor;
+use App\Services\LinkUrlCleanService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -76,7 +77,8 @@ class BookmarksController extends Controller
     }
 
     public function store(Request $request,
-                          LinkPreviewImageExtractor $linkPreviewImageExtractor)
+                          LinkPreviewImageExtractor $linkPreviewImageExtractor,
+                          LinkUrlCleanService $linkUrlCleanService)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:400',
@@ -85,6 +87,7 @@ class BookmarksController extends Controller
             'read' => 'boolean'
         ]);
 
+        $validated['url'] = $linkUrlCleanService->cleanTrackingParameters($validated['url']);
         $validated['checked'] = $validated['read'] ?? true;
 
         DB::transaction(function () use ($linkPreviewImageExtractor, $validated) {
