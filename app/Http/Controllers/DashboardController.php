@@ -16,7 +16,7 @@ class DashboardController extends Controller
         $bookmarks = Bookmark::query()
             ->where('checked', false)
             ->latest()
-            ->cursorPaginate(3);
+            ->cursorPaginate(8);
 
         return Inertia::render('dashboard', [
             'bookmarks' => $bookmarks,

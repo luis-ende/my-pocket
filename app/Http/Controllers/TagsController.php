@@ -78,7 +78,7 @@ class TagsController extends Controller
         $bookmarks = $bookmarksQuery
             ->latest()
             ->withoutGlobalScope(BookmarkNotArchivedScope::class)
-            ->cursorPaginate(5);
+            ->cursorPaginate(8);
 
         return Inertia::render('search-by-tags', [
             'bookmarks' => $bookmarks,

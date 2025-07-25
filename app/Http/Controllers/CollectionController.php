@@ -45,7 +45,7 @@ class CollectionController extends Controller
             ->select('bookmarks.id', 'title', 'url', 'tags', 'checked', 'is_fav')
             ->whereRelation('collections', 'bookmark_collection.collection_id', $collectionId)
             ->latest()
-            ->cursorPaginate(5);
+            ->cursorPaginate(8);
 
         return Inertia::render('collections-bookmarks', [
             'collection' => $collection,

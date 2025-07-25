@@ -16,7 +16,7 @@ class BookmarksController extends Controller
     {
         $bookmarks = Bookmark::query()
             ->latest()
-            ->cursorPaginate(5);
+            ->cursorPaginate(8);
 
         return Inertia::render('bookmarks', [
             'bookmarks' => $bookmarks,
@@ -29,7 +29,7 @@ class BookmarksController extends Controller
             ->where('is_archived', true)
             ->latest()
             ->withoutGlobalScope(BookmarkNotArchivedScope::class)
-            ->cursorPaginate(5);
+            ->cursorPaginate(8);
 
         return Inertia::render('archive', [
             'bookmarks' => $bookmarks,
@@ -68,7 +68,7 @@ class BookmarksController extends Controller
         $bookmarks = Bookmark::query()
             ->where('is_fav', true)
             ->latest()
-            ->cursorPaginate(5);
+            ->cursorPaginate(8);
 
         return Inertia::render('favorites', [
             'bookmarks' => $bookmarks,
