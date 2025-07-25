@@ -52,6 +52,7 @@ export interface Bookmark {
     is_broken_link: boolean;
     preview_image_url?: string;
     is_archived?: boolean;
+    created_at: string;
 }
 
 export interface Tag {

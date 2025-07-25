@@ -16,7 +16,12 @@ export default function CardBookmark({ bookmark,
 }>) {
 
     const url = new URL(bookmark.url);
-    const cardDescription = url.hostname;
+    const bookmarkUrlHostname = url.hostname;
+    const bookmarkCreatedAt = new Date(bookmark.created_at).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+    });
 
     return (
         <Card key={bookmark.id}
@@ -42,7 +47,8 @@ export default function CardBookmark({ bookmark,
                     <CardTitle className="text-sm h-16 text-left pt-1 px-3 line-clamp-3">{bookmark.title}</CardTitle>
                 </a>
                 <CardDescription className="text-left text-xs px-3 h-5">
-                    {cardDescription}
+                    <span className="block">{bookmarkUrlHostname}</span>
+                    <span className="block mt-1 text-end">{bookmarkCreatedAt}</span>
                 </CardDescription>
             </CardHeader>
             <CardContent className="px-3 pt-0 mt-0">
