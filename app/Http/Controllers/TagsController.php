@@ -62,9 +62,9 @@ class TagsController extends Controller
             ]);
         }
 
-        $pgArray = 'ARRAY[' . collect($tags)
-                ->map(fn($tag) => DB::getPdo()->quote(strtolower($tag)))
-                ->implode(',') . ']';
+        $pgArray = 'ARRAY['.collect($tags)
+            ->map(fn ($tag) => DB::getPdo()->quote(strtolower($tag)))
+            ->implode(',').']';
         $bookmarksQuery = Bookmark::whereRaw("
             EXISTS (
                 SELECT 1 FROM unnest(string_to_array(tags, '|')) AS tag

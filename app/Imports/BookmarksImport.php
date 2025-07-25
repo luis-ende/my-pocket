@@ -8,7 +8,7 @@ use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Row;
 
-class BookmarksImport implements ToModel, WithHeadingRow, OnEachRow
+class BookmarksImport implements OnEachRow, ToModel, WithHeadingRow
 {
     private array $tagsToRemove = [
         'to-',
@@ -22,34 +22,28 @@ class BookmarksImport implements ToModel, WithHeadingRow, OnEachRow
         'to-translate',
     ];
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
     public function model(array $row)
     {
         $createdAt = \DateTime::createFromFormat('Y-m-d\TH:i:s', $row['time_added']);
         if ($createdAt === false) {
-            $createdAt = date("Y-m-d H:i:s", $row['time_added']);
+            $createdAt = date('Y-m-d H:i:s', $row['time_added']);
         }
 
         return new Bookmark([
             'title' => $row['title'],
             'url' => $row['url'],
             'tags' => $row['tags'] && $row['tags'] !== '' ? $this->getCleanTags($row['tags']) : null,
-            'checked' => !$row['tags'] || !$this->containsTagsToRemove($row['tags']),
+            'checked' => ! $row['tags'] || ! $this->containsTagsToRemove($row['tags']),
             'created_at' => $createdAt,
         ]);
     }
 
-    public function onRow(Row $row)
-    {
-    }
+    public function onRow(Row $row) {}
 
     private function containsTagsToRemove(string $tags): bool
     {

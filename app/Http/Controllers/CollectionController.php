@@ -84,11 +84,10 @@ class CollectionController extends Controller
         }
     }
 
-
     public function destroy(Collection $collection)
     {
         try {
-            if  ($collection->delete() === 1) {
+            if ($collection->delete() === 1) {
                 return redirect()->back()->with('success', 'Collection removed.');
             }
 

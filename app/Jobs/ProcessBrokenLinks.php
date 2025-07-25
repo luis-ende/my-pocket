@@ -20,9 +20,7 @@ class ProcessBrokenLinks implements ShouldQueue
     public function __construct(
         protected LinkUrlCheckService $linkUrlCheckService,
         protected Collection $bookmarks
-    )
-    {
-    }
+    ) {}
 
     /**
      * Execute the job.
@@ -39,23 +37,24 @@ class ProcessBrokenLinks implements ShouldQueue
                 }
             }
 
-            if (!empty($brokenLinks)) {
+            if (! empty($brokenLinks)) {
                 Bookmark::whereIn('id', $brokenLinks)
                     ->update([
                         'is_broken_link' => true,
+                        'is_archived' => true,
                     ]);
                 Cache::put('check_broken_links_last_id', $this->bookmarks->last()->id);
             }
 
             Log::info('Broken links checking process completed.');
         } catch (\Throwable $e) {
-            Log::error('Broken links checking process failed: ' . $e->getMessage());
+            Log::error('Broken links checking process failed: '.$e->getMessage());
             throw $e;
         }
     }
 
     public function failed(\Throwable $exception)
     {
-        Log::error('Job ProcessBrokenLinks permanently failed: ' . $exception->getMessage());
+        Log::error('Job ProcessBrokenLinks permanently failed: '.$exception->getMessage());
     }
 }

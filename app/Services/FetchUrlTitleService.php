@@ -2,15 +2,14 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
 use DOMDocument;
+use Illuminate\Support\Facades\Http;
 
 class FetchUrlTitleService
 {
     public function __construct(
         public ?string $htmlBody = null,
-    )
-    {}
+    ) {}
 
     public function getTitle(string $url): ?string
     {
@@ -25,7 +24,7 @@ class FetchUrlTitleService
                     ->withOptions(['allow_redirects' => true])
                     ->get($url);
 
-                if (!$response->successful()) {
+                if (! $response->successful()) {
                     return null;
                 }
 
@@ -66,9 +65,9 @@ class FetchUrlTitleService
     private function extractTitleWithDom(string $html): ?string
     {
         libxml_use_internal_errors(true);
-        $dom = new DOMDocument();
+        $dom = new DOMDocument;
 
-        if (!$dom->loadHTML($html)) {
+        if (! $dom->loadHTML($html)) {
             return null;
         }
 

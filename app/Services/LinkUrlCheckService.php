@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -16,11 +15,14 @@ class LinkUrlCheckService
             }
 
             $response = Http::timeout(30)->get($url);
-            if ($response->failed()) return true;
+            if ($response->failed()) {
+                return true;
+            }
 
             return $response->getStatusCode() >= 300;
         } catch (\Throwable $e) {
             Log::error("LinkUrlCheckService connection error ({$e->getMessage()})");
+
             return true;
         }
     }
@@ -29,7 +31,7 @@ class LinkUrlCheckService
     {
         $response = Http::timeout(30)
             ->withHeaders([
-                'User-Agent' => 'Mozilla/5.0 (compatible; LinkChecker/1.0)'
+                'User-Agent' => 'Mozilla/5.0 (compatible; LinkChecker/1.0)',
             ])
             ->get($url);
 

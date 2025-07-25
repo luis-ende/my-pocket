@@ -19,11 +19,11 @@ class CheckBrokenLinks extends Command
         $this->info('Sending broken links checking process to queue...');
         $lastId = $this->option('start-id') ?
             $this->option('start-id') : Cache::get('check_broken_links_last_id');
-        $this->info('Starting from bookmark id: ' . $lastId);
+        $this->info('Starting from bookmark id: '.$lastId);
         Bookmark::query()->select('id', 'url')
             ->where('id', '>', $lastId)
             ->orderBy('id')
-            ->chunk(1000, function ($bookmarks) use($lastId, $linkUrlCheckService) {
+            ->chunk(1000, function ($bookmarks) use ($linkUrlCheckService) {
                 ProcessBrokenLinks::dispatch($linkUrlCheckService, $bookmarks);
             });
 

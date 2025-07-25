@@ -14,11 +14,11 @@ class BookmarkSeeder extends Seeder
      */
     public function run(): void
     {
-        $import = new BookmarksImport();
+        $import = new BookmarksImport;
         $files = File::files(base_path('database/data/imports/bookmarks'));
         foreach ($files as $file) {
             Excel::import($import,
-                base_path('database/data/imports/bookmarks/' . $file->getFilename()));
+                base_path('database/data/imports/bookmarks/'.$file->getFilename()));
         }
     }
 }

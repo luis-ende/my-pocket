@@ -13,8 +13,7 @@ class LinkPreviewImageExtractor
 
     public function __construct(
         public ?string $htmlBody = null,
-    )
-    {}
+    ) {}
 
     public function extractPreviewImage(string $url): ?string
     {
@@ -28,7 +27,7 @@ class LinkPreviewImageExtractor
                     'Connection' => 'keep-alive',
                 ])->timeout(30)->get($url);
 
-                if (!$response->successful()) {
+                if (! $response->successful()) {
                     return null;
                 }
 
@@ -37,7 +36,8 @@ class LinkPreviewImageExtractor
 
             return $this->parseMetaTags($this->htmlBody, $url);
         } catch (\Exception $e) {
-            Log::error("LinkPreviewImageExtractor exception ({$url}): " . $e->getMessage());
+            Log::error("LinkPreviewImageExtractor exception ({$url}): ".$e->getMessage());
+
             return null;
         }
     }
@@ -49,7 +49,7 @@ class LinkPreviewImageExtractor
 
     protected function parseMetaTags(string $html, string $baseUrl): ?string
     {
-        $dom = new DOMDocument();
+        $dom = new DOMDocument;
         @$dom->loadHTML($html);
         $xpath = new DOMXPath($dom);
 
@@ -91,7 +91,7 @@ class LinkPreviewImageExtractor
 
         // If no meta images found, try to find large images in content
         $imageUrl = $this->findContentImages($xpath, $baseUrl);
-        if (!empty($imageUrl)) {
+        if (! empty($imageUrl)) {
             return $imageUrl;
         }
 
@@ -108,13 +108,13 @@ class LinkPreviewImageExtractor
             $width = $img->getAttribute('width');
             $height = $img->getAttribute('height');
 
-            if (!$src) {
+            if (! $src) {
                 continue;
             }
 
             $imageUrl = $this->resolveUrl($src, $baseUrl);
 
-            if (!$width || !$height) {
+            if (! $width || ! $height) {
                 $size = @getimagesize($imageUrl);
                 if ($size !== false) {
                     $width = $size[0];
@@ -168,7 +168,8 @@ class LinkPreviewImageExtractor
         // Protocol relative URL
         if (str_starts_with($url, '//')) {
             $parsedBase = parse_url($baseUrl);
-            return $parsedBase['scheme'] . ':' . $url;
+
+            return $parsedBase['scheme'].':'.$url;
         }
 
         // Relative URL
@@ -179,12 +180,15 @@ class LinkPreviewImageExtractor
 
         if (str_starts_with($url, '/')) {
             // Absolute path
-            return $baseScheme . '://' . $baseHost . $url;
+            return $baseScheme.'://'.$baseHost.$url;
         } else {
             // Relative path
             $basePath = dirname($basePath);
-            if ($basePath === '.') $basePath = '';
-            return $baseScheme . '://' . $baseHost . $basePath . '/' . $url;
+            if ($basePath === '.') {
+                $basePath = '';
+            }
+
+            return $baseScheme.'://'.$baseHost.$basePath.'/'.$url;
         }
     }
 }

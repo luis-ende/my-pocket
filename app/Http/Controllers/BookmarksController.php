@@ -49,7 +49,7 @@ class BookmarksController extends Controller
         }
 
         $bookmarks = [];
-        if (!empty($searchTerm)) {
+        if (! empty($searchTerm)) {
             $bookmarks = Bookmark::search($searchTerm)
                 ->query(function ($query) {
                     // Also include archived bookmarks
@@ -77,14 +77,14 @@ class BookmarksController extends Controller
     }
 
     public function store(Request $request,
-                          LinkPreviewImageExtractor $linkPreviewImageExtractor,
-                          LinkUrlCleanService $linkUrlCleanService)
+        LinkPreviewImageExtractor $linkPreviewImageExtractor,
+        LinkUrlCleanService $linkUrlCleanService)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:400',
             'url' => 'required|url|max:900',
             'tags' => 'max:300',
-            'read' => 'boolean'
+            'read' => 'boolean',
         ]);
 
         $validated['url'] = $linkUrlCleanService->cleanTrackingParameters($validated['url']);
@@ -94,7 +94,7 @@ class BookmarksController extends Controller
             $bookmark = Bookmark::create($validated);
 
             $imageUrl = $linkPreviewImageExtractor->extractPreviewImage($validated['url']);
-            if (!empty($imageUrl)) {
+            if (! empty($imageUrl)) {
                 $bookmark->addMediaFromUrl($imageUrl)->toMediaCollection('preview');
             }
 
@@ -109,12 +109,12 @@ class BookmarksController extends Controller
         $validated = $request->validate([
             'tags' => 'max:300',
             'read' => 'boolean',
-            //'notes' => 'string|max:300',
+            // 'notes' => 'string|max:300',
         ]);
 
         try {
             Bookmark::withoutGlobalScopes()
-            ->where('id', $bookmark->id)->update([
+                ->where('id', $bookmark->id)->update([
                 'tags' => empty($validated['tags']) ? null : $validated['tags'],
                 'checked' => $validated['read'] ?? true,
             ]);
@@ -128,12 +128,12 @@ class BookmarksController extends Controller
     public function saveFav(Request $request, int $bookmarkId)
     {
         $validated = $request->validate([
-            'is_fav' => 'required|boolean'
+            'is_fav' => 'required|boolean',
         ]);
 
         Bookmark::withoutGlobalScopes()
-        ->where('id', $bookmarkId)->update([
-            'is_fav' => $validated['is_fav']
+            ->where('id', $bookmarkId)->update([
+            'is_fav' => $validated['is_fav'],
         ]);
 
         return redirect()->back();
@@ -142,24 +142,24 @@ class BookmarksController extends Controller
     public function saveRead(Request $request, int $bookmarkId)
     {
         $validated = $request->validate([
-            'read' => 'required|boolean'
+            'read' => 'required|boolean',
         ]);
 
         Bookmark::withoutGlobalScopes()
-        ->where('id', $bookmarkId)->update([
-            'checked' => $validated['read']
+            ->where('id', $bookmarkId)->update([
+            'checked' => $validated['read'],
         ]);
     }
 
     public function saveArchive(Request $request, int $bookmarkId)
     {
         $validated = $request->validate([
-            'archive' => 'required|boolean'
+            'archive' => 'required|boolean',
         ]);
 
         Bookmark::withoutGlobalScopes()
-        ->where('id', $bookmarkId)->update([
-            'is_archived' => $validated['archive']
+            ->where('id', $bookmarkId)->update([
+            'is_archived' => $validated['archive'],
         ]);
 
         if ($validated['archive'] === true) {
@@ -172,19 +172,19 @@ class BookmarksController extends Controller
     public function saveBrokenLink(Request $request, int $bookmarkId)
     {
         $validated = $request->validate([
-            'is_broken_link' => 'required|boolean'
+            'is_broken_link' => 'required|boolean',
         ]);
 
         Bookmark::withoutGlobalScopes()
             ->where('id', $bookmarkId)->update([
-                'is_broken_link' => $validated['is_broken_link']
+                'is_broken_link' => $validated['is_broken_link'],
             ]);
     }
 
     public function destroy(Bookmark $bookmark)
     {
         try {
-            if  ($bookmark->delete() === 1) {
+            if ($bookmark->delete() === 1) {
                 return redirect()->back()->with('success', 'Bookmark removed.');
             }
 
@@ -198,7 +198,7 @@ class BookmarksController extends Controller
     {
         $validated = $request->validate([
             'bookmarkId' => 'required|integer|exists:bookmarks,id',
-            'collectionId' => 'required|integer|exists:collections,id'
+            'collectionId' => 'required|integer|exists:collections,id',
         ]);
 
         DB::delete('DELETE FROM bookmark_collection WHERE bookmark_id = ?',
@@ -222,7 +222,7 @@ class BookmarksController extends Controller
 
         return response()->json([
             'bookmarkId' => $bookmarkId,
-            'collectionId' => $collectionId
+            'collectionId' => $collectionId,
         ]);
     }
 
@@ -239,7 +239,7 @@ class BookmarksController extends Controller
         }
 
         return response()->json([
-            'title' => $title
+            'title' => $title,
         ]);
     }
 }

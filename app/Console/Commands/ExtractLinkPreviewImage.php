@@ -33,7 +33,7 @@ class ExtractLinkPreviewImage extends Command
             ->select('id', 'url', 'is_broken_link', 'is_archived')
             ->where(function ($query) {
                 $query->where('is_broken_link', '<>', true)
-                      ->orWhereNull('is_broken_link');
+                    ->orWhereNull('is_broken_link');
             })
             ->where('id', '>=', $this->option('start-id'))
             ->when($this->option('limit') > 0, function ($query) {
@@ -52,7 +52,7 @@ class ExtractLinkPreviewImage extends Command
                 $linkPreviewImageExtractor->clearContent();
                 $imageUrl = $linkPreviewImageExtractor->extractPreviewImage($bookmark->url);
                 $this->warn("Extracted url ({$bookmark->id}): {$imageUrl}");
-                if (!empty($imageUrl)) {
+                if (! empty($imageUrl)) {
                     $bookmark->clearMediaCollection('preview');
                     try {
                         $bookmark->addMediaFromUrl($imageUrl)->toMediaCollection('preview');

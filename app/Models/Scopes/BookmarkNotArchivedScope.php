@@ -11,6 +11,6 @@ class BookmarkNotArchivedScope implements Scope
     public function apply(Builder $builder, Model $model): void
     {
         $builder->where('is_archived', false)
-                ->orWhereNull('is_archived');
+            ->orWhereNull('is_archived');
     }
 }
