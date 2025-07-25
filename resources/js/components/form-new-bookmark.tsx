@@ -175,7 +175,7 @@ export default function FormNewBookmark({ open, onClose, tags }) {
                                 Cancel
                             </Button>
                         </DialogClose>
-                        <Button type="submit" disabled={processing}>
+                        <Button type="submit" disabled={titleLoading || processing}>
                             Save
                         </Button>
                     </DialogFooter>

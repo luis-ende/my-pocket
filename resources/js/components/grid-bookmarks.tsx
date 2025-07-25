@@ -28,7 +28,7 @@ export default function GridBookmarks({ initialBookmarks,
 }: PropsWithChildren<GridBookmarksProps>){
     const { url } = usePage();
     const [nextPage, setNextPage] = useState(initialBookmarks.next_page_url);
-    const [tagsQueryString] = useState(initialBookmarks.tagsQueryString);
+    const [tagsQueryString] = useState(initialBookmarks?.tagsQueryString);
     const [loading, setLoading] = useState(false);
     const lastItemRef = useRef<HTMLDivElement | null>(null);
 
