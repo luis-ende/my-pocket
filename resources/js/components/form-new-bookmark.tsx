@@ -14,16 +14,19 @@ import { Textarea } from "@/components/ui/textarea"
 import CreatableSelect from 'react-select/creatable';
 import React, { useEffect, useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
+import { toast } from 'sonner';
 
 export default function FormNewBookmark({ open, onClose, tags }) {
     const { data, setData, post, processing, errors, reset } = useForm({
+        title: '',
         url: '',
         tags: '',
         notes: '',
-        read: true,
+        read: false,
     });
 
     const [selectedOptions, setSelectedOptions] = useState([]);
+    const [titleLoading, setTitleLoading] = useState(false);
 
     const [tagsOptions, setTagsOptions] = useState([]);
 
@@ -58,6 +61,37 @@ export default function FormNewBookmark({ open, onClose, tags }) {
         return !value && onClose();
     }
 
+    const handleProcessUrl = () => {
+        try {
+            const url = new URL(data.url);
+            if (url.protocol === "http:" || url.protocol === "https:") {
+                const encodedUrl = encodeURIComponent(data.url);
+                setTitleLoading(true);
+                fetch(route('bookmarks.title') + `?target=${encodedUrl}`)
+                    .then(res => {
+                        if (!res.ok) throw new Error('Failed to load bookmark title.');
+                        return res.json();
+                    })
+                    .then(json => {
+                        const title = json.title ? json.title : 'Page title not found';
+                        setData('title', title);
+                    })
+                    .catch(err => {
+                        toast("Failed to load bookmark title.", {
+                            description: err,
+                            action: {
+                                label: "Close",
+                                onClick: () => console.log("Close"),
+                            },
+                        })
+                    })
+                    .finally(() => setTitleLoading(false));
+            }
+        } catch (_) {
+            return false;
+        }
+    }
+
     return (
         <Dialog open={open} onOpenChange={handleDialogOpenChange}>
             <DialogContent>
@@ -69,9 +103,11 @@ export default function FormNewBookmark({ open, onClose, tags }) {
                         <Label htmlFor="url">URL</Label>
                         <Input
                             id="url"
+                            name="url"
                             type="url"
                             placeholder="Save a URL https://..."
                             value={data.url}
+                            onBlur={handleProcessUrl}
                             onChange={(e) => setData('url', e.target.value)}
                             required
                         />
@@ -80,9 +116,26 @@ export default function FormNewBookmark({ open, onClose, tags }) {
                         )}
                     </fieldset>
                     <fieldset>
+                        <Label htmlFor="title">{titleLoading ? ' Loading bookmark title...' : 'Title'}</Label>
+                        <Input
+                            id="title"
+                            name="title"
+                            type="title"
+                            readOnly={titleLoading}
+                            className={titleLoading ? 'text-gray-400' : ''}
+                            value={data.title}
+                            onChange={(e) => setData('title', e.target.value)}
+                            required
+                        />
+                        {errors.title && (
+                            <p className="text-sm text-red-500">{errors.title}</p>
+                        )}
+                    </fieldset>
+                    <fieldset>
                         <Label htmlFor="tags">Tags</Label>
                         <CreatableSelect
                             id="tags"
+                            name="tags"
                             isClearable
                             isMulti
                             options={tagsOptions}
@@ -97,6 +150,7 @@ export default function FormNewBookmark({ open, onClose, tags }) {
                         <Label htmlFor="notes">Notes</Label>
                         <Textarea
                             id="notes"
+                            name="notes"
                             value={data.notes}
                             onChange={(e) => setData('notes', e.target.value)}
                         />
@@ -107,7 +161,7 @@ export default function FormNewBookmark({ open, onClose, tags }) {
                     <fieldset className="flex items-center gap-3">
                         <Checkbox
                             id="read"
-                            defaultChecked
+                            name="read"
                             onCheckedChange={(e) => setData('read', e)}
                         />
                         <Label htmlFor="read">Mark as read</Label>

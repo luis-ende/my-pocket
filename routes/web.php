@@ -35,6 +35,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('collections/{collectionId}/bookmarks', [CollectionController::class, 'getCollectionBookmarks'])->name('collections.bookmarks');
     Route::post('bookmarks/add-to-collection', [BookmarksController::class, 'addToCollection'])->name('bookmarks.addToCollection');
     Route::get('bookmarks/{bookmarkId}/collections', [BookmarksController::class, 'getCollections'])->name('bookmarks.collections');
+    Route::get('bookmarks/bookmark-title', [BookmarksController::class, 'getBookmarkTitle'])->name('bookmarks.title');
 });
 
 require __DIR__.'/settings.php';

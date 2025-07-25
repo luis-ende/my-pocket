@@ -16,7 +16,14 @@ class FetchUrlTitleService
     {
         try {
             if (empty($this->htmlBody)) {
-                $response = Http::timeout(10)->get($url);
+                $response = Http::timeout(10)
+                    ->withHeaders([
+                        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
+                        'Accept-Language' => 'en-US,en;q=0.9',
+                        'Accept-Encoding' => 'gzip, deflate, br',
+                    ])
+                    ->withOptions(['allow_redirects' => true])
+                    ->get($url);
 
                 if (!$response->successful()) {
                     return null;
@@ -35,6 +42,16 @@ class FetchUrlTitleService
         } catch (\Exception $e) {
             return null;
         }
+    }
+
+    public function generateTitleFromUrl(string $url): string
+    {
+        $path = parse_url($url, PHP_URL_PATH);
+        $segments = explode('/', trim($path, '/'));
+        $lastSegment = end($segments);
+        $title = ucwords(str_replace('-', ' ', $lastSegment));
+
+        return $title;
     }
 
     private function extractTitleWithRegex(string $html): ?string

@@ -76,32 +76,23 @@ class BookmarksController extends Controller
     }
 
     public function store(Request $request,
-                          FetchUrlTitleService $fetchUrlTitleService,
                           LinkPreviewImageExtractor $linkPreviewImageExtractor)
     {
         $validated = $request->validate([
+            'title' => 'required|string|max:400',
             'url' => 'required|url|max:900',
             'tags' => 'max:300',
             'read' => 'boolean'
         ]);
 
-        $title = $fetchUrlTitleService->getTitle($validated['url']);
-        if (empty($title)) {
-            $title = 'Page title not found';
-        }
-
-        $validated['title'] = $title;
         $validated['checked'] = $validated['read'] ?? true;
 
-        DB::transaction(function () use ($fetchUrlTitleService, $linkPreviewImageExtractor, $title, $validated) {
+        DB::transaction(function () use ($linkPreviewImageExtractor, $validated) {
             $bookmark = Bookmark::create($validated);
 
-            if (!empty($fetchUrlTitleService->htmlBody)) {
-                $linkPreviewImageExtractor->htmlBody = $fetchUrlTitleService->htmlBody;
-                $imageUrl = $linkPreviewImageExtractor->extractPreviewImage($validated['url']);
-                if (!empty($imageUrl)) {
-                    $bookmark->addMediaFromUrl($imageUrl)->toMediaCollection('preview');
-                }
+            $imageUrl = $linkPreviewImageExtractor->extractPreviewImage($validated['url']);
+            if (!empty($imageUrl)) {
+                $bookmark->addMediaFromUrl($imageUrl)->toMediaCollection('preview');
             }
 
             return redirect()->back()->with('success', 'Bookmark created.');
@@ -229,6 +220,23 @@ class BookmarksController extends Controller
         return response()->json([
             'bookmarkId' => $bookmarkId,
             'collectionId' => $collectionId
+        ]);
+    }
+
+    public function getBookmarkTitle(Request $request, FetchUrlTitleService $fetchUrlTitleService)
+    {
+        $validated = $request->validate([
+            'target' => 'required|string|url',
+        ]);
+
+        $url = $validated['target'];
+        $title = $fetchUrlTitleService->getTitle($url);
+        if (empty($title)) {
+            $title = $fetchUrlTitleService->generateTitleFromUrl($url);
+        }
+
+        return response()->json([
+            'title' => $title
         ]);
     }
 }
