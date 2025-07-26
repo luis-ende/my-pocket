@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { type PropsWithChildren } from 'react';
+import React, { type PropsWithChildren, RefObject, MouseEvent } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Icon } from '@/components/icon';
 import { Button } from '@/components/ui/button';
@@ -11,8 +11,8 @@ export default function CardBookmark({ bookmark,
                                        handleActionsClick,
                                      }: PropsWithChildren<{
     bookmark: BookmarkType;
-    parentRef?: any;
-    handleActionsClick?: any;
+    parentRef: RefObject<HTMLDivElement | null> | null;
+    handleActionsClick: (event: MouseEvent<HTMLButtonElement>) => void;
 }>) {
 
     const url = new URL(bookmark.url);

@@ -19,7 +19,7 @@ export default function Dashboard() {
     }>().props;
     const [toReadBookmarks, setToReadBookmarks] = useState(initialBookmarks.data)
     const { stats } = usePage<{
-        stags: Stats;
+        stats: Stats;
     }>().props;
 
     return (

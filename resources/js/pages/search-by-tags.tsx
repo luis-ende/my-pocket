@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, Bookmark, CursorPaginatedData, Tag } from '@/types';
 import { Head, router } from '@inertiajs/react';
@@ -15,9 +14,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function SearchByTags() {
     const [tags, setTags] = useState<Tag[]>([]);
-    const [initialBookmarks, setInitialBookmarks] = useState<CursorPaginatedData<Bookmark> | null>(null)
-    const [bookmarks, setBookmarks] = useState<Bookmark[]>([])
-    const [rowSelection, setRowSelection] = useState({})
+    const [initialBookmarks, setInitialBookmarks] = useState<CursorPaginatedData<Bookmark> | null>(null);
+    const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
+    const [rowSelection, setRowSelection] = useState({});
 
     const loadTags = () => {
         fetch('/tags/index')
@@ -29,7 +28,13 @@ export default function SearchByTags() {
             .catch(() => setTags([]));
     };
 
-    const loadBookmarks = () => {
+    useEffect(() => {
+        loadTags();
+    }, [])
+
+    useEffect(() => {
+        setBookmarks([]);
+
         if (!tags || tags.length === 0 || Object.entries(rowSelection).length === 0) {
             return
         }
@@ -51,15 +56,6 @@ export default function SearchByTags() {
                 setBookmarks(bookmarks.data)
             }
         });
-    };
-
-    useEffect(() => {
-        loadTags();
-    }, [])
-
-    useEffect(() => {
-        setBookmarks([])
-        loadBookmarks();
     }, [rowSelection, tags]);
 
     return (

@@ -1,4 +1,4 @@
-import type { BreadcrumbItem } from '@/types';
+import type { Bookmark, BreadcrumbItem, CursorPaginatedData } from '@/types';
 import AppLayout from '@/layouts/app-layout';
 import { Head, usePage } from '@inertiajs/react';
 import GridBookmarks from '@/components/grid-bookmarks';
@@ -12,8 +12,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Archive() {
-    const { bookmarks: initialBookmarks } = usePage().props;
-    const [bookmarks, setBookmarks] = useState(initialBookmarks.data)
+    const { bookmarks: initialBookmarks } = usePage<{
+        bookmarks: CursorPaginatedData<Bookmark>;
+    }>().props;
+
+    const [bookmarks, setBookmarks] = useState<Bookmark[]>(initialBookmarks.data)
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

@@ -14,18 +14,27 @@ import { Textarea } from "@/components/ui/textarea"
 import CreatableSelect from 'react-select/creatable';
 import React, { useState, useRef, useEffect } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Bookmark } from '@/types';
 
-export default function FormEditBookmark({ open, onClose, bookmark, tags }) {
+export default function FormEditBookmark({ open,
+                                           onClose,
+                                           bookmark,
+                                           tags }: React.PropsWithChildren<{
+    open: boolean;
+    onClose: () => void;
+    bookmark: Bookmark;
+    tags: object[];
+}>) {
     const { data, setData, patch, processing, errors, reset } = useForm({
-        url: '',
-        tags: '',
+        url: bookmark?.url,
+        tags: bookmark?.tags,
         notes: '',
-        read: false,
+        read: bookmark?.checked,
     });
 
-    const [selectedOptions, setSelectedOptions] = useState([]);
+    const [selectedOptions, setSelectedOptions] = useState<object[]>([]);
+    const [tagsOptions, setTagsOptions] = useState<object[]>([]);
     const inputRef = useRef(null);
-    const [tagsOptions, setTagsOptions] = useState([]);
 
     useEffect(() => {
         setTagsOptions([]);
@@ -55,19 +64,12 @@ export default function FormEditBookmark({ open, onClose, bookmark, tags }) {
     };
 
     useEffect(() => {
-        reset();
-        if (bookmark) {
-            setData('url', bookmark.url);
-            setData('tags', bookmark.tags);
-            setData('notes', bookmark.notes);
-            setData('read', bookmark.checked);
-            if (bookmark.tags) {
-                setSelectedOptions(bookmark?.tags
-                    .split('|')
-                    .map((t: string) => ({ label: t, value: t, color: '#00B8D9' })));
-            } else {
-                setSelectedOptions([]);
-            }
+        if (bookmark?.tags) {
+            setSelectedOptions(bookmark?.tags
+                .split('|')
+                .map((t: string) => ({ label: t, value: t, color: '#00B8D9' })));
+        } else {
+            setSelectedOptions([]);
         }
     }, [bookmark]);
 
@@ -89,13 +91,15 @@ export default function FormEditBookmark({ open, onClose, bookmark, tags }) {
                             ref={inputRef}
                             id="url"
                             type="url"
-                            value={data.url}
+                            value={bookmark?.url}
                             readOnly={true}
                         />
                     </fieldset>
                     <fieldset>
                         <Label htmlFor="tags">Tags</Label>
                         <CreatableSelect
+                            id="tags"
+                            name="tags"
                             autoFocus
                             isClearable
                             isMulti
@@ -121,16 +125,16 @@ export default function FormEditBookmark({ open, onClose, bookmark, tags }) {
                     <fieldset className="flex items-center gap-3">
                         <Checkbox
                             id="read"
-                            defaultChecked
+                            defaultChecked={bookmark?.checked}
                             onCheckedChange={(e) => setData('read', e)}
                         />
-                        <Label htmlFor="read">Mark as read</Label>
+                        <Label htmlFor="read">Read</Label>
                         {errors.read && (
                             <p className="text-sm text-red-500">{errors.read}</p>
                         )}
                     </fieldset>
                     <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => onClose() }>
+                        <Button type="button" variant="outline" onClick={() => { reset(); onClose(); } }>
                             Cancel
                         </Button>
                         <Button type="submit" disabled={processing}>

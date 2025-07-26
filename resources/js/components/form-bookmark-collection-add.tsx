@@ -11,25 +11,38 @@ import { Label } from '@/components/ui/label';
 import { useForm } from '@inertiajs/react';
 import React, { useEffect, useState } from 'react';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Bookmark, Collection } from '@/types';
 
-export default function FormBookmarkCollectionAdd({ open, onClose, bookmark }) {
+export default function FormBookmarkCollectionAdd({ open,
+                                                    onClose,
+                                                    bookmark }: React.PropsWithChildren<{
+    open: boolean;
+    onClose: () => void;
+    bookmark: Bookmark | null;
+}>) {
     const { data, setData, post, processing, errors, reset } = useForm({
-        bookmarkId: 0,
+        bookmarkId: bookmark?.id,
         collectionId: 0
     });
 
-    const [collections, setCollections] = useState([]);
+    const [collections, setCollections] = useState<Collection[]>([]);
 
     useEffect(() => {
-        if (open) {
-            setData('collectionId', 0);
-            if (bookmark) {
-                loadCollections();
-                setData('bookmarkId', bookmark.id)
-                loadBookmarkCollections();
-            }
+        loadCollections();
+    }, []);
+
+    useEffect(() => {
+        if (open && bookmark) {
+            setData('bookmarkId', bookmark.id)
+            fetch(route('bookmarks.collections', bookmark.id))
+                .then(res => {
+                    if (!res.ok) throw new Error('Failed to load bookmark collections.');
+                    return res.json();
+                })
+                .then(data => setData('collectionId', data.collectionId))
+                .catch(() => setData('collectionId', 0));
         }
-    }, [open]);
+    }, [bookmark, open, setData]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -49,18 +62,6 @@ export default function FormBookmarkCollectionAdd({ open, onClose, bookmark }) {
             })
             .then(data => setCollections(data.collections))
             .catch(() => setCollections([]));
-    }
-
-    const loadBookmarkCollections = () => {
-        if (bookmark) {
-            fetch(route('bookmarks.collections', bookmark.id))
-                .then(res => {
-                    if (!res.ok) throw new Error('Failed to load bookmark collections.');
-                    return res.json();
-                })
-                .then(data => setData('collectionId', data.collectionId))
-                .catch(() => setData('collectionId', 0));
-        }
     }
 
     return (
@@ -92,8 +93,8 @@ export default function FormBookmarkCollectionAdd({ open, onClose, bookmark }) {
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
-                        {errors.collection && (
-                            <p className="text-sm text-red-500">{errors.collection}</p>
+                        {errors.bookmarkId && (
+                            <p className="text-sm text-red-500">{errors.bookmarkId}</p>
                         )}
                     </fieldset>
                     <DialogFooter>

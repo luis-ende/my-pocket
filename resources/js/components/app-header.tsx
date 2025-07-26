@@ -51,7 +51,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const getInitials = useInitials();
     const [modalOpen, setModalOpen] = useState(false);
 
-    const [tags, setTags] = useState([]);
+    const [tags, setTags] = useState<object[]>([]);
 
     const params = new URLSearchParams(window.location.search);
     const searchTermParam = params.get('query') ?? '';
@@ -116,7 +116,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                             ))}
                                         </div>
 
-                                        <div className="flex flex-col space-y-4">
+                                        <div className="flex flex-row space-y-4">
                                             {rightNavItems.map((item) => (
                                                 <Button
                                                     variant="ghost"
@@ -124,7 +124,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                                     onClick={() => onMenuButtonClick(item.title)}
                                                 >
                                                     <span className="sr-only">{item.title}</span>
-                                                    {item.icon && <Icon iconNode={item.icon} className="size-5 opacity-80 group-hover:opacity-100" />}
+                                                    {item.icon && <Icon iconNode={item.icon} className="size-7 opacity-80 group-hover:opacity-100" />}
                                                 </Button>
                                             ))}
                                         </div>

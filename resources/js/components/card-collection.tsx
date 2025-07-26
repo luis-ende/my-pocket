@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { type PropsWithChildren } from 'react';
+import React, { type PropsWithChildren, MouseEvent } from 'react';
 import { Icon } from '@/components/icon';
 import { Button } from '@/components/ui/button';
 import { Ellipsis } from 'lucide-react';
@@ -13,8 +13,8 @@ export default function CardCollection({ id,
     id: number;
     name?: string;
     description?: string;
-    bookmarksCount?: number;
-    handleActionsClick?: any;
+    bookmarksCount: number;
+    handleActionsClick?: (event: MouseEvent<HTMLButtonElement>) => void;
 }>) {
     return (
         <Card

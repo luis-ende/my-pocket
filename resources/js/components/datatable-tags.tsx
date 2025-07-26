@@ -6,22 +6,20 @@ import {
     getCoreRowModel,
     getFilteredRowModel,
     getPaginationRowModel,
-    getSortedRowModel,
+    getSortedRowModel, RowSelectionState,
     SortingState,
     useReactTable,
-    VisibilityState,
-} from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+    VisibilityState
+} from '@tanstack/react-table';
+import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
     DropdownMenu,
-    DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -33,64 +31,48 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { Tag } from '@/types';
 
-export type BookmarkTag = {
-    id: string
-    count: number
-}
-
-export const columns: ColumnDef<BookmarkTag>[] = [
+export const columns: ColumnDef<Tag>[] = [
     {
-        id: "select",
+        id: 'select',
         header: ({ table }) => (
             <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
-                }
+                checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
                 onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
                 aria-label="Select all"
             />
         ),
         cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-            />
+            <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />
         ),
         enableSorting: false,
         enableHiding: false,
     },
     {
-        accessorKey: "id",
+        accessorKey: 'id',
         header: ({ column }) => {
             return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                     Tag
                     <ArrowUpDown />
                 </Button>
-            )
+            );
         },
-        cell: ({ row }) => <div className="lowercase">{row.getValue("id")}</div>,
+        cell: ({ row }) => <div className="lowercase">{row.getValue('id')}</div>,
     },
     {
-        accessorKey: "count",
+        accessorKey: 'count',
         header: () => <div className="text-right">Count</div>,
         cell: ({ row }) => {
-            const count = parseFloat(row.getValue("count"))
-            return <div className="text-right font-medium">{count}</div>
+            const count = parseFloat(row.getValue('count'));
+            return <div className="text-right font-medium">{count}</div>;
         },
     },
     {
-        id: "actions",
+        id: 'actions',
         enableHiding: false,
         cell: ({ row }) => {
-            const payment = row.original
-
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -101,21 +83,21 @@ export const columns: ColumnDef<BookmarkTag>[] = [
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(payment.id)}
-                        >
-                            Rename Tag
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>Delete Tag</DropdownMenuItem>
+                        <DropdownMenuItem>Delete Tag: { row.original.id }</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
-            )
+            );
         },
     },
-]
+];
 
-export function DataTableTags({ data, rowSelection, setRowSelection }) {
+export function DataTableTags({ data,
+                                rowSelection,
+                                setRowSelection }: React.PropsWithChildren<{
+    data: Tag[],
+    rowSelection: RowSelectionState,
+    setRowSelection:  React.Dispatch<React.SetStateAction<object>>,
+}>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
         []
@@ -126,6 +108,7 @@ export function DataTableTags({ data, rowSelection, setRowSelection }) {
     const table = useReactTable({
         data,
         columns,
+        enableRowSelection: true,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
         getCoreRowModel: getCoreRowModel(),

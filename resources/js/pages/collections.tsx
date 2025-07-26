@@ -1,5 +1,5 @@
 import type { BreadcrumbItem } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import React from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button'

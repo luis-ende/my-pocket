@@ -18,7 +18,7 @@ import { Bookmark, CursorPaginatedData, PaginatedData } from '@/types';
 type GridBookmarksProps = {
     initialBookmarks: CursorPaginatedData<Bookmark> | PaginatedData<Bookmark>;
     bookmarks: Bookmark[];
-    setBookmarks?: any;
+    setBookmarks: React.Dispatch<React.SetStateAction<Bookmark[]>>;
     infiniteScroll: boolean;
 }
 export default function GridBookmarks({ initialBookmarks,
@@ -383,21 +383,21 @@ export default function GridBookmarks({ initialBookmarks,
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            <FormEditBookmark
+            {currentBookmark && <FormEditBookmark
                 open={dialogEditOpen}
                 bookmark={currentBookmark}
                 onClose={() => {
                     setDialogEditOpen(false)
                 }}
                 tags={tags}
-            />
+            />}
 
             <FormBookmarkCollectionAdd
                 open={dialogCollectionsOpen}
-                bookmark={currentBookmark}
                 onClose={() => {
                     setDialogCollectionsOpen(false)
                 }}
+                bookmark={currentBookmark}
             />
 
             <div className="px-10 py-10 grid xl:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-6 sm:gap-3">

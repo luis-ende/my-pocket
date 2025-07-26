@@ -168,13 +168,13 @@ export default function GridCollections() {
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            <FormEditCollection
+            {currentCollection && <FormEditCollection
                 open={dialogEditOpen}
                 collection={currentCollection}
                 onClose={() => {
                     setDialogEditOpen(false)
                 }}
-            />
+            />}
 
             {collections.map(collection => {
                 return (

@@ -4,26 +4,26 @@ import {
     DialogHeader,
     DialogTitle,
     DialogFooter,
-    DialogClose, DialogTrigger
+    DialogClose,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useForm } from '@inertiajs/react';
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
+import { Collection } from '@/types';
 
-export default function FormEditCollection({ open, onClose, collection }) {
-    const { data, setData, patch, processing, errors, reset } = useForm({
-        name: '',
-        description: '',
+export default function FormEditCollection({ open,
+                                             onClose,
+                                             collection }: React.PropsWithChildren<{
+    open: boolean;
+    onClose: () => void;
+    collection: Collection;
+}>) {
+    const { setData, patch, processing, errors, reset } = useForm({
+        name: collection?.name,
+        description: collection?.description,
     });
-
-    useEffect(() => {
-        if (collection) {
-            setData('name', collection.name);
-            setData('description', collection.description);
-        }
-    }, [collection]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -49,7 +49,7 @@ export default function FormEditCollection({ open, onClose, collection }) {
                         <Label htmlFor="name">Collection Name</Label>
                         <Input
                             id="name"
-                            value={data.name}
+                            value={collection?.name}
                             onChange={(e) => setData('name', e.target.value)}
                             required
                         />
@@ -61,7 +61,7 @@ export default function FormEditCollection({ open, onClose, collection }) {
                         <Label htmlFor="name">Description</Label>
                         <Input
                             id="description"
-                            value={data.description}
+                            value={collection?.description}
                             onChange={(e) => setData('description', e.target.value)}
                         />
                         {errors.description && (

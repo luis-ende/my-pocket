@@ -16,7 +16,13 @@ import React, { useEffect, useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 
-export default function FormNewBookmark({ open, onClose, tags }) {
+export default function FormNewBookmark({ open,
+                                          onClose,
+                                          tags }: React.PropsWithChildren<{
+    open: boolean;
+    onClose: () => void;
+    tags: object[];
+}>) {
     const { data, setData, post, processing, errors, reset } = useForm({
         title: '',
         url: '',
@@ -25,10 +31,9 @@ export default function FormNewBookmark({ open, onClose, tags }) {
         read: false,
     });
 
-    const [selectedOptions, setSelectedOptions] = useState([]);
+    const [selectedOptions, setSelectedOptions] = useState<object[]>([]);
+    const [tagsOptions, setTagsOptions] = useState<object[]>([]);
     const [titleLoading, setTitleLoading] = useState(false);
-
-    const [tagsOptions, setTagsOptions] = useState([]);
 
     useEffect(() => {
         setTagsOptions([]);
@@ -62,33 +67,31 @@ export default function FormNewBookmark({ open, onClose, tags }) {
     }
 
     const handleProcessUrl = () => {
-        try {
-            const url = new URL(data.url);
-            if (url.protocol === "http:" || url.protocol === "https:") {
-                const encodedUrl = encodeURIComponent(data.url);
-                setTitleLoading(true);
-                fetch(route('bookmarks.title') + `?target=${encodedUrl}`)
-                    .then(res => {
-                        if (!res.ok) throw new Error('Failed to load bookmark title.');
-                        return res.json();
+        if (!data.url) return;
+
+        const url = new URL(data.url);
+        if (url.protocol === "http:" || url.protocol === "https:") {
+            const encodedUrl = encodeURIComponent(data.url);
+            setTitleLoading(true);
+            fetch(route('bookmarks.title') + `?target=${encodedUrl}`)
+                .then(res => {
+                    if (!res.ok) throw new Error('Failed to load bookmark title.');
+                    return res.json();
+                })
+                .then(json => {
+                    const title = json.title ? json.title : 'Page title not found';
+                    setData('title', title);
+                })
+                .catch(err => {
+                    toast("Failed to load bookmark title.", {
+                        description: err,
+                        action: {
+                            label: "Close",
+                            onClick: () => console.log("Close"),
+                        },
                     })
-                    .then(json => {
-                        const title = json.title ? json.title : 'Page title not found';
-                        setData('title', title);
-                    })
-                    .catch(err => {
-                        toast("Failed to load bookmark title.", {
-                            description: err,
-                            action: {
-                                label: "Close",
-                                onClick: () => console.log("Close"),
-                            },
-                        })
-                    })
-                    .finally(() => setTitleLoading(false));
-            }
-        } catch (_) {
-            return false;
+                })
+                .finally(() => setTitleLoading(false));
         }
     }
 
@@ -164,7 +167,7 @@ export default function FormNewBookmark({ open, onClose, tags }) {
                             name="read"
                             onCheckedChange={(e) => setData('read', e)}
                         />
-                        <Label htmlFor="read">Mark as read</Label>
+                        <Label htmlFor="read">Read</Label>
                         {errors.read && (
                             <p className="text-sm text-red-500">{errors.read}</p>
                         )}
