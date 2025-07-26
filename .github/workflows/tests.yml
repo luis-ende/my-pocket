@@ -14,7 +14,13 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
-
+    env:
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_DATABASE: testing
+      DB_USERNAME: test_user
+      DB_PASSWORD: test_password
     services:
       postgres:
         image: postgres:17
@@ -29,7 +35,6 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -64,15 +69,8 @@ jobs:
 
       - name: Set Laravel ENV for DB
         run: |
-            php artisan config:clear
-            php artisan config:cache
-        env:
-            DB_CONNECTION: pgsql
-            DB_HOST: 127.0.0.1
-            DB_PORT: 5432
-            DB_DATABASE: testing
-            DB_USERNAME: test_user
-            DB_PASSWORD: test_password
+          php artisan config:clear
+#          php artisan config:cache
 
       - name: Run Migrations
         run: php artisan migrate --force
