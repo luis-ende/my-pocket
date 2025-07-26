@@ -1,6 +1,7 @@
 name: tests
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - develop
@@ -23,6 +24,11 @@ jobs:
           POSTGRES_DB: testing
           POSTGRES_USER: test_user
           POSTGRES_PASSWORD: test_password
+        options: >-
+          --health-cmd="pg_isready -U test_user"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - name: Checkout
