@@ -90,7 +90,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                 tags={tags}
             />
 
-            <div className="border-sidebar-border/80 border-b">
+            <div className="fixed z-10 w-full border-sidebar-border/80 border-b bg-white">
                 <div className="mx-auto flex h-16 items-center px-4 md:max-w-7xl">
                     {/* Mobile Menu */}
                     <div className="lg:hidden">
@@ -212,6 +212,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                     </div>
                 </div>
             </div>
+            <div className="mt-16"></div>
             {breadcrumbs.length > 1 && (
                 <div className="border-sidebar-border/70 flex w-full border-b">
                     <div className="mx-auto flex h-12 w-full items-center justify-start px-4 text-neutral-500 md:max-w-7xl">
