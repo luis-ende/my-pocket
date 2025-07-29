@@ -1,8 +1,9 @@
 import type { BreadcrumbItem, CursorPaginatedData, Bookmark } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import GridBookmarks from '@/components/grid-bookmarks';
+import BookmarksContext from '@/contexts/bookmarks-context';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -17,6 +18,14 @@ export default function Bookmarks() {
     }>().props;
 
     const [bookmarks, setBookmarks] = useState<Bookmark[]>(initialBookmarks.data)
+    const { newBookmark } = useContext(BookmarksContext);
+
+    useEffect(() => {
+        if (newBookmark) {
+            setBookmarks(prev =>
+                ! prev.find(b => b.id === newBookmark.id) ? [newBookmark, ...prev] : prev);
+        }
+    }, [newBookmark]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

@@ -12,9 +12,10 @@ import { Label } from '@/components/ui/label';
 import { useForm } from '@inertiajs/react';
 import { Textarea } from "@/components/ui/textarea"
 import CreatableSelect from 'react-select/creatable';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
+import BookmarksContext from '@/contexts/bookmarks-context';
 
 interface FormNewBookmarkProps {
     open: boolean;
@@ -36,6 +37,7 @@ export default function FormNewBookmark({ open,
     const [selectedOptions, setSelectedOptions] = useState<object[]>([]);
     const [tagsOptions, setTagsOptions] = useState<object[]>([]);
     const [titleLoading, setTitleLoading] = useState(false);
+    const { setNewBookmark } = useContext(BookmarksContext);
 
     useEffect(() => {
         setTagsOptions([]);
@@ -54,8 +56,13 @@ export default function FormNewBookmark({ open,
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        setNewBookmark(null);
         post('/bookmarks', {
-            onSuccess: () => {
+            preserveScroll: true,
+            onSuccess: (page) => {
+                if (page.props.new_bookmark) {
+                    setNewBookmark(page.props.new_bookmark);
+                }
                 reset();
                 onClose();
             },

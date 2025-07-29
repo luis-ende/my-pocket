@@ -13,7 +13,7 @@ use Inertia\Inertia;
 
 class BookmarksController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $bookmarks = Bookmark::query()
             ->latest()
@@ -21,6 +21,7 @@ class BookmarksController extends Controller
 
         return Inertia::render('bookmarks', [
             'bookmarks' => $bookmarks,
+            'new_bookmark' => $request->session()->get('new_bookmark'),
         ]);
     }
 
@@ -98,7 +99,10 @@ class BookmarksController extends Controller
                 $bookmark->addMediaFromUrl($imageUrl)->toMediaCollection('preview');
             }
 
-            return redirect()->back()->with('success', 'Bookmark created.');
+            return redirect()->back()->with([
+                'new_bookmark' => $bookmark,
+                'success', 'Bookmark created.'
+            ]);
         });
 
         return redirect()->back()->with('error', 'Bookmark couldn\'t be created.');

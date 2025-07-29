@@ -405,8 +405,8 @@ export default function GridBookmarks({ initialBookmarks,
                 {bookmarks.map((bookmark: Bookmark, index: number) => {
                     return (
                         <CardBookmark
-                            parentRef={index === bookmarks.length - 1 ? lastItemRef : null}
                             key={bookmark.id}
+                            parentRef={index === bookmarks.length - 1 ? lastItemRef : null}
                             bookmark={bookmark}
                             handleActionsClick={handleOpenDropDown}
                         />
