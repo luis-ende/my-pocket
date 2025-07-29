@@ -179,6 +179,7 @@ export default function GridBookmarks({ initialBookmarks,
         router.visit(fullNextPageUrl, {
             method: 'get',
             preserveState: true,
+            preserveScroll: true,
             only: ['bookmarks'],
             onSuccess: ({props}) => {
                 const newBookmarks = props.bookmarks.data;
