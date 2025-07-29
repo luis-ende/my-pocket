@@ -16,13 +16,15 @@ import React, { useEffect, useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 
-export default function FormNewBookmark({ open,
-                                          onClose,
-                                          tags }: React.PropsWithChildren<{
+interface FormNewBookmarkProps {
     open: boolean;
     onClose: () => void;
     tags: object[];
-}>) {
+}
+
+export default function FormNewBookmark({ open,
+                                          onClose,
+                                          tags }: FormNewBookmarkProps) {
     const { data, setData, post, processing, errors, reset } = useForm({
         title: '',
         url: '',

@@ -13,13 +13,15 @@ import React, { useEffect, useState } from 'react';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Bookmark, Collection } from '@/types';
 
-export default function FormBookmarkCollectionAdd({ open,
-                                                    onClose,
-                                                    bookmark }: React.PropsWithChildren<{
+interface FormBookmarkCollectionProps {
     open: boolean;
     onClose: () => void;
     bookmark: Bookmark | null;
-}>) {
+}
+
+export default function FormBookmarkCollectionAdd({ open,
+                                                    onClose,
+                                                    bookmark }: FormBookmarkCollectionProps) {
     const { data, setData, post, processing, errors, reset } = useForm({
         bookmarkId: bookmark?.id,
         collectionId: 0

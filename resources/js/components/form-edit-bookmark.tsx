@@ -16,15 +16,17 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Bookmark } from '@/types';
 
-export default function FormEditBookmark({ open,
-                                           onClose,
-                                           bookmark,
-                                           tags }: React.PropsWithChildren<{
+interface FormEditBookmarkProps {
     open: boolean;
     onClose: () => void;
     bookmark: Bookmark;
     tags: object[];
-}>) {
+}
+
+export default function FormEditBookmark({ open,
+                                           onClose,
+                                           bookmark,
+                                           tags }: FormEditBookmarkProps) {
     const { data, setData, patch, processing, errors, reset } = useForm({
         url: bookmark?.url,
         tags: bookmark?.tags,

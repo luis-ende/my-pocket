@@ -1,21 +1,23 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import React, { type PropsWithChildren, MouseEvent } from 'react';
+import React, { MouseEvent } from 'react';
 import { Icon } from '@/components/icon';
 import { Button } from '@/components/ui/button';
 import { Ellipsis } from 'lucide-react';
+
+interface CardCollectionProps {
+    id: number;
+    name?: string;
+    description?: string;
+    bookmarksCount: number;
+    handleActionsClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+}
 
 export default function CardCollection({ id,
                                        name,
                                        description,
                                        bookmarksCount,
                                        handleActionsClick,
-                                     }: PropsWithChildren<{
-    id: number;
-    name?: string;
-    description?: string;
-    bookmarksCount: number;
-    handleActionsClick?: (event: MouseEvent<HTMLButtonElement>) => void;
-}>) {
+                                     }: CardCollectionProps) {
     return (
         <Card
             key={id}

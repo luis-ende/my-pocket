@@ -10,9 +10,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useForm } from '@inertiajs/react';
-import React, { useRef } from 'react';
+import React, { ReactNode, useRef } from 'react';
 
-export default function FormNewCollection({ trigger }) {
+interface FormNewCollectionProps {
+    trigger: ReactNode;
+}
+
+export default function FormNewCollection({ trigger }: FormNewCollectionProps) {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         description: '',

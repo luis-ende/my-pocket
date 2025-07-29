@@ -1,19 +1,21 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import React, { type PropsWithChildren, RefObject, MouseEvent } from 'react';
+import React, { RefObject, MouseEvent } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Icon } from '@/components/icon';
 import { Button } from '@/components/ui/button';
 import { Bookmark, Ellipsis, Unlink } from 'lucide-react';
 import { type Bookmark as BookmarkType } from '@/types';
 
-export default function CardBookmark({ bookmark,
-                                       parentRef,
-                                       handleActionsClick,
-                                     }: PropsWithChildren<{
+interface CardBookmarkProps {
     bookmark: BookmarkType;
     parentRef: RefObject<HTMLDivElement | null> | null;
     handleActionsClick: (event: MouseEvent<HTMLButtonElement>) => void;
-}>) {
+}
+
+export default function CardBookmark({ bookmark,
+                                       parentRef,
+                                       handleActionsClick,
+                                     }: CardBookmarkProps) {
 
     const url = new URL(bookmark.url);
     const bookmarkUrlHostname = url.hostname;

@@ -91,13 +91,15 @@ export const columns: ColumnDef<Tag>[] = [
     },
 ];
 
-export function DataTableTags({ data,
-                                rowSelection,
-                                setRowSelection }: React.PropsWithChildren<{
+interface DataTableTagsProps {
     data: Tag[],
     rowSelection: RowSelectionState,
     setRowSelection:  React.Dispatch<React.SetStateAction<object>>,
-}>) {
+}
+
+export function DataTableTags({ data,
+                                rowSelection,
+                                setRowSelection }: DataTableTagsProps) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
         []

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, type PropsWithChildren } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { router, usePage } from '@inertiajs/react';
 import CardBookmark from '@/components/card-bookmark';
 import AlertDialogDelete from '@/components/alert-dialog-delete';
@@ -25,7 +25,7 @@ export default function GridBookmarks({ initialBookmarks,
                                         bookmarks,
                                         setBookmarks,
                                         infiniteScroll
-}: PropsWithChildren<GridBookmarksProps>){
+}: GridBookmarksProps){
     const { url } = usePage();
     const [nextPage, setNextPage] = useState(initialBookmarks.next_page_url);
     const [tagsQueryString] = useState(initialBookmarks?.tagsQueryString);

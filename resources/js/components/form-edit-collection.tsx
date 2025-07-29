@@ -13,13 +13,15 @@ import { useForm } from '@inertiajs/react';
 import React from 'react';
 import { Collection } from '@/types';
 
-export default function FormEditCollection({ open,
-                                             onClose,
-                                             collection }: React.PropsWithChildren<{
+interface FormEditCollectionProps {
     open: boolean;
     onClose: () => void;
     collection: Collection;
-}>) {
+}
+
+export default function FormEditCollection({ open,
+                                             onClose,
+                                             collection }: FormEditCollectionProps) {
     const { setData, patch, processing, errors, reset } = useForm({
         name: collection?.name,
         description: collection?.description,
