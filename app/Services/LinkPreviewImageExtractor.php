@@ -102,6 +102,7 @@ class LinkPreviewImageExtractor
     {
         $imgTags = $xpath->query("//img[not(contains(translate(@src, 'GIF', 'gif'), '.gif'))]");
 
+        /** @var \DOMElement $img */
         foreach ($imgTags as $img) {
             $src = $img->getAttribute('src');
             $alt = $img->getAttribute('alt');

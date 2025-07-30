@@ -37,7 +37,7 @@ class ExtractLinkPreviewImage extends Command
             })
             ->where('id', '>=', $this->option('start-id'))
             ->when($this->option('limit') > 0, function ($query) {
-                $query->limit($this->option('limit'));
+                $query->limit(intval($this->option('limit')));
             })
             ->orderBy('id')
             ->withoutGlobalScope(BookmarkNotArchivedScope::class)

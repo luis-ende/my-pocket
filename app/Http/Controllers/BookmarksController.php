@@ -101,7 +101,7 @@ class BookmarksController extends Controller
 
             return redirect()->back()->with([
                 'new_bookmark' => $bookmark,
-                'success', 'Bookmark created.'
+                'success', 'Bookmark created.',
             ]);
         });
 
@@ -119,9 +119,9 @@ class BookmarksController extends Controller
         try {
             Bookmark::withoutGlobalScopes()
                 ->where('id', $bookmark->id)->update([
-                'tags' => empty($validated['tags']) ? null : $validated['tags'],
-                'checked' => $validated['read'] ?? true,
-            ]);
+                    'tags' => empty($validated['tags']) ? null : $validated['tags'],
+                    'checked' => $validated['read'] ?? true,
+                ]);
 
             return redirect()->back()->with('success', 'Bookmark updated.');
         } catch (\Exception $e) {
@@ -137,8 +137,8 @@ class BookmarksController extends Controller
 
         Bookmark::withoutGlobalScopes()
             ->where('id', $bookmarkId)->update([
-            'is_fav' => $validated['is_fav'],
-        ]);
+                'is_fav' => $validated['is_fav'],
+            ]);
 
         return redirect()->back();
     }
@@ -151,8 +151,8 @@ class BookmarksController extends Controller
 
         Bookmark::withoutGlobalScopes()
             ->where('id', $bookmarkId)->update([
-            'checked' => $validated['read'],
-        ]);
+                'checked' => $validated['read'],
+            ]);
     }
 
     public function saveArchive(Request $request, int $bookmarkId)
@@ -163,8 +163,8 @@ class BookmarksController extends Controller
 
         Bookmark::withoutGlobalScopes()
             ->where('id', $bookmarkId)->update([
-            'is_archived' => $validated['archive'],
-        ]);
+                'is_archived' => $validated['archive'],
+            ]);
 
         if ($validated['archive'] === true) {
             return redirect()->back()->with('success', 'Bookmark archived.');
@@ -188,7 +188,7 @@ class BookmarksController extends Controller
     public function destroy(Bookmark $bookmark)
     {
         try {
-            if ($bookmark->delete() === 1) {
+            if ($bookmark->delete() === true) {
                 return redirect()->back()->with('success', 'Bookmark removed.');
             }
 
@@ -219,7 +219,7 @@ class BookmarksController extends Controller
 
     public function getCollections(int $bookmarkId)
     {
-        $collectionId = Bookmark::findOrFail($bookmarkId)
+        $collectionId = Bookmark::query()->findOrFail($bookmarkId)
             ->collections()
             ->select('collections.id')
             ->first()?->id;
