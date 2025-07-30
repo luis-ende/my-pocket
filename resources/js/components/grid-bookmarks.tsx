@@ -87,6 +87,7 @@ export default function GridBookmarks({ initialBookmarks, bookmarks, setBookmark
         setDialogDeleteState((prev) => ({ ...prev, isDeleting: true }));
 
         router.delete(route('bookmarks.destroy', dialogDeleteState.bookmark.id), {
+            preserveScroll: true,
             onSuccess: () => {
                 closeDeleteDialog();
                 if (currentBookmark) removeBookmark(currentBookmark.id);
