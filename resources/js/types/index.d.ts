@@ -77,7 +77,7 @@ export type CursorPaginatedData<T> = {
     prev_cursor: string;
     prev_page_url: string;
     tagsQueryString?: string;
-}
+};
 
 export type PaginatedData<T> = {
     current_page: number;
@@ -107,7 +107,7 @@ export type Stats = {
     to_read_count: number;
     favorites_count: number;
     archived_count: number;
-}
+};
 
 export interface Collection {
     id: number;

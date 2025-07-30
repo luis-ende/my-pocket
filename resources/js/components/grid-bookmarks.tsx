@@ -1,31 +1,30 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { router, usePage } from '@inertiajs/react';
-import CardBookmark from '@/components/card-bookmark';
 import AlertDialogDelete from '@/components/alert-dialog-delete';
+import CardBookmark from '@/components/card-bookmark';
+import FormBookmarkCollectionAdd from '@/components/form-bookmark-collection-add';
+import FormEditBookmark from '@/components/form-edit-bookmark';
+import { Icon } from '@/components/icon';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
-    DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator,
-    DropdownMenuTrigger
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Trash2, SquarePen, Star, Copy, ListPlus, StarOff, Glasses, BookOpenCheck, Archive, ArchiveRestore, Link } from 'lucide-react';
-import { Icon } from '@/components/icon';
-import FormEditBookmark from '@/components/form-edit-bookmark';
-import FormBookmarkCollectionAdd from '@/components/form-bookmark-collection-add';
-import { Toaster, toast } from 'sonner';
 import { Bookmark, CursorPaginatedData, PaginatedData } from '@/types';
+import { router, usePage } from '@inertiajs/react';
+import { Archive, ArchiveRestore, BookOpenCheck, Copy, Glasses, Link, ListPlus, SquarePen, Star, StarOff, Trash2 } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Toaster, toast } from 'sonner';
 
 type GridBookmarksProps = {
     initialBookmarks: CursorPaginatedData<Bookmark> | PaginatedData<Bookmark>;
     bookmarks: Bookmark[];
     setBookmarks: React.Dispatch<React.SetStateAction<Bookmark[]>>;
     infiniteScroll: boolean;
-}
-export default function GridBookmarks({ initialBookmarks,
-                                        bookmarks,
-                                        setBookmarks,
-                                        infiniteScroll
-}: GridBookmarksProps){
+};
+export default function GridBookmarks({ initialBookmarks, bookmarks, setBookmarks, infiniteScroll }: GridBookmarksProps) {
     const { url } = usePage();
     const [nextPage, setNextPage] = useState(initialBookmarks.next_page_url);
     const [tagsQueryString] = useState(initialBookmarks?.tagsQueryString);
@@ -43,7 +42,7 @@ export default function GridBookmarks({ initialBookmarks,
     }>({
         isOpen: false,
         bookmark: null,
-        isDeleting: false
+        isDeleting: false,
     });
 
     const [dialogEditOpen, setDialogEditOpen] = useState(false);
@@ -53,11 +52,11 @@ export default function GridBookmarks({ initialBookmarks,
 
     useEffect(() => {
         fetch('/tags/all')
-            .then(res => {
+            .then((res) => {
                 if (!res.ok) throw new Error('Failed to load tags');
                 return res.json();
             })
-            .then(data => setTags(data.tags))
+            .then((data) => setTags(data.tags))
             .catch(() => setTags([]));
     }, []);
 
@@ -65,7 +64,7 @@ export default function GridBookmarks({ initialBookmarks,
         setDialogDeleteState({
             isOpen: true,
             bookmark: bookmark,
-            isDeleting: false
+            isDeleting: false,
         });
     };
 
@@ -74,40 +73,41 @@ export default function GridBookmarks({ initialBookmarks,
             setDialogDeleteState({
                 isOpen: false,
                 bookmark: null,
-                isDeleting: false
+                isDeleting: false,
             });
             setTimeout(() => {
                 setDropdownOpen(false);
-            }, 300)
+            }, 300);
         }
     };
 
     const handleDeleteConfirm = () => {
         if (!dialogDeleteState.bookmark) return;
 
-        setDialogDeleteState(prev => ({ ...prev, isDeleting: true }));
+        setDialogDeleteState((prev) => ({ ...prev, isDeleting: true }));
 
         router.delete(route('bookmarks.destroy', dialogDeleteState.bookmark.id), {
             onSuccess: () => {
-                closeDeleteDialog()
+                closeDeleteDialog();
                 if (currentBookmark) removeBookmark(currentBookmark.id);
-                setCurrentBookmark(null)
+                setCurrentBookmark(null);
             },
             onError: (errors) => {
-                setDialogDeleteState(prev => ({ ...prev, isDeleting: false }));
+                setDialogDeleteState((prev) => ({ ...prev, isDeleting: false }));
                 toast("Bookmark couldn't be deleted!", {
                     description: errors.toString(),
                     action: {
-                        label: "Close",
-                        onClick: () => console.log("Close"),
+                        label: 'Close',
+                        onClick: () => console.log('Close'),
                     },
-                })
+                });
             },
         });
     };
 
     const handleSaveFav = (bookmark: Bookmark) => {
-        router.patch(route('bookmarks.favs', bookmark.id),
+        router.patch(
+            route('bookmarks.favs', bookmark.id),
             { is_fav: !bookmark.is_fav },
             {
                 preserveScroll: true,
@@ -117,12 +117,14 @@ export default function GridBookmarks({ initialBookmarks,
                         removeBookmark(bookmark.id);
                     }
                     setCurrentBookmark(null);
-            }
-        });
-    }
+                },
+            },
+        );
+    };
 
     const handleSaveRead = (bookmark: Bookmark) => {
-        router.patch(route('bookmarks.reads', bookmark.id),
+        router.patch(
+            route('bookmarks.reads', bookmark.id),
             { read: !bookmark.checked },
             {
                 preserveScroll: true,
@@ -132,39 +134,44 @@ export default function GridBookmarks({ initialBookmarks,
                         removeBookmark(bookmark.id);
                     }
                     setCurrentBookmark(null);
-                }
-            });
-    }
+                },
+            },
+        );
+    };
 
     const handleArchive = (bookmark: Bookmark) => {
-        router.patch(route('bookmarks.archive', bookmark.id),
+        router.patch(
+            route('bookmarks.archive', bookmark.id),
             { archive: !bookmark.is_archived },
             {
                 preserveScroll: true,
                 onSuccess: () => {
                     removeBookmark(bookmark.id);
                     setCurrentBookmark(null);
-                }
-            });
-    }
+                },
+            },
+        );
+    };
 
     const handleRestoreBrokenLink = (bookmark: Bookmark) => {
-        router.patch(route('bookmarks.broken-link', bookmark.id),
+        router.patch(
+            route('bookmarks.broken-link', bookmark.id),
             { is_broken_link: false },
             {
                 preserveScroll: true,
                 onSuccess: () => {
                     bookmark.is_broken_link = false;
-                }
-            });
-    }
+                },
+            },
+        );
+    };
 
     const removeBookmark = (bookmarkId: number) => {
-        const index = bookmarks.findIndex(item => item.id == bookmarkId);
+        const index = bookmarks.findIndex((item) => item.id == bookmarkId);
         if (index !== -1) {
             bookmarks.splice(index, 1);
         }
-    }
+    };
 
     const loadMore = () => {
         if (!nextPage || loading) return;
@@ -181,9 +188,9 @@ export default function GridBookmarks({ initialBookmarks,
             preserveState: true,
             preserveScroll: true,
             only: ['bookmarks'],
-            onSuccess: ({props}) => {
+            onSuccess: ({ props }) => {
                 const newBookmarks = props.bookmarks.data;
-                setBookmarks(prev => [...prev, ...newBookmarks]);
+                setBookmarks((prev) => [...prev, ...newBookmarks]);
                 setNextPage(props.bookmarks.next_page_url);
 
                 // Scroll to the first new item after DOM updates
@@ -192,42 +199,42 @@ export default function GridBookmarks({ initialBookmarks,
                 }, 50);
             },
             onFinish: () => setLoading(false),
-        })
-    }
+        });
+    };
 
     const handleOpenDropDown = (event: React.MouseEvent<HTMLButtonElement>) => {
-        const selectedBookmark =
-            bookmarks.find(b => b.id.toString() === event.currentTarget.dataset.bookmarkId)
+        const selectedBookmark = bookmarks.find((b) => b.id.toString() === event.currentTarget.dataset.bookmarkId);
         if (!selectedBookmark) {
-             return;
+            return;
         }
 
         setCurrentBookmark(selectedBookmark);
-        const rect = event.currentTarget.getBoundingClientRect()
-        const scrollTop = event.currentTarget.scrollTop || 0
-        const scrollLeft = event.currentTarget.scrollLeft || 0
+        const rect = event.currentTarget.getBoundingClientRect();
+        const scrollTop = event.currentTarget.scrollTop || 0;
+        const scrollLeft = event.currentTarget.scrollLeft || 0;
         setPositionDropDown({
             x: rect.left + scrollLeft,
-            y: rect.bottom + scrollTop
+            y: rect.bottom + scrollTop,
         });
-        setDropdownOpen(true)
-    }
+        setDropdownOpen(true);
+    };
 
     const handleCopyLink = (bookmark: Bookmark) => {
-        navigator.clipboard.writeText(bookmark.url)
+        navigator.clipboard
+            .writeText(bookmark.url)
             .then(() => {
-                toast("Bookmark", {
-                    description: "Link address copied to clipboard!",
+                toast('Bookmark', {
+                    description: 'Link address copied to clipboard!',
                     action: {
-                        label: "Close",
-                        onClick: () => console.log("Close"),
+                        label: 'Close',
+                        onClick: () => console.log('Close'),
                     },
-                })
+                });
             })
-            .catch(err => {
-                console.error("Failed to copy: ", err);
+            .catch((err) => {
+                console.error('Failed to copy: ', err);
             });
-    }
+    };
 
     const handleDropDownItemClick = (key: string) => {
         if (!currentBookmark) return;
@@ -258,7 +265,7 @@ export default function GridBookmarks({ initialBookmarks,
                 handleRestoreBrokenLink(currentBookmark);
                 break;
         }
-    }
+    };
 
     return (
         <div className="relative overflow-auto">
@@ -275,9 +282,9 @@ export default function GridBookmarks({ initialBookmarks,
                             height: '1px',
                             padding: '0',
                             border: 'none',
-                            background: 'none'
-                        }}>
-                    </button>
+                            background: 'none',
+                        }}
+                    ></button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" side="bottom" align="start">
                     <DropdownMenuLabel>Bookmark Actions</DropdownMenuLabel>
@@ -285,13 +292,11 @@ export default function GridBookmarks({ initialBookmarks,
                     <DropdownMenuItem
                         onSelect={(e) => {
                             e.preventDefault();
-                            setDropdownOpen(false)
+                            setDropdownOpen(false);
                         }}
                         onClick={() => handleDropDownItemClick('edit')}
                     >
-                        <Icon iconNode={SquarePen}
-                              className="size-5 opacity-90 group-hover:opacity-100"
-                        />
+                        <Icon iconNode={SquarePen} className="size-5 opacity-90 group-hover:opacity-100" />
                         Edit
                     </DropdownMenuItem>
 
@@ -302,106 +307,82 @@ export default function GridBookmarks({ initialBookmarks,
                         title="Delete Bookmark"
                         description="This will permanently delete the bookmark and all associated data."
                         trigger={
-                            <DropdownMenuItem
-                                onSelect={(e) => e.preventDefault()}
-                                onClick={() => handleDropDownItemClick('delete')}
-                            >
-                                <Icon iconNode={Trash2}
-                                      className="size-5 opacity-90 group-hover:opacity-100"
-                                />
+                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} onClick={() => handleDropDownItemClick('delete')}>
+                                <Icon iconNode={Trash2} className="size-5 opacity-90 group-hover:opacity-100" />
                                 Delete
                             </DropdownMenuItem>
                         }
                     />
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => handleDropDownItemClick('fav')}>
-                        {currentBookmark?.is_fav ?
-                            <Icon iconNode={StarOff}
-                                  className="size-5 opacity-90 group-hover:opacity-100 bg"
-                            />
-                            :
-                            <Icon iconNode={Star}
-                                  className="size-5 opacity-90 group-hover:opacity-100 bg"
-                            />
-                        }
-                        {currentBookmark?.is_fav ? "Un-Favorite" : "Favorite"}
+                        {currentBookmark?.is_fav ? (
+                            <Icon iconNode={StarOff} className="bg size-5 opacity-90 group-hover:opacity-100" />
+                        ) : (
+                            <Icon iconNode={Star} className="bg size-5 opacity-90 group-hover:opacity-100" />
+                        )}
+                        {currentBookmark?.is_fav ? 'Un-Favorite' : 'Favorite'}
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => handleDropDownItemClick('read')}>
-                        {currentBookmark?.checked ?
-                            <Icon iconNode={Glasses}
-                                  className="size-5 opacity-90 group-hover:opacity-100 bg"
-                            />
-                            :
-                            <Icon iconNode={BookOpenCheck}
-                                  className="size-5 opacity-90 group-hover:opacity-100 bg"
-                            />
-                        }
-                        {currentBookmark?.checked ? "Mark as not read" : "Mark as read"}
+                        {currentBookmark?.checked ? (
+                            <Icon iconNode={Glasses} className="bg size-5 opacity-90 group-hover:opacity-100" />
+                        ) : (
+                            <Icon iconNode={BookOpenCheck} className="bg size-5 opacity-90 group-hover:opacity-100" />
+                        )}
+                        {currentBookmark?.checked ? 'Mark as not read' : 'Mark as read'}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                         onSelect={(e) => {
                             e.preventDefault();
-                            setDropdownOpen(false)
+                            setDropdownOpen(false);
                         }}
                         onClick={() => handleDropDownItemClick('addToCol')}
                     >
-                        <Icon iconNode={ListPlus}
-                              className="size-5 opacity-90 group-hover:opacity-100"
-                        />
+                        <Icon iconNode={ListPlus} className="size-5 opacity-90 group-hover:opacity-100" />
                         Add to Collection
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => handleDropDownItemClick('copy')}>
-                        <Icon iconNode={Copy}
-                              className="size-5 opacity-90 group-hover:opacity-100"
-                        />
+                        <Icon iconNode={Copy} className="size-5 opacity-90 group-hover:opacity-100" />
                         Copy Link
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    {currentBookmark?.is_broken_link && <DropdownMenuItem
-                        onClick={() => handleDropDownItemClick('restore-broken-link')}
-                    >
-                        <Icon iconNode={Link}
-                              className="size-5 opacity-90 group-hover:opacity-100"
-                        />
-                        Restore broken link
+                    {currentBookmark?.is_broken_link && (
+                        <DropdownMenuItem onClick={() => handleDropDownItemClick('restore-broken-link')}>
+                            <Icon iconNode={Link} className="size-5 opacity-90 group-hover:opacity-100" />
+                            Restore broken link
                         </DropdownMenuItem>
-                    }
-                    <DropdownMenuItem
-                        onClick={() => handleDropDownItemClick('archive')}
-                    >
-                        {currentBookmark?.is_archived ?
-                            <Icon iconNode={ArchiveRestore}
-                                  className="size-5 opacity-90 group-hover:opacity-100"
-                            />
-                            :
-                            <Icon iconNode={Archive}
-                                  className="size-5 opacity-90 group-hover:opacity-100"
-                            />
-                        }
-                        {currentBookmark?.is_archived ? "Un-Archive" : "Archive"}
+                    )}
+                    <DropdownMenuItem onClick={() => handleDropDownItemClick('archive')}>
+                        {currentBookmark?.is_archived ? (
+                            <Icon iconNode={ArchiveRestore} className="size-5 opacity-90 group-hover:opacity-100" />
+                        ) : (
+                            <Icon iconNode={Archive} className="size-5 opacity-90 group-hover:opacity-100" />
+                        )}
+                        {currentBookmark?.is_archived ? 'Un-Archive' : 'Archive'}
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            {currentBookmark && <FormEditBookmark
-                open={dialogEditOpen}
-                bookmark={currentBookmark}
-                onClose={() => {
-                    setDialogEditOpen(false)
-                }}
-                tags={tags}
-            />}
+            {currentBookmark && (
+                <FormEditBookmark
+                    open={dialogEditOpen}
+                    bookmark={currentBookmark}
+                    onClose={() => {
+                        setDialogEditOpen(false);
+                    }}
+                    tags={tags}
+                />
+            )}
 
             <FormBookmarkCollectionAdd
                 open={dialogCollectionsOpen}
                 onClose={() => {
-                    setDialogCollectionsOpen(false)
+                    setDialogCollectionsOpen(false);
                 }}
                 bookmark={currentBookmark}
             />
 
-            <div className="px-10 py-10 grid xl:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-6 sm:gap-3">
+            <div className="xs:grid-cols-1 grid gap-6 px-10 py-10 sm:grid-cols-2 sm:gap-3 xl:grid-cols-4">
                 {bookmarks.map((bookmark: Bookmark, index: number) => {
                     return (
                         <CardBookmark
@@ -416,12 +397,7 @@ export default function GridBookmarks({ initialBookmarks,
 
             {infiniteScroll && nextPage && (
                 <div className="mb-6 text-center">
-                    <Button
-                        className="w-60"
-                        variant="default"
-                        onClick={loadMore}
-                        disabled={loading}
-                    >
+                    <Button className="w-60" variant="default" onClick={loadMore} disabled={loading}>
                         {loading ? 'Loading...' : 'Load more...'}
                     </Button>
                 </div>

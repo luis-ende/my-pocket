@@ -1,9 +1,10 @@
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import FormNewBookmark from '@/components/form-new-bookmark';
 import { Icon } from '@/components/icon';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList, navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -11,12 +12,10 @@ import { UserMenuContent } from '@/components/user-menu-content';
 import { useInitials } from '@/hooks/use-initials';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { BookmarkPlus, House, Menu, Search, SquarePen } from 'lucide-react';
-import AppLogoIcon from './app-logo-icon';
-import FormNewBookmark from '@/components/form-new-bookmark';
 import { useEffect, useState } from 'react';
-import { router } from '@inertiajs/react';
+import AppLogoIcon from './app-logo-icon';
 
 const mainNavItems: NavItem[] = [
     {
@@ -60,11 +59,11 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     useEffect(() => {
         if (modalOpen) {
             fetch('/tags/all')
-                .then(res => {
+                .then((res) => {
                     if (!res.ok) throw new Error('Failed to load tags.');
                     return res.json();
                 })
-                .then(data => setTags(data.tags))
+                .then((data) => setTags(data.tags))
                 .catch(() => setTags([]));
         }
     }, [modalOpen]);
@@ -74,23 +73,21 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
             case 'Add Bookmark':
                 setModalOpen(true);
         }
-    }
+    };
 
     const onSearchClick = () => {
-        router.visit(route('bookmarks.search', {
-            query: encodeURIComponent(searchTerm),
-        }))
-    }
+        router.visit(
+            route('bookmarks.search', {
+                query: encodeURIComponent(searchTerm),
+            }),
+        );
+    };
 
     return (
         <>
-            <FormNewBookmark
-                open={modalOpen}
-                onClose={() => setModalOpen(false)}
-                tags={tags}
-            />
+            <FormNewBookmark open={modalOpen} onClose={() => setModalOpen(false)} tags={tags} />
 
-            <div className="fixed z-10 w-full border-sidebar-border/80 border-b bg-white">
+            <div className="border-sidebar-border/80 fixed z-10 w-full border-b bg-white">
                 <div className="mx-auto flex h-16 items-center px-4 md:max-w-7xl">
                     {/* Mobile Menu */}
                     <div className="lg:hidden">
@@ -169,7 +166,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 placeholder="Search..."
-                                onKeyDown={(e) => e.key === 'Enter' ? onSearchClick() : '' }
+                                onKeyDown={(e) => (e.key === 'Enter' ? onSearchClick() : '')}
                             />
                             <Button variant="ghost" size="icon" className="group h-9 w-9 cursor-pointer" onClick={onSearchClick}>
                                 <Search className="!size-5 opacity-80 group-hover:opacity-100" />
@@ -178,11 +175,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                 {rightNavItems.map((item) => (
                                     <Tooltip>
                                         <TooltipTrigger>
-                                            <Button
-                                                variant="ghost"
-                                                className="mr-2 h-[34px] w-[34px]"
-                                                onClick={() => onMenuButtonClick(item.title)}
-                                            >
+                                            <Button variant="ghost" className="mr-2 h-[34px] w-[34px]" onClick={() => onMenuButtonClick(item.title)}>
                                                 <span className="sr-only">{item.title}</span>
                                                 {item.icon && <Icon iconNode={item.icon} className="size-5 opacity-80 group-hover:opacity-100" />}
                                             </Button>

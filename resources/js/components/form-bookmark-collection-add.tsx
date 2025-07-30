@@ -1,17 +1,10 @@
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogFooter,
-    DialogDescription
-} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { useForm } from '@inertiajs/react';
-import React, { useEffect, useState } from 'react';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Bookmark, Collection } from '@/types';
+import { useForm } from '@inertiajs/react';
+import React, { useEffect, useState } from 'react';
 
 interface FormBookmarkCollectionProps {
     open: boolean;
@@ -19,12 +12,10 @@ interface FormBookmarkCollectionProps {
     bookmark: Bookmark | null;
 }
 
-export default function FormBookmarkCollectionAdd({ open,
-                                                    onClose,
-                                                    bookmark }: FormBookmarkCollectionProps) {
+export default function FormBookmarkCollectionAdd({ open, onClose, bookmark }: FormBookmarkCollectionProps) {
     const { data, setData, post, processing, errors, reset } = useForm({
         bookmarkId: bookmark?.id,
-        collectionId: 0
+        collectionId: 0,
     });
 
     const [collections, setCollections] = useState<Collection[]>([]);
@@ -35,13 +26,13 @@ export default function FormBookmarkCollectionAdd({ open,
 
     useEffect(() => {
         if (open && bookmark) {
-            setData('bookmarkId', bookmark.id)
+            setData('bookmarkId', bookmark.id);
             fetch(route('bookmarks.collections', bookmark.id))
-                .then(res => {
+                .then((res) => {
                     if (!res.ok) throw new Error('Failed to load bookmark collections.');
                     return res.json();
                 })
-                .then(data => setData('collectionId', data.collectionId))
+                .then((data) => setData('collectionId', data.collectionId))
                 .catch(() => setData('collectionId', 0));
         }
     }, [bookmark, open, setData]);
@@ -58,19 +49,16 @@ export default function FormBookmarkCollectionAdd({ open,
 
     const loadCollections = () => {
         fetch(route('collections.list'))
-            .then(res => {
+            .then((res) => {
                 if (!res.ok) throw new Error('Failed to load collections.');
                 return res.json();
             })
-            .then(data => setCollections(data.collections))
+            .then((data) => setCollections(data.collections))
             .catch(() => setCollections([]));
-    }
+    };
 
     return (
-        <Dialog
-            modal
-            open={open}
-        >
+        <Dialog modal open={open}>
             <DialogContent forceMount>
                 <DialogHeader>
                     <DialogTitle>Add to Collection</DialogTitle>
@@ -79,15 +67,17 @@ export default function FormBookmarkCollectionAdd({ open,
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <fieldset>
                         <Label htmlFor="collections">Collections</Label>
-                        <Select name="collections"
-                                value={String(data.collectionId)}
-                                onValueChange={(value) => setData('collectionId', parseInt(value))}>
+                        <Select
+                            name="collections"
+                            value={String(data.collectionId)}
+                            onValueChange={(value) => setData('collectionId', parseInt(value))}
+                        >
                             <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Select a collection" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
-                                    {collections.map(collection => (
+                                    {collections.map((collection) => (
                                         <SelectItem key={collection.id} value={String(collection.id)}>
                                             {collection.name}
                                         </SelectItem>
@@ -95,12 +85,10 @@ export default function FormBookmarkCollectionAdd({ open,
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
-                        {errors.bookmarkId && (
-                            <p className="text-sm text-red-500">{errors.bookmarkId}</p>
-                        )}
+                        {errors.bookmarkId && <p className="text-sm text-red-500">{errors.bookmarkId}</p>}
                     </fieldset>
                     <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => onClose() }>
+                        <Button type="button" variant="outline" onClick={() => onClose()}>
                             Cancel
                         </Button>
                         <Button type="submit" disabled={processing}>

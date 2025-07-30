@@ -1,7 +1,7 @@
-import type { BreadcrumbItem, PaginatedData, Bookmark } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
 import GridBookmarks from '@/components/grid-bookmarks';
+import AppLayout from '@/layouts/app-layout';
+import type { Bookmark, BreadcrumbItem, PaginatedData } from '@/types';
+import { Head, Link, usePage } from '@inertiajs/react';
 import React, { useMemo, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -60,73 +60,71 @@ export default function Search() {
             <Head title="Full-text Search" />
 
             {/* Pagination Info */}
-            {searchTerm && (<div className="text-center mt-4 mb-2 ml-4 text-gray-600 flex flex-col">
-                <div className="mb-2 text-sm">
-                    Search results for: "<strong>{searchTerm}</strong>."
+            {searchTerm && (
+                <div className="mt-4 mb-2 ml-4 flex flex-col text-center text-gray-600">
+                    <div className="mb-2 text-sm">
+                        Search results for: "<strong>{searchTerm}</strong>."
+                    </div>
+                    {bookmarks?.data?.length > 0 && (
+                        <div className="mb-2 text-sm">
+                            Showing {bookmarks.from} to {bookmarks.to} of {bookmarks.total} results.
+                        </div>
+                    )}
                 </div>
-                {bookmarks?.data?.length > 0 && (<div className="mb-2 text-sm">
-                    Showing {bookmarks.from} to {bookmarks.to} of {bookmarks.total} results.
-                </div>)}
-            </div>)}
+            )}
 
             {/* Pagination */}
-            <div className="flex justify-center text-xs mb-4">
-                {bookmarks?.data?.length > 0 && <nav className="flex items-center space-x-2">
-                    {bookmarks.prev_page_url && (
-                        <Link
-                            href={bookmarks.prev_page_url}
-                            className="px-3 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
-                        >
-                            &lt;
-                        </Link>
-                    )}
+            <div className="mb-4 flex justify-center text-xs">
+                {bookmarks?.data?.length > 0 && (
+                    <nav className="flex items-center space-x-2">
+                        {bookmarks.prev_page_url && (
+                            <Link
+                                href={bookmarks.prev_page_url}
+                                className="rounded bg-gray-500 px-3 py-2 text-white transition-colors hover:bg-gray-600"
+                            >
+                                &lt;
+                            </Link>
+                        )}
 
-                    {pageNumbers.map((page: string | number, index) => (
-                        <React.Fragment key={index}>
-                            {page !== '...' ? (
-                                <Link
-                                    href={getPageUrl(String(page))}
-                                    className={`px-3 py-2 rounded transition-colors ${
-                                        page === bookmarks.current_page
-                                            ? 'bg-gray-600 text-white'
-                                            : 'bg-transparent text-gray-700 hover:bg-gray-300'
-                                    }`}
-                                >
-                                    {page}
-                                </Link>
-                            ) : (
-                                <span className="px-3 py-2 text-gray-500">...</span>
-                            )}
-                        </React.Fragment>
-                    ))}
+                        {pageNumbers.map((page: string | number, index) => (
+                            <React.Fragment key={index}>
+                                {page !== '...' ? (
+                                    <Link
+                                        href={getPageUrl(String(page))}
+                                        className={`rounded px-3 py-2 transition-colors ${
+                                            page === bookmarks.current_page
+                                                ? 'bg-gray-600 text-white'
+                                                : 'bg-transparent text-gray-700 hover:bg-gray-300'
+                                        }`}
+                                    >
+                                        {page}
+                                    </Link>
+                                ) : (
+                                    <span className="px-3 py-2 text-gray-500">...</span>
+                                )}
+                            </React.Fragment>
+                        ))}
 
-                    {bookmarks.next_page_url && (
-                        <Link
-                            href={bookmarks.next_page_url}
-                            className="px-3 py-2 bg-gray-500 rounded text-white hover:bg-gray-600 transition-colors"
-                        >
-                            &gt;
-                        </Link>
-                    )}
-                </nav>}
+                        {bookmarks.next_page_url && (
+                            <Link
+                                href={bookmarks.next_page_url}
+                                className="rounded bg-gray-500 px-3 py-2 text-white transition-colors hover:bg-gray-600"
+                            >
+                                &gt;
+                            </Link>
+                        )}
+                    </nav>
+                )}
             </div>
 
             {/* Search results */}
-            {bookmarks?.data?.length > 0 ?
-                <GridBookmarks
-                    initialBookmarks={bookmarks}
-                    bookmarks={bookmarks.data}
-                    setBookmarks={null}
-                    infiniteScroll={false}
-                />
-                :
-                searchTerm === '' ?
-                        <div></div>
-                    :
-                        <div className="text-center mt-4 mb-2 ml-4 text-gray-600 flex flex-col">
-                            No bookmarks found.
-                        </div>
-            }
+            {bookmarks?.data?.length > 0 ? (
+                <GridBookmarks initialBookmarks={bookmarks} bookmarks={bookmarks.data} setBookmarks={null} infiniteScroll={false} />
+            ) : searchTerm === '' ? (
+                <div></div>
+            ) : (
+                <div className="mt-4 mb-2 ml-4 flex flex-col text-center text-gray-600">No bookmarks found.</div>
+            )}
         </AppLayout>
     );
 }

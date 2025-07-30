@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { DataTableTags } from '@/components/datatable-tags';
+import GridBookmarks from '@/components/grid-bookmarks';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, Bookmark, CursorPaginatedData, Tag } from '@/types';
 import { Head, router } from '@inertiajs/react';
-import { DataTableTags } from '@/components/datatable-tags';
-import GridBookmarks from '@/components/grid-bookmarks';
+import { useEffect, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -20,28 +20,28 @@ export default function SearchByTags() {
 
     const loadTags = () => {
         fetch('/tags/index')
-            .then(res => {
+            .then((res) => {
                 if (!res.ok) throw new Error('Failed to load tags');
                 return res.json();
             })
-            .then(data => setTags(data.tags))
+            .then((data) => setTags(data.tags))
             .catch(() => setTags([]));
     };
 
     useEffect(() => {
         loadTags();
-    }, [])
+    }, []);
 
     useEffect(() => {
         setBookmarks([]);
 
         if (!tags || tags.length === 0 || Object.entries(rowSelection).length === 0) {
-            return
+            return;
         }
 
-        const selectedTags = Object.keys(rowSelection).map(r => tags[Number(r)].id);
+        const selectedTags = Object.keys(rowSelection).map((r) => tags[Number(r)].id);
         const params = new URLSearchParams();
-        selectedTags.forEach(tagId => params.append('tags[]', tagId.toString()));
+        selectedTags.forEach((tagId) => params.append('tags[]', tagId.toString()));
         const queryString = params.toString();
         const url = `/search-by-tags?${queryString}`;
 
@@ -49,26 +49,22 @@ export default function SearchByTags() {
             method: 'get',
             preserveState: true,
             only: ['bookmarks'],
-            onSuccess: ({ props })=> {
+            onSuccess: ({ props }) => {
                 const bookmarks = props.bookmarks as CursorPaginatedData<Bookmark>;
                 bookmarks.tagsQueryString = queryString;
-                setInitialBookmarks(bookmarks)
-                setBookmarks(bookmarks.data)
-            }
+                setInitialBookmarks(bookmarks);
+                setBookmarks(bookmarks.data);
+            },
         });
     }, [rowSelection, tags]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap- 4 rounded-xl p-4">
+            <div className="gap- 4 flex h-full flex-1 flex-col rounded-xl p-4">
                 <div className="flex flex-col md:flex-row">
-                    <div className="md:flex-1/6 relative overflow-auto">
-                        <DataTableTags
-                            data={tags}
-                            rowSelection={rowSelection}
-                            setRowSelection={setRowSelection}
-                        />
+                    <div className="relative overflow-auto md:flex-1/6">
+                        <DataTableTags data={tags} rowSelection={rowSelection} setRowSelection={setRowSelection} />
                     </div>
 
                     <div className="md:flex-5/6">

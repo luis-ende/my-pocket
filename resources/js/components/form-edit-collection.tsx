@@ -1,17 +1,10 @@
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogFooter,
-    DialogClose,
-} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Collection } from '@/types';
 import { useForm } from '@inertiajs/react';
 import React from 'react';
-import { Collection } from '@/types';
 
 interface FormEditCollectionProps {
     open: boolean;
@@ -19,9 +12,7 @@ interface FormEditCollectionProps {
     collection: Collection;
 }
 
-export default function FormEditCollection({ open,
-                                             onClose,
-                                             collection }: FormEditCollectionProps) {
+export default function FormEditCollection({ open, onClose, collection }: FormEditCollectionProps) {
     const { setData, patch, processing, errors, reset } = useForm({
         name: collection?.name,
         description: collection?.description,
@@ -38,10 +29,7 @@ export default function FormEditCollection({ open,
     };
 
     return (
-        <Dialog
-            modal
-            open={open}
-        >
+        <Dialog modal open={open}>
             <DialogContent forceMount>
                 <DialogHeader>
                     <DialogTitle>Edit Collection</DialogTitle>
@@ -49,26 +37,13 @@ export default function FormEditCollection({ open,
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <fieldset>
                         <Label htmlFor="name">Collection Name</Label>
-                        <Input
-                            id="name"
-                            value={collection?.name}
-                            onChange={(e) => setData('name', e.target.value)}
-                            required
-                        />
-                        {errors.name && (
-                            <p className="text-sm text-red-500">{errors.name}</p>
-                        )}
+                        <Input id="name" value={collection?.name} onChange={(e) => setData('name', e.target.value)} required />
+                        {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
                     </fieldset>
                     <fieldset>
                         <Label htmlFor="name">Description</Label>
-                        <Input
-                            id="description"
-                            value={collection?.description}
-                            onChange={(e) => setData('description', e.target.value)}
-                        />
-                        {errors.description && (
-                            <p className="text-sm text-red-500">{errors.description}</p>
-                        )}
+                        <Input id="description" value={collection?.description} onChange={(e) => setData('description', e.target.value)} />
+                        {errors.description && <p className="text-sm text-red-500">{errors.description}</p>}
                     </fieldset>
                     <DialogFooter>
                         <DialogClose asChild>

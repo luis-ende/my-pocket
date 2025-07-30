@@ -1,18 +1,19 @@
+import AlertDialogDelete from '@/components/alert-dialog-delete';
 import CardCollection from '@/components/card-collection';
-import React, { useState } from 'react';
-import { router, usePage } from '@inertiajs/react';
+import FormEditCollection from '@/components/form-edit-collection';
+import { Icon } from '@/components/icon';
 import {
     DropdownMenu,
-    DropdownMenuContent, DropdownMenuItem,
+    DropdownMenuContent,
+    DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
-    DropdownMenuTrigger
+    DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Icon } from '@/components/icon';
-import { SquarePen, Trash2 } from 'lucide-react';
-import AlertDialogDelete from '@/components/alert-dialog-delete';
-import FormEditCollection from '@/components/form-edit-collection';
 import type { Collection } from '@/types';
+import { router, usePage } from '@inertiajs/react';
+import { SquarePen, Trash2 } from 'lucide-react';
+import React, { useState } from 'react';
 
 export default function GridCollections() {
     const { collections } = usePage<{ collections: Collection[] }>().props;
@@ -22,13 +23,13 @@ export default function GridCollections() {
     const [currentCollection, setCurrentCollection] = useState<Collection | null>(null);
 
     const [dialogDeleteState, setDialogDeleteState] = useState<{
-        isOpen: boolean,
-        collection: Collection | null,
-        isDeleting: boolean,
+        isOpen: boolean;
+        collection: Collection | null;
+        isDeleting: boolean;
     }>({
         isOpen: false,
         collection: null,
-        isDeleting: false
+        isDeleting: false,
     });
 
     const [dialogEditOpen, setDialogEditOpen] = useState(false);
@@ -37,7 +38,7 @@ export default function GridCollections() {
         setDialogDeleteState({
             isOpen: true,
             collection: collection,
-            isDeleting: false
+            isDeleting: false,
         });
     };
 
@@ -46,75 +47,74 @@ export default function GridCollections() {
 
         switch (key) {
             case 'edit':
-                setDialogEditOpen(true)
+                setDialogEditOpen(true);
                 break;
             case 'delete':
-                openDeleteDialog(currentCollection)
+                openDeleteDialog(currentCollection);
                 break;
         }
-    }
+    };
 
     const handleOpenDropDown = (event: React.MouseEvent<HTMLButtonElement>) => {
-        const selectedCollection =
-            collections.find(b => b.id.toString() === event.currentTarget.dataset.collectionId)
+        const selectedCollection = collections.find((b) => b.id.toString() === event.currentTarget.dataset.collectionId);
         if (!selectedCollection) {
             return;
         }
 
         setCurrentCollection(selectedCollection);
-        const rect = event.currentTarget.getBoundingClientRect()
-        const scrollTop = event.currentTarget.scrollTop || 0
-        const scrollLeft = event.currentTarget.scrollLeft || 0
+        const rect = event.currentTarget.getBoundingClientRect();
+        const scrollTop = event.currentTarget.scrollTop || 0;
+        const scrollLeft = event.currentTarget.scrollLeft || 0;
         setPositionDropDown({
             x: rect.left + scrollLeft,
-            y: rect.bottom + scrollTop
+            y: rect.bottom + scrollTop,
         });
-        setDropdownOpen(true)
-    }
+        setDropdownOpen(true);
+    };
 
     const closeDeleteDialog = () => {
         if (!dialogDeleteState.isDeleting) {
             setDialogDeleteState({
                 isOpen: false,
                 collection: null,
-                isDeleting: false
+                isDeleting: false,
             });
             setTimeout(() => {
                 setDropdownOpen(false);
-            }, 300)
+            }, 300);
         }
     };
 
     const handleDeleteConfirm = () => {
         if (!dialogDeleteState.collection) return;
 
-        setDialogDeleteState(prev => ({ ...prev, isDeleting: true }));
+        setDialogDeleteState((prev) => ({ ...prev, isDeleting: true }));
 
         router.delete(route('collections.destroy', dialogDeleteState.collection.id), {
             onSuccess: () => {
-                closeDeleteDialog()
+                closeDeleteDialog();
                 if (currentCollection) removeCollection(currentCollection.id);
-                setCurrentCollection(null)
+                setCurrentCollection(null);
             },
             onError: (errors) => {
-                setDialogDeleteState(prev => ({ ...prev, isDeleting: false }));
+                setDialogDeleteState((prev) => ({ ...prev, isDeleting: false }));
                 console.error('Delete failed:', errors);
             },
             onFinish: () => {
                 // This runs regardless of success/error
-            }
+            },
         });
     };
 
     const removeCollection = (collectionId: number) => {
-        const index = collections.findIndex(item => item.id == collectionId);
+        const index = collections.findIndex((item) => item.id == collectionId);
         if (index !== -1) {
             collections.splice(index, 1);
         }
-    }
+    };
 
     return (
-        <div className="px-10 py-10 grid md:grid-cols-3 sm:grid-cols-1 gap-6 sm:gap-3">
+        <div className="grid gap-6 px-10 py-10 sm:grid-cols-1 sm:gap-3 md:grid-cols-3">
             <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
                 <DropdownMenuTrigger asChild>
                     <button
@@ -127,9 +127,9 @@ export default function GridCollections() {
                             height: '1px',
                             padding: '0',
                             border: 'none',
-                            background: 'none'
-                        }}>
-                    </button>
+                            background: 'none',
+                        }}
+                    ></button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" side="bottom" align="start">
                     <DropdownMenuLabel>Collection Actions</DropdownMenuLabel>
@@ -137,13 +137,11 @@ export default function GridCollections() {
                     <DropdownMenuItem
                         onSelect={(e) => {
                             e.preventDefault();
-                            setDropdownOpen(false)
+                            setDropdownOpen(false);
                         }}
                         onClick={() => handleDropDownItemClick('edit')}
                     >
-                        <Icon iconNode={SquarePen}
-                              className="size-5 opacity-90 group-hover:opacity-100"
-                        />
+                        <Icon iconNode={SquarePen} className="size-5 opacity-90 group-hover:opacity-100" />
                         Edit
                     </DropdownMenuItem>
 
@@ -154,13 +152,8 @@ export default function GridCollections() {
                         title="Delete Bookmark"
                         description="This will permanently delete the bookmark and all associated data."
                         trigger={
-                            <DropdownMenuItem
-                                onSelect={(e) => e.preventDefault()}
-                                onClick={() => handleDropDownItemClick('delete')}
-                            >
-                                <Icon iconNode={Trash2}
-                                      className="size-5 opacity-90 group-hover:opacity-100"
-                                />
+                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} onClick={() => handleDropDownItemClick('delete')}>
+                                <Icon iconNode={Trash2} className="size-5 opacity-90 group-hover:opacity-100" />
                                 Delete
                             </DropdownMenuItem>
                         }
@@ -168,15 +161,17 @@ export default function GridCollections() {
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            {currentCollection && <FormEditCollection
-                open={dialogEditOpen}
-                collection={currentCollection}
-                onClose={() => {
-                    setDialogEditOpen(false)
-                }}
-            />}
+            {currentCollection && (
+                <FormEditCollection
+                    open={dialogEditOpen}
+                    collection={currentCollection}
+                    onClose={() => {
+                        setDialogEditOpen(false);
+                    }}
+                />
+            )}
 
-            {collections.map(collection => {
+            {collections.map((collection) => {
                 return (
                     <CardCollection
                         key={collection.id}
@@ -189,5 +184,5 @@ export default function GridCollections() {
                 );
             })}
         </div>
-    )
+    );
 }

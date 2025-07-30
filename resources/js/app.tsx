@@ -1,10 +1,10 @@
 import '../css/app.css';
 
+import BookmarksProvider from '@/providers/bookmarks-provider';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 import { initializeTheme } from './hooks/use-appearance';
-import BookmarksProvider from '@/providers/bookmarks-provider';
 
 const appName = import.meta.env.VITE_APP_NAME || 'My Pocket';
 
@@ -17,7 +17,7 @@ createInertiaApp({
         root.render(
             <BookmarksProvider>
                 <App {...props} />
-            </BookmarksProvider>
+            </BookmarksProvider>,
         );
     },
     progress: {

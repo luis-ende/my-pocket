@@ -1,20 +1,13 @@
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogFooter,
-    DialogDescription
-} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useForm } from '@inertiajs/react';
-import { Textarea } from "@/components/ui/textarea"
-import CreatableSelect from 'react-select/creatable';
-import React, { useState, useRef, useEffect } from 'react';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Textarea } from '@/components/ui/textarea';
 import { Bookmark } from '@/types';
+import { useForm } from '@inertiajs/react';
+import React, { useEffect, useRef, useState } from 'react';
+import CreatableSelect from 'react-select/creatable';
 
 interface FormEditBookmarkProps {
     open: boolean;
@@ -23,10 +16,7 @@ interface FormEditBookmarkProps {
     tags: object[];
 }
 
-export default function FormEditBookmark({ open,
-                                           onClose,
-                                           bookmark,
-                                           tags }: FormEditBookmarkProps) {
+export default function FormEditBookmark({ open, onClose, bookmark, tags }: FormEditBookmarkProps) {
     const { data, setData, patch, processing, errors, reset } = useForm({
         url: bookmark?.url,
         tags: bookmark?.tags,
@@ -41,16 +31,14 @@ export default function FormEditBookmark({ open,
     useEffect(() => {
         setTagsOptions([]);
         if (tags && tags.length > 0) {
-            const options = tags.map(t => (
-                { label: t.tag, value: t.tag, color: '#00B8D9' }
-            ));
+            const options = tags.map((t) => ({ label: t.tag, value: t.tag, color: '#00B8D9' }));
             setTagsOptions(options);
         }
     }, [tags]);
 
     const handleChange = (selected) => {
         setSelectedOptions(selected);
-        setData('tags', selected.map(o => o.value).join('|'));
+        setData('tags', selected.map((o) => o.value).join('|'));
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -58,7 +46,7 @@ export default function FormEditBookmark({ open,
         patch(route('bookmarks.update', bookmark.id), {
             preserveScroll: true,
             onSuccess: () => {
-                bookmark.tags = data.tags
+                bookmark.tags = data.tags;
                 reset();
                 onClose();
             },
@@ -67,19 +55,14 @@ export default function FormEditBookmark({ open,
 
     useEffect(() => {
         if (bookmark?.tags) {
-            setSelectedOptions(bookmark?.tags
-                .split('|')
-                .map((t: string) => ({ label: t, value: t, color: '#00B8D9' })));
+            setSelectedOptions(bookmark?.tags.split('|').map((t: string) => ({ label: t, value: t, color: '#00B8D9' })));
         } else {
             setSelectedOptions([]);
         }
     }, [bookmark]);
 
     return (
-        <Dialog
-            modal
-            open={open}
-        >
+        <Dialog modal open={open}>
             <DialogContent forceMount>
                 <DialogHeader>
                     <DialogTitle>Edit Bookmark</DialogTitle>
@@ -88,14 +71,7 @@ export default function FormEditBookmark({ open,
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <fieldset>
                         <Label htmlFor="url">URL</Label>
-                        <Input
-                            className="bg-gray-100"
-                            ref={inputRef}
-                            id="url"
-                            type="url"
-                            value={bookmark?.url}
-                            readOnly={true}
-                        />
+                        <Input className="bg-gray-100" ref={inputRef} id="url" type="url" value={bookmark?.url} readOnly={true} />
                     </fieldset>
                     <fieldset>
                         <Label htmlFor="tags">Tags</Label>
@@ -109,34 +85,27 @@ export default function FormEditBookmark({ open,
                             onChange={handleChange}
                             value={selectedOptions}
                         />
-                        {errors.tags && (
-                            <p className="text-sm text-red-500">{errors.tags}</p>
-                        )}
+                        {errors.tags && <p className="text-sm text-red-500">{errors.tags}</p>}
                     </fieldset>
                     <fieldset>
                         <Label htmlFor="notes">Notes</Label>
-                        <Textarea
-                            id="notes"
-                            value={data.notes}
-                            onChange={(e) => setData('notes', e.target.value)}
-                        />
-                        {errors.notes && (
-                            <p className="text-sm text-red-500">{errors.notes}</p>
-                        )}
+                        <Textarea id="notes" value={data.notes} onChange={(e) => setData('notes', e.target.value)} />
+                        {errors.notes && <p className="text-sm text-red-500">{errors.notes}</p>}
                     </fieldset>
                     <fieldset className="flex items-center gap-3">
-                        <Checkbox
-                            id="read"
-                            defaultChecked={bookmark?.checked}
-                            onCheckedChange={(e) => setData('read', e)}
-                        />
+                        <Checkbox id="read" defaultChecked={bookmark?.checked} onCheckedChange={(e) => setData('read', e)} />
                         <Label htmlFor="read">Read</Label>
-                        {errors.read && (
-                            <p className="text-sm text-red-500">{errors.read}</p>
-                        )}
+                        {errors.read && <p className="text-sm text-red-500">{errors.read}</p>}
                     </fieldset>
                     <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => { reset(); onClose(); } }>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => {
+                                reset();
+                                onClose();
+                            }}
+                        >
                             Cancel
                         </Button>
                         <Button type="submit" disabled={processing}>
