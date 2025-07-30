@@ -5,10 +5,11 @@ set -e
 echo "Starting My Pocket deployment"
 cd /opt/ensoo/my-pocket
 echo "---Pulling repository"
-git pull
+git pull origin main
 echo "---Backing up media files"
 CONTAINER="my-pocket-php-1"
 if docker ps --filter "name=^/${CONTAINER}$" --filter "status=running" --format '{{.Names}}' | grep -wq "$CONTAINER"; then
+    echo "Container '$CONTAINER' is running."
     docker cp my-pocket-php-1:/app/storage/app/public/. storage/app/public/
 fi
 echo "---Optimizing autoloader"
@@ -22,4 +23,6 @@ docker compose -f docker-compose.prod.yaml build --no-cache
 echo "---Starting containers"
 docker compose -f docker-compose.prod.yaml up --wait
 docker exec -it my-pocket-php-1 php artisan storage:link
+echo "---Running migrations"
+docker exec -it my-pocket-php-1 php artisan migrate
 echo "Deployment finished"
