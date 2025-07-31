@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CollectionPostRequest;
 use App\Models\Bookmark;
 use App\Models\Collection;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class CollectionController extends Controller
@@ -53,24 +53,18 @@ class CollectionController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(CollectionPostRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'description' => 'string|max:200',
-        ]);
+        $validated = $request->validated();
 
         Collection::create($validated);
 
         return redirect()->back()->with('success', 'Collection created.');
     }
 
-    public function update(Request $request, Collection $collection)
+    public function update(CollectionPostRequest $request, Collection $collection)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'description' => 'string|max:200',
-        ]);
+        $validated = $request->validated();
 
         try {
             Collection::where('id', $collection->id)->update([
