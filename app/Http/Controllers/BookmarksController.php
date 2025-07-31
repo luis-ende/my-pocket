@@ -66,7 +66,7 @@ class BookmarksController extends Controller
         ]);
     }
 
-    public function getFavorites()
+    public function indexFavorites()
     {
         $bookmarks = Bookmark::query()
             ->where('is_fav', true)
