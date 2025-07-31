@@ -18,5 +18,5 @@ echo "---Starting containers"
 docker compose -f docker-compose.prod.yaml up --wait
 docker exec -it my-pocket-php-1 php artisan storage:link
 echo "---Running migrations"
-docker exec -it my-pocket-php-1 php artisan migrate
+docker exec -it my-pocket-php-1 php artisan migrate --force
 echo "Deployment finished"
