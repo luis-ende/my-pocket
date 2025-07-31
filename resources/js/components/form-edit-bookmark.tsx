@@ -6,8 +6,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Bookmark } from '@/types';
 import { useForm } from '@inertiajs/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import CreatableSelect from 'react-select/creatable';
+import BookmarksContext from '@/contexts/bookmarks-context';
 
 interface FormEditBookmarkProps {
     open: boolean;
@@ -27,6 +28,7 @@ export default function FormEditBookmark({ open, onClose, bookmark, tags }: Form
     const [selectedOptions, setSelectedOptions] = useState<object[]>([]);
     const [tagsOptions, setTagsOptions] = useState<object[]>([]);
     const inputRef = useRef(null);
+    const { setSavedBookmark } = useContext(BookmarksContext);
 
     useEffect(() => {
         setTagsOptions([]);
@@ -45,8 +47,16 @@ export default function FormEditBookmark({ open, onClose, bookmark, tags }: Form
         e.preventDefault();
         patch(route('bookmarks.update', bookmark.id), {
             preserveScroll: true,
-            onSuccess: () => {
-                bookmark.tags = data.tags;
+            onSuccess: (page) => {
+                if (page.props?.flash?.saved_bookmark) {
+                    const savedBookmark = page.props.flash.saved_bookmark as Bookmark;
+                    setSavedBookmark(savedBookmark);
+                    bookmark.tags = savedBookmark.tags;
+                    bookmark.checked = savedBookmark.checked;
+                    bookmark.is_fav = savedBookmark.is_fav;
+                    bookmark.is_archived = savedBookmark.is_archived;
+                    bookmark.preview_image_url = savedBookmark.preview_image_url;
+                }
                 reset();
                 onClose();
             },

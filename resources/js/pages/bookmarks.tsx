@@ -18,13 +18,15 @@ export default function Bookmarks() {
     }>().props;
 
     const [bookmarks, setBookmarks] = useState<Bookmark[]>(initialBookmarks.data);
-    const { newBookmark } = useContext(BookmarksContext);
+    const { savedBookmark } = useContext(BookmarksContext);
 
     useEffect(() => {
-        if (newBookmark) {
-            setBookmarks((prev) => (!prev.find((b) => b.id === newBookmark.id) ? [newBookmark, ...prev] : prev));
+        if (savedBookmark) {
+            if (savedBookmark.is_new == true) {
+                setBookmarks((prev) => (!prev.find((b) => b.id === savedBookmark.id) ? [savedBookmark, ...prev] : prev));
+            }
         }
-    }, [newBookmark]);
+    }, [savedBookmark]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

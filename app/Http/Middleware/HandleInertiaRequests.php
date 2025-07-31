@@ -50,6 +50,7 @@ class HandleInertiaRequests extends Middleware
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
+                'saved_bookmark' => fn () => $request->session()->get('saved_bookmark'),
             ],
         ];
     }

@@ -23,7 +23,7 @@ class TagsController extends Controller
             ->orderByDesc('count')
             ->get();
 
-        $tags->unshift((object)[
+        $tags->unshift((object) [
             'id' => 'not-tagged',
             'title' => 'Not Tagged',
             'count' => Bookmark::whereNull('tags')->count(),

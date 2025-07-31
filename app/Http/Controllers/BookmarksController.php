@@ -13,7 +13,7 @@ use Inertia\Inertia;
 
 class BookmarksController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         $bookmarks = Bookmark::query()
             ->latest()
@@ -21,7 +21,6 @@ class BookmarksController extends Controller
 
         return Inertia::render('bookmarks', [
             'bookmarks' => $bookmarks,
-            'new_bookmark' => $request->session()->get('new_bookmark'),
         ]);
     }
 
@@ -99,17 +98,30 @@ class BookmarksController extends Controller
                 $bookmark->addMediaFromUrl($imageUrl)->toMediaCollection('preview');
             }
 
+            $savedBookmark = array_merge($bookmark->toArray(), [
+                'is_new' => true,
+            ]);
+
             return redirect()->back()->with([
-                'new_bookmark' => $bookmark,
-                'success', 'Bookmark created.',
+                'success' => 'Bookmark created.',
+                'saved_bookmark' => $savedBookmark,
             ]);
         });
 
         return redirect()->back()->with('error', 'Bookmark couldn\'t be created.');
     }
 
-    public function update(Request $request, Bookmark $bookmark)
+    public function update(Request $request, Bookmark $bookmark, LinkPreviewImageExtractor $linkPreviewImageExtractor)
     {
+        $referer = $request->header('referer');
+        if ($referer) {
+            $parsedUrl = parse_url($referer);
+            $path = $parsedUrl['path'] ?? '/';
+            $path = strtok($path, '?');
+        } else {
+            $path = strtok($request->path(), '?');
+        }
+
         $validated = $request->validate([
             'tags' => 'max:300',
             'read' => 'boolean',
@@ -123,9 +135,23 @@ class BookmarksController extends Controller
                     'checked' => $validated['read'] ?? true,
                 ]);
 
-            return redirect()->back()->with('success', 'Bookmark updated.');
+            if (! $bookmark->is_broken_link && $bookmark->getMedia('preview')->isEmpty()) {
+                $imageUrl = $linkPreviewImageExtractor->extractPreviewImage($bookmark->url);
+                if (! empty($imageUrl)) {
+                    $bookmark->addMediaFromUrl($imageUrl)->toMediaCollection('preview');
+                }
+            }
+
+            $savedBookmark = array_merge($bookmark->refresh()->toArray(), [
+                'is_new' => false,
+            ]);
+
+            redirect($path)->with([
+                'success' => 'Bookmark updated.',
+                'saved_bookmark' => $savedBookmark,
+            ]);
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to delete bookmark.');
+            return redirect($path)->with('error', 'Failed to update bookmark.');
         }
     }
 

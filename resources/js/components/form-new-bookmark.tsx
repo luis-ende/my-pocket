@@ -9,6 +9,7 @@ import { useForm } from '@inertiajs/react';
 import React, { useContext, useEffect, useState } from 'react';
 import CreatableSelect from 'react-select/creatable';
 import { toast } from 'sonner';
+import { Bookmark } from '@/types';
 
 interface FormNewBookmarkProps {
     open: boolean;
@@ -28,7 +29,7 @@ export default function FormNewBookmark({ open, onClose, tags }: FormNewBookmark
     const [selectedOptions, setSelectedOptions] = useState<object[]>([]);
     const [tagsOptions, setTagsOptions] = useState<object[]>([]);
     const [titleLoading, setTitleLoading] = useState(false);
-    const { setNewBookmark } = useContext(BookmarksContext);
+    const { setSavedBookmark } = useContext(BookmarksContext);
 
     useEffect(() => {
         setTagsOptions([]);
@@ -45,12 +46,13 @@ export default function FormNewBookmark({ open, onClose, tags }: FormNewBookmark
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        setNewBookmark(null);
-        post('/bookmarks', {
+        setSavedBookmark(null);
+        post(route('bookmarks.store'), {
             preserveScroll: true,
             onSuccess: (page) => {
-                if (page.props.new_bookmark) {
-                    setNewBookmark(page.props.new_bookmark);
+                if (page.props?.flash?.saved_bookmark) {
+                    const savedBookmark = page.props.flash.saved_bookmark as Bookmark;
+                    setSavedBookmark(savedBookmark);
                 }
                 reset();
                 onClose();

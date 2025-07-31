@@ -15,6 +15,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('bookmarks', [BookmarksController::class, 'index'])->name('bookmarks');
     Route::post('bookmarks', [BookmarksController::class, 'store'])->name('bookmarks.store');
+    Route::get('favorites', [BookmarksController::class, 'indexFavorites'])->name('favorites');
     Route::get('archive', [BookmarksController::class, 'indexArchive'])->name('bookmarks.archive');
     Route::get('search', [BookmarksController::class, 'indexSearch'])->name('bookmarks.search');
     Route::patch('bookmarks/{bookmark}', [BookmarksController::class, 'update'])->name('bookmarks.update');
@@ -26,7 +27,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('search-by-tags', [TagsController::class, 'getBookmarksByTags'])->name('search-by-tags');
     Route::get('tags/index', [TagsController::class, 'getTagsByCount'])->name('tags.index');
     Route::get('tags/all', [TagsController::class, 'getAllTags'])->name('tags.all');
-    Route::get('favorites', [BookmarksController::class, 'getFavorites'])->name('favorites');
     Route::get('collections', [CollectionController::class, 'index'])->name('collections');
     Route::get('collections/list', [CollectionController::class, 'list'])->name('collections.list');
     Route::post('collections', [CollectionController::class, 'store'])->name('collections');
