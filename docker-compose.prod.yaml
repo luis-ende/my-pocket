@@ -11,8 +11,7 @@ services:
     volumes:
       - caddy_data:/data
       - caddy_config:/config
-      - ./storage/app/public/media:/app/storage/app/public/media
-      - ./storage/app/backups:/app/storage/app/backups
+      - ./storage/app:/app/storage/app
     networks:
       - mypocket
     depends_on:
