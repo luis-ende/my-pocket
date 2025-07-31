@@ -4,7 +4,8 @@ import AppLayout from '@/layouts/app-layout';
 import type { Bookmark, BreadcrumbItem, CursorPaginatedData, Stats } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { Archive, Bookmark as BookmarkIcon, ChartNetwork, Glasses, LibraryBig, Star, Tags } from 'lucide-react';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import BookmarksContext from '@/contexts/bookmarks-context';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -21,6 +22,15 @@ export default function Dashboard() {
     const { stats } = usePage<{
         stats: Stats;
     }>().props;
+
+    const { savedBookmark } = useContext(BookmarksContext);
+    useEffect(() => {
+        if (savedBookmark) {
+            if (savedBookmark.is_new == true && !savedBookmark.checked) {
+                setToReadBookmarks((prev) => (!prev.find((b) => b.id === savedBookmark.id) ? [savedBookmark, ...prev] : prev));
+            }
+        }
+    }, [savedBookmark]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

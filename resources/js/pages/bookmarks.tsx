@@ -18,8 +18,8 @@ export default function Bookmarks() {
     }>().props;
 
     const [bookmarks, setBookmarks] = useState<Bookmark[]>(initialBookmarks.data);
-    const { savedBookmark } = useContext(BookmarksContext);
 
+    const { savedBookmark } = useContext(BookmarksContext);
     useEffect(() => {
         if (savedBookmark) {
             if (savedBookmark.is_new == true) {
