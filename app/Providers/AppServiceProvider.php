@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Bookmark;
+use App\Models\Scopes\BookmarkNotArchivedScope;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,6 +24,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Route::bind('bookmark', function ($value) {
+            return Bookmark::withoutGlobalScope(BookmarkNotArchivedScope::class)
+                ->where('id', $value)
+                ->firstOrFail();
+        });
+
         if (app()->environment('production') &&
             request()->header('X-Forwarded-Proto') === 'https') {
             URL::forceScheme('https');
