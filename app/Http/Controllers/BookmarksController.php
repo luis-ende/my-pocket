@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BookmarkPatchRequest;
+use App\Http\Requests\BookmarkPostRequest;
 use App\Models\Bookmark;
 use App\Models\Scopes\BookmarkNotArchivedScope;
 use App\Services\FetchUrlTitleService;
@@ -76,16 +78,12 @@ class BookmarksController extends Controller
         ]);
     }
 
-    public function store(Request $request,
+    public function store(BookmarkPostRequest $request,
         LinkPreviewImageExtractor $linkPreviewImageExtractor,
         LinkUrlCleanService $linkUrlCleanService)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:400',
-            'url' => 'required|url|max:900',
-            'tags' => 'max:300',
-            'read' => 'boolean',
-        ]);
+
+        $validated = $request->validated();
 
         $validated['url'] = $linkUrlCleanService->cleanTrackingParameters($validated['url']);
         $validated['checked'] = $validated['read'] ?? true;
@@ -111,7 +109,7 @@ class BookmarksController extends Controller
         return redirect()->back()->with('error', 'Bookmark couldn\'t be created.');
     }
 
-    public function update(Request $request, Bookmark $bookmark, LinkPreviewImageExtractor $linkPreviewImageExtractor)
+    public function update(BookmarkPatchRequest $request, Bookmark $bookmark, LinkPreviewImageExtractor $linkPreviewImageExtractor)
     {
         $referer = $request->header('referer');
         if ($referer) {
@@ -122,11 +120,7 @@ class BookmarksController extends Controller
             $path = strtok($request->path(), '?');
         }
 
-        $validated = $request->validate([
-            'tags' => 'max:300',
-            'read' => 'boolean',
-            // 'notes' => 'string|max:300',
-        ]);
+        $validated = $request->validated();
 
         try {
             Bookmark::withoutGlobalScopes()
