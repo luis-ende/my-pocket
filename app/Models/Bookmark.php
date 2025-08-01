@@ -12,6 +12,7 @@ use Laravel\Scout\Attributes\SearchUsingPrefix;
 use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 #[ScopedBy([BookmarkNotArchivedScope::class])]
 class Bookmark extends Model implements HasMedia
@@ -60,7 +61,16 @@ class Bookmark extends Model implements HasMedia
     protected function previewImageUrl(): Attribute
     {
         return new Attribute(
-            get: fn () => $this->getFirstMediaUrl('preview')
+            get: fn () => $this->getFirstMedia('preview')
+                ?->getUrl('thumb-cropped'),
         );
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('thumb-cropped')
+            ->nonOptimized()
+            ->performOnCollections('preview')
+            ->nonQueued();
     }
 }
