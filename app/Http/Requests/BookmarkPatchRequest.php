@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\BookmarkRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class BookmarkPatchRequest extends FormRequest
@@ -22,9 +23,7 @@ class BookmarkPatchRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'tags' => 'max:300',
-            'read' => 'boolean',
-            // 'notes' => 'string|max:300',
+            ...BookmarkRules::base(),
         ];
     }
 }

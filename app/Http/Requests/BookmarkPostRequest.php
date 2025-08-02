@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\BookmarkRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class BookmarkPostRequest extends FormRequest
@@ -19,8 +20,7 @@ class BookmarkPostRequest extends FormRequest
         return [
             'title' => 'required|string|max:400',
             'url' => 'required|url|max:900|unique:bookmarks,url',
-            'tags' => 'max:300',
-            'read' => 'boolean',
+            ...BookmarkRules::base(),
         ];
     }
 
