@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Scopes\BookmarkNotArchivedScope;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Laravel\Scout\Attributes\SearchUsingFullText;
@@ -17,7 +18,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 #[ScopedBy([BookmarkNotArchivedScope::class])]
 class Bookmark extends Model implements HasMedia
 {
-    use InteractsWithMedia, Searchable;
+    use HasFactory, InteractsWithMedia, Searchable;
 
     protected $fillable = [
         'title',
