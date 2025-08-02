@@ -18,18 +18,18 @@ export default function SearchByTags() {
     const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
     const [rowSelection, setRowSelection] = useState({});
 
-    const loadTags = () => {
-        fetch('/tags/index')
-            .then((res) => {
-                if (!res.ok) throw new Error('Failed to load tags');
-                return res.json();
-            })
-            .then((data) => setTags(data.tags))
-            .catch(() => setTags([]));
-    };
-
     useEffect(() => {
-        loadTags();
+        const loadTags = async () => {
+            fetch('/tags/index')
+                .then((res) => {
+                    if (!res.ok) throw new Error('Failed to load tags');
+                    return res.json();
+                })
+                .then((data) => setTags(data.tags))
+                .catch(() => setTags([]));
+        };
+
+        void loadTags();
     }, []);
 
     useEffect(() => {
@@ -39,23 +39,27 @@ export default function SearchByTags() {
             return;
         }
 
-        const selectedTags = Object.keys(rowSelection).map((r) => tags[Number(r)].id);
-        const params = new URLSearchParams();
-        selectedTags.forEach((tagId) => params.append('tags[]', tagId.toString()));
-        const queryString = params.toString();
-        const url = `/search-by-tags?${queryString}`;
+        const loadBookmarks = async () => {
+            const selectedTags = Object.keys(rowSelection).map((r) => tags[Number(r)].id);
+            const params = new URLSearchParams();
+            selectedTags.forEach((tagId) => params.append('tags[]', tagId.toString()));
+            const queryString = params.toString();
+            const url = `/search-by-tags?${queryString}`;
 
-        router.visit(url, {
-            method: 'get',
-            preserveState: true,
-            only: ['bookmarks'],
-            onSuccess: ({ props }) => {
-                const bookmarks = props.bookmarks as CursorPaginatedData<Bookmark>;
-                bookmarks.tagsQueryString = queryString;
-                setInitialBookmarks(bookmarks);
-                setBookmarks(bookmarks.data);
-            },
-        });
+            router.visit(url, {
+                method: 'get',
+                preserveState: true,
+                only: ['bookmarks'],
+                onSuccess: ({ props }) => {
+                    const bookmarks = props.bookmarks as CursorPaginatedData<Bookmark>;
+                    bookmarks.tagsQueryString = queryString;
+                    setInitialBookmarks(bookmarks);
+                    setBookmarks(bookmarks.data);
+                },
+            });
+        }
+
+        void loadBookmarks();
     }, [rowSelection, tags]);
 
     return (
