@@ -13,7 +13,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('bookmarks', [BookmarksController::class, 'index'])->name('bookmarks');
+    Route::get('bookmarks', [BookmarksController::class, 'index'])->name('bookmarks.index');
     Route::post('bookmarks', [BookmarksController::class, 'store'])->name('bookmarks.store');
     Route::get('favorites', [BookmarksController::class, 'indexFavorites'])->name('favorites');
     Route::get('archive', [BookmarksController::class, 'indexArchive'])->name('bookmarks.archive');
