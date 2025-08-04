@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use App\Models\Scopes\BookmarkNotArchivedScope;
+use App\Services\LinkPreviewImageExtractor;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Log;
 use Laravel\Scout\Attributes\SearchUsingFullText;
 use Laravel\Scout\Attributes\SearchUsingPrefix;
 use Laravel\Scout\Searchable;
@@ -73,5 +75,17 @@ class Bookmark extends Model implements HasMedia
             ->nonOptimized()
             ->performOnCollections('preview')
             ->nonQueued();
+    }
+
+    public function savePreviewImage(LinkPreviewImageExtractor $linkPreviewImageExtractor): void
+    {
+        try {
+            $imageUrl = $linkPreviewImageExtractor->extractPreviewImage($this->url);
+            if (! empty($imageUrl)) {
+                $this->addMediaFromUrl($imageUrl)->toMediaCollection('preview');
+            }
+        } catch (\Throwable $e) {
+            Log::error("Fetch bookmark ({$this->url}) preview image failed with message: {$e->getMessage()}");
+        }
     }
 }

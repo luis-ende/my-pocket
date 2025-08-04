@@ -90,11 +90,7 @@ class BookmarksController extends Controller
 
         DB::transaction(function () use ($linkPreviewImageExtractor, $validated) {
             $bookmark = Bookmark::create($validated);
-
-            $imageUrl = $linkPreviewImageExtractor->extractPreviewImage($validated['url']);
-            if (! empty($imageUrl)) {
-                $bookmark->addMediaFromUrl($imageUrl)->toMediaCollection('preview');
-            }
+            $bookmark->savePreviewImage($linkPreviewImageExtractor);
 
             $savedBookmark = array_merge($bookmark->toArray(), [
                 'is_new' => true,
@@ -130,10 +126,7 @@ class BookmarksController extends Controller
                 ]);
 
             if (! $bookmark->is_broken_link && $bookmark->getMedia('preview')->isEmpty()) {
-                $imageUrl = $linkPreviewImageExtractor->extractPreviewImage($bookmark->url);
-                if (! empty($imageUrl)) {
-                    $bookmark->addMediaFromUrl($imageUrl)->toMediaCollection('preview');
-                }
+                $bookmark->savePreviewImage($linkPreviewImageExtractor);
             }
 
             $savedBookmark = array_merge($bookmark->refresh()->toArray(), [
