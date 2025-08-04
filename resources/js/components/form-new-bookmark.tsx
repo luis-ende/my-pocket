@@ -1,9 +1,16 @@
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import BookmarksContext from '@/contexts/bookmarks-context';
 import { useForm } from '@inertiajs/react';
 import React, { useContext, useEffect, useState } from 'react';
@@ -18,11 +25,10 @@ interface FormNewBookmarkProps {
 }
 
 export default function FormNewBookmark({ open, onClose, tags }: FormNewBookmarkProps) {
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors } = useForm({
         title: '',
         url: '',
         tags: '',
-        notes: '',
         read: false,
     });
 
@@ -30,6 +36,16 @@ export default function FormNewBookmark({ open, onClose, tags }: FormNewBookmark
     const [tagsOptions, setTagsOptions] = useState<object[]>([]);
     const [titleLoading, setTitleLoading] = useState(false);
     const { setSavedBookmark } = useContext(BookmarksContext);
+
+    useEffect(() => {
+        if (open) {
+            setData('title', '');
+            setData('url', '');
+            setData('tags', '');
+            setData('read', false);
+            setSelectedOptions([]);
+        }
+    }, [open, setData]);
 
     useEffect(() => {
         setTagsOptions([]);
@@ -54,15 +70,12 @@ export default function FormNewBookmark({ open, onClose, tags }: FormNewBookmark
                     const savedBookmark = page.props.flash.saved_bookmark as Bookmark;
                     setSavedBookmark(savedBookmark);
                 }
-                reset();
                 onClose();
             },
         });
     };
 
     const handleDialogOpenChange = (value: boolean) => {
-        reset();
-        setSelectedOptions([]);
         return !value && onClose();
     };
 
@@ -100,6 +113,7 @@ export default function FormNewBookmark({ open, onClose, tags }: FormNewBookmark
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Add Bookmark</DialogTitle>
+                    <DialogDescription>Create a new bookmark with:</DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <fieldset>
@@ -143,14 +157,9 @@ export default function FormNewBookmark({ open, onClose, tags }: FormNewBookmark
                         />
                         {errors.tags && <p className="text-sm text-red-500">{errors.tags}</p>}
                     </fieldset>
-                    <fieldset>
-                        <Label htmlFor="notes">Notes</Label>
-                        <Textarea id="notes" name="notes" value={data.notes} onChange={(e) => setData('notes', e.target.value)} />
-                        {errors.notes && <p className="text-sm text-red-500">{errors.notes}</p>}
-                    </fieldset>
                     <fieldset className="flex items-center gap-3">
                         <Checkbox id="read" name="read" onCheckedChange={(e) => setData('read', e)} />
-                        <Label htmlFor="read">Read</Label>
+                        <Label htmlFor="read">Marked as read</Label>
                         {errors.read && <p className="text-sm text-red-500">{errors.read}</p>}
                     </fieldset>
                     <DialogFooter>

@@ -3,7 +3,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Bookmark } from '@/types';
 import { useForm } from '@inertiajs/react';
 import React, { useContext, useEffect, useRef, useState } from 'react';
@@ -18,10 +17,9 @@ interface FormEditBookmarkProps {
 }
 
 export default function FormEditBookmark({ open, onClose, bookmark, tags }: FormEditBookmarkProps) {
-    const { data, setData, patch, processing, errors, reset } = useForm({
+    const { setData, patch, processing, errors, reset } = useForm({
         url: bookmark?.url,
         tags: bookmark?.tags,
-        notes: '',
         read: bookmark?.checked,
     });
 
@@ -97,14 +95,9 @@ export default function FormEditBookmark({ open, onClose, bookmark, tags }: Form
                         />
                         {errors.tags && <p className="text-sm text-red-500">{errors.tags}</p>}
                     </fieldset>
-                    <fieldset>
-                        <Label htmlFor="notes">Notes</Label>
-                        <Textarea id="notes" value={data.notes} onChange={(e) => setData('notes', e.target.value)} />
-                        {errors.notes && <p className="text-sm text-red-500">{errors.notes}</p>}
-                    </fieldset>
                     <fieldset className="flex items-center gap-3">
                         <Checkbox id="read" defaultChecked={bookmark?.checked} onCheckedChange={(e) => setData('read', e)} />
-                        <Label htmlFor="read">Read</Label>
+                        <Label htmlFor="read">Marked as read</Label>
                         {errors.read && <p className="text-sm text-red-500">{errors.read}</p>}
                     </fieldset>
                     <DialogFooter>
