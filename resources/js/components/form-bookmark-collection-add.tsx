@@ -40,6 +40,7 @@ export default function FormBookmarkCollectionAdd({ open, onClose, bookmark }: F
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         post(route('bookmarks.addToCollection'), {
+            preserveScroll: true,
             onSuccess: () => {
                 reset();
                 onClose();
