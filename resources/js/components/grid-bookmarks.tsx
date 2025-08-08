@@ -27,6 +27,7 @@ type GridBookmarksProps = {
 export default function GridBookmarks({ initialBookmarks, bookmarks, setBookmarks, infiniteScroll }: GridBookmarksProps) {
     const { url } = usePage();
     const [nextPage, setNextPage] = useState(initialBookmarks.next_page_url);
+    const [perPage, setPerPage] = useState(initialBookmarks.per_page);
     const [tagsQueryString] = useState(initialBookmarks?.tagsQueryString);
     const [loading, setLoading] = useState(false);
     const lastItemRef = useRef<HTMLDivElement | null>(null);
@@ -193,6 +194,7 @@ export default function GridBookmarks({ initialBookmarks, bookmarks, setBookmark
                 const newBookmarks = props.bookmarks.data;
                 setBookmarks((prev) => [...prev, ...newBookmarks]);
                 setNextPage(props.bookmarks.next_page_url);
+                setPerPage(props.bookmarks.per_page);
 
                 // Scroll to the first new item after DOM updates
                 setTimeout(() => {
@@ -388,7 +390,7 @@ export default function GridBookmarks({ initialBookmarks, bookmarks, setBookmark
                     return (
                         <CardBookmark
                             key={bookmark.id}
-                            parentRef={index === bookmarks.length - 1 ? lastItemRef : null}
+                            parentRef={index === ((bookmarks.length - 1) - perPage) ? lastItemRef : null}
                             bookmark={bookmark}
                             handleActionsClick={handleOpenDropDown}
                         />
