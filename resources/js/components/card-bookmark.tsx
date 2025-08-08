@@ -42,7 +42,11 @@ export default function CardBookmark({ bookmark, parentRef, handleActionsClick }
             <CardContent className="mt-0 px-3 pt-0">
                 <div className="flex h-14 flex-row flex-wrap items-center gap-x-0.5 gap-y-0.5">
                     {bookmark.tags !== '' &&
-                        bookmark.tags?.split('|').map((tag) => <Badge className="h-5 bg-gray-900 pt-0 text-center">{tag}</Badge>)}
+                        bookmark.tags?.split('|').map((tag) =>
+                            <a key={tag} href={route('search-by-tags') + '?tags%5B0%5D=' + tag}>
+                                <Badge className="h-5 bg-gray-900 pt-0 text-center">{tag}</Badge>
+                            </a>
+                        )}
                 </div>
             </CardContent>
             <CardFooter className="px-10">

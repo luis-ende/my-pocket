@@ -4,6 +4,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, Bookmark, CursorPaginatedData, Tag } from '@/types';
 import { Head, router } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -82,13 +83,26 @@ export default function SearchByTags() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="gap- 4 flex h-full flex-1 flex-col rounded-xl p-4">
+            <div className="gap-4 flex h-full flex-1 flex-col rounded-xl p-4">
                 <div className="flex flex-col md:flex-row">
                     <div className="relative overflow-auto md:flex-1/6">
                         <DataTableTags data={tags} rowSelection={rowSelection} setRowSelection={setRowSelection} />
                     </div>
 
                     <div className="md:flex-5/6">
+                        {rowSelection && Object.keys(rowSelection).length > 0 && (
+                            <div className="text-sm text-gray-600 text-center my-0 py-0">
+                                Tags: { Object.keys(rowSelection).map((r) => {
+                                    const tagId = tags[Number(r)].id;
+                                    return (
+                                        <a key={tagId} href={route('search-by-tags') + '?tags%5B0%5D=' + tagId}>
+                                            <Badge className="h-5 mx-1 bg-gray-600 pt-0 text-center">{tagId} ({tags[Number(r)].count})</Badge>
+                                        </a>
+                                    );
+                                })}
+                            </div>
+                        )}
+
                         {initialBookmarks && bookmarks && bookmarks.length > 0 && (
                             <GridBookmarks
                                 initialBookmarks={initialBookmarks}
