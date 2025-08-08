@@ -107,6 +107,7 @@ export type Stats = {
     to_read_count: number;
     favorites_count: number;
     archived_count: number;
+    broken_count: number;
 };
 
 export interface Collection {

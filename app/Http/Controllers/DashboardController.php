@@ -56,6 +56,13 @@ class DashboardController extends Controller
                 ->count();
         });
 
+        $brokenCount = Cache::remember('broken_count', 86400, static function () {
+            return Bookmark::query()
+                ->where('is_broken_link', true)
+                ->withoutGlobalScope(BookmarkNotArchivedScope::class)
+                ->count();
+        });
+
         return [
             'bookmarks_count' => $bookmarksCount,
             'tags_count' => $tagsCount,
@@ -63,6 +70,7 @@ class DashboardController extends Controller
             'to_read_count' => $toReadCount,
             'favorites_count' => $favoritesCount,
             'archived_count' => $archivedCount,
+            'broken_count' => $brokenCount,
         ];
     }
 }

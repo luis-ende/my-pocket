@@ -3,7 +3,7 @@ import { Icon } from '@/components/icon';
 import AppLayout from '@/layouts/app-layout';
 import type { Bookmark, BreadcrumbItem, CursorPaginatedData, Stats } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import { Archive, Bookmark as BookmarkIcon, ChartNetwork, Glasses, LibraryBig, Star, Tags } from 'lucide-react';
+import { Archive, Bookmark as BookmarkIcon, ChartNetwork, Glasses, LibraryBig, Star, Tags, Unlink } from 'lucide-react';
 import { useContext, useEffect, useState } from 'react';
 import BookmarksContext from '@/contexts/bookmarks-context';
 
@@ -74,6 +74,11 @@ export default function Dashboard() {
                             <Icon iconNode={Archive} className="size-6 opacity-70" />
                             <div className="mt-1 text-sm font-bold">{stats.archived_count}</div>
                             <div>Archived</div>
+                        </div>
+                        <div className="mb-5 flex h-28 w-28 flex-col items-center rounded-lg border border-gray-200 p-5">
+                            <Icon iconNode={Unlink} className="size-6 opacity-70" />
+                            <div className="mt-1 text-sm font-bold">{stats.broken_count}</div>
+                            <div>Broken</div>
                         </div>
                     </div>
                 </div>
