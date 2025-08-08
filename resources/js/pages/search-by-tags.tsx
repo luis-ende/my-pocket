@@ -18,6 +18,19 @@ export default function SearchByTags() {
     const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
     const [rowSelection, setRowSelection] = useState({});
 
+    const setSelection= (fetchTags: Tag[]) => {
+        const url = new URL(window.location.href);
+        const urlParams = new URLSearchParams(new URL(url).search);
+        const selection = {};
+        for (const [key, value] of urlParams) {
+            if (key.startsWith('tags[')) {
+                const index = fetchTags.findIndex(t => t.id === value);
+                selection[index] = true;
+            }
+        }
+        setRowSelection(selection);
+    }
+
     useEffect(() => {
         const loadTags = async () => {
             fetch('/tags/index')
@@ -25,7 +38,11 @@ export default function SearchByTags() {
                     if (!res.ok) throw new Error('Failed to load tags');
                     return res.json();
                 })
-                .then((data) => setTags(data.tags))
+                .then((data) => {
+                    const fetchTags = data.tags;
+                    setTags(fetchTags);
+                    setSelection(fetchTags);
+                })
                 .catch(() => setTags([]));
         };
 
