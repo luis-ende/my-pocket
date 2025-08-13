@@ -1,4 +1,4 @@
-import GridBookmarks from '@/components/grid-bookmarks';
+import ViewBookmarks from '@/components/view-bookmarks';
 import AppLayout from '@/layouts/app-layout';
 import type { Bookmark, BreadcrumbItem, Collection, CursorPaginatedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
@@ -25,7 +25,12 @@ export default function Collections() {
                 <div className="font-bold">{collection.name}</div>
                 <div className="text-sm text-gray-600">{collection.description}</div>
             </div>
-            <GridBookmarks initialBookmarks={initialBookmarks} bookmarks={bookmarks} setBookmarks={setBookmarks} infiniteScroll={true} />
+            <ViewBookmarks
+                initialBookmarks={initialBookmarks}
+                bookmarks={bookmarks}
+                setBookmarks={setBookmarks}
+                infiniteScroll={true}
+            />
         </AppLayout>
     );
 }

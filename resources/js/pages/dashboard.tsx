@@ -1,4 +1,4 @@
-import GridBookmarks from '@/components/grid-bookmarks';
+import ViewBookmarks from '@/components/view-bookmarks';
 import { Icon } from '@/components/icon';
 import AppLayout from '@/layouts/app-layout';
 import type { Bookmark, BreadcrumbItem, CursorPaginatedData, Stats } from '@/types';
@@ -92,7 +92,7 @@ export default function Dashboard() {
                         </div>
                     </div>
                     {toReadBookmarks && (
-                        <GridBookmarks
+                        <ViewBookmarks
                             initialBookmarks={initialBookmarks}
                             bookmarks={toReadBookmarks}
                             setBookmarks={setToReadBookmarks}

@@ -1,4 +1,4 @@
-import GridBookmarks from '@/components/grid-bookmarks';
+import ViewBookmarks from '@/components/view-bookmarks';
 import BookmarksContext from '@/contexts/bookmarks-context';
 import AppLayout from '@/layouts/app-layout';
 import type { Bookmark, BreadcrumbItem, CursorPaginatedData } from '@/types';
@@ -31,7 +31,7 @@ export default function Bookmarks() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="My Bookmarks" />
-            <GridBookmarks initialBookmarks={initialBookmarks} bookmarks={bookmarks} setBookmarks={setBookmarks} infiniteScroll={true} />
+            <ViewBookmarks initialBookmarks={initialBookmarks} bookmarks={bookmarks} setBookmarks={setBookmarks} infiniteScroll={true} />
         </AppLayout>
     );
 }

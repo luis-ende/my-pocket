@@ -36,6 +36,7 @@ class Bookmark extends Model implements HasMedia
 
     protected $appends = [
         'preview_image_url',
+        'url_host',
     ];
 
     public function collections(): BelongsToMany
@@ -66,6 +67,13 @@ class Bookmark extends Model implements HasMedia
         return new Attribute(
             get: fn () => $this->getFirstMedia('preview')
                 ?->getUrl('thumb-cropped'),
+        );
+    }
+
+    protected function urlHost(): Attribute
+    {
+        return new Attribute(
+            get: fn () => preg_replace('/^www\./i', '', parse_url($this->url, PHP_URL_HOST)),
         );
     }
 

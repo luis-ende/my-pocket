@@ -1,4 +1,4 @@
-import GridBookmarks from '@/components/grid-bookmarks';
+import ViewBookmarks from '@/components/view-bookmarks';
 import AppLayout from '@/layouts/app-layout';
 import type { Bookmark, BreadcrumbItem, CursorPaginatedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
@@ -21,7 +21,12 @@ export default function Archive() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Archive" />
-            {<GridBookmarks initialBookmarks={initialBookmarks} bookmarks={bookmarks} setBookmarks={setBookmarks} infiniteScroll={true} />}
+            <ViewBookmarks
+                initialBookmarks={initialBookmarks}
+                bookmarks={bookmarks}
+                setBookmarks={setBookmarks}
+                infiniteScroll={true}
+            />
         </AppLayout>
     );
 }

@@ -13,8 +13,6 @@ interface CardBookmarkProps {
 }
 
 export default function CardBookmark({ bookmark, parentRef, handleActionsClick }: CardBookmarkProps) {
-    const url = new URL(bookmark.url);
-    const bookmarkUrlHostname = url.hostname;
     const bookmarkCreatedAt = new Date(bookmark.created_at).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
@@ -35,7 +33,7 @@ export default function CardBookmark({ bookmark, parentRef, handleActionsClick }
                     <CardTitle className="line-clamp-3 h-16 px-3 pt-1 text-left text-sm">{bookmark.title}</CardTitle>
                 </a>
                 <CardDescription className="h-5 px-3 text-left text-xs">
-                    <span className="block">{bookmarkUrlHostname}</span>
+                    <span className="block">{bookmark.url_host}</span>
                     <span className="mt-1 block text-end">{bookmarkCreatedAt}</span>
                 </CardDescription>
             </CardHeader>

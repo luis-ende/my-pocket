@@ -3,7 +3,6 @@ import CardBookmark from '@/components/card-bookmark';
 import FormBookmarkCollectionAdd from '@/components/form-bookmark-collection-add';
 import FormEditBookmark from '@/components/form-edit-bookmark';
 import { Icon } from '@/components/icon';
-import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -12,25 +11,19 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Bookmark, CursorPaginatedData, PaginatedData } from '@/types';
+import { Bookmark } from '@/types';
 import { router, usePage } from '@inertiajs/react';
 import { Archive, ArchiveRestore, BookOpenCheck, Copy, Glasses, Link, ListPlus, SquarePen, Star, StarOff, Trash2 } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { RefObject, useEffect, useState } from 'react';
 import { Toaster, toast } from 'sonner';
 
 type GridBookmarksProps = {
-    initialBookmarks: CursorPaginatedData<Bookmark> | PaginatedData<Bookmark>;
     bookmarks: Bookmark[];
-    setBookmarks: React.Dispatch<React.SetStateAction<Bookmark[]>>;
-    infiniteScroll: boolean;
+    lastItemRef: RefObject<HTMLDivElement | null> | null;
+    perPage: number;
 };
-export default function GridBookmarks({ initialBookmarks, bookmarks, setBookmarks, infiniteScroll }: GridBookmarksProps) {
+export default function GridBookmarks({ bookmarks, lastItemRef, perPage }: GridBookmarksProps) {
     const { url } = usePage();
-    const [nextPage, setNextPage] = useState(initialBookmarks.next_page_url);
-    const [perPage, setPerPage] = useState(initialBookmarks.per_page);
-    const [tagsQueryString] = useState(initialBookmarks?.tagsQueryString);
-    const [loading, setLoading] = useState(false);
-    const lastItemRef = useRef<HTMLDivElement | null>(null);
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [positionDropDown, setPositionDropDown] = useState({ x: 0, y: 0 });
@@ -173,36 +166,6 @@ export default function GridBookmarks({ initialBookmarks, bookmarks, setBookmark
         if (index !== -1) {
             bookmarks.splice(index, 1);
         }
-    };
-
-    const loadMore = () => {
-        if (!nextPage || loading) return;
-
-        setLoading(true);
-
-        let fullNextPageUrl = nextPage;
-        if (tagsQueryString && tagsQueryString.length > 0) {
-            fullNextPageUrl += '&' + tagsQueryString;
-        }
-
-        router.visit(fullNextPageUrl, {
-            method: 'get',
-            preserveState: true,
-            preserveScroll: true,
-            only: ['bookmarks'],
-            onSuccess: ({ props }) => {
-                const newBookmarks = props.bookmarks.data;
-                setBookmarks((prev) => [...prev, ...newBookmarks]);
-                setNextPage(props.bookmarks.next_page_url);
-                setPerPage(props.bookmarks.per_page);
-
-                // Scroll to the first new item after DOM updates
-                setTimeout(() => {
-                    lastItemRef.current?.scrollIntoView({ behavior: 'smooth' });
-                }, 50);
-            },
-            onFinish: () => setLoading(false),
-        });
     };
 
     const handleOpenDropDown = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -397,14 +360,6 @@ export default function GridBookmarks({ initialBookmarks, bookmarks, setBookmark
                     );
                 })}
             </div>
-
-            {infiniteScroll && nextPage && (
-                <div className="mb-6 text-center">
-                    <Button className="w-60" variant="default" onClick={loadMore} disabled={loading}>
-                        {loading ? 'Loading...' : 'Load more...'}
-                    </Button>
-                </div>
-            )}
         </div>
     );
 }

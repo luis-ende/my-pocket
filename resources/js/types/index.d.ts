@@ -51,6 +51,7 @@ export interface Bookmark {
     is_fav: boolean;
     is_broken_link: boolean;
     preview_image_url?: string;
+    url_host: string;
     is_archived?: boolean;
     created_at: string;
 }
