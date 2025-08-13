@@ -38,11 +38,10 @@ class CollectionController extends Controller
     public function getCollectionBookmarks(int $collectionId)
     {
         $collection = Collection::query()
-            ->select('id', 'name', 'description')
+            ->select(['id', 'name', 'description'])
             ->findOrFail($collectionId);
 
         $bookmarks = Bookmark::query()
-            ->select('bookmarks.id', 'title', 'url', 'tags', 'checked', 'is_fav')
             ->whereRelation('collections', 'bookmark_collection.collection_id', $collectionId)
             ->latest()
             ->cursorPaginate(8);
