@@ -1,8 +1,8 @@
-import GridBookmarks from '@/components/grid-bookmarks';
 import AppLayout from '@/layouts/app-layout';
 import type { Bookmark, BreadcrumbItem, PaginatedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import React, { useMemo, useState } from 'react';
+import ViewBookmarks from '@/components/view-bookmarks';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -119,7 +119,7 @@ export default function Search() {
 
             {/* Search results */}
             {bookmarks?.data?.length > 0 ? (
-                <GridBookmarks initialBookmarks={bookmarks} bookmarks={bookmarks.data} setBookmarks={null} infiniteScroll={false} />
+                <ViewBookmarks initialBookmarks={bookmarks} bookmarks={bookmarks.data} setBookmarks={null} infiniteScroll={false} />
             ) : searchTerm === '' ? (
                 <div></div>
             ) : (

@@ -1,11 +1,11 @@
 import ViewBookmarks from '@/components/view-bookmarks';
 import { Icon } from '@/components/icon';
 import AppLayout from '@/layouts/app-layout';
-import type { Bookmark, BreadcrumbItem, CursorPaginatedData, Stats } from '@/types';
+import type { BreadcrumbItem, Stats } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { Archive, Bookmark as BookmarkIcon, ChartNetwork, Glasses, LibraryBig, Star, Tags, Unlink } from 'lucide-react';
-import { useContext, useEffect, useState } from 'react';
-import BookmarksContext from '@/contexts/bookmarks-context';
+import useNewBookmark from '@/hooks/use-new-bookmark';
+import useLoadViewBookmarks from '@/hooks/use-load-view-bookmarks';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -15,22 +15,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Dashboard() {
-    const { bookmarks: initialBookmarks } = usePage<{
-        bookmarks: CursorPaginatedData<Bookmark>;
-    }>().props;
-    const [toReadBookmarks, setToReadBookmarks] = useState(initialBookmarks.data);
+    const { initialBookmarks, bookmarks: toReadBookmarks, setBookmarks: setToReadBookmarks } = useLoadViewBookmarks();
     const { stats } = usePage<{
         stats: Stats;
     }>().props;
 
-    const { savedBookmark } = useContext(BookmarksContext);
-    useEffect(() => {
-        if (savedBookmark) {
-            if (savedBookmark.is_new == true && !savedBookmark.checked) {
-                setToReadBookmarks((prev) => (!prev.find((b) => b.id === savedBookmark.id) ? [savedBookmark, ...prev] : prev));
-            }
-        }
-    }, [savedBookmark]);
+    useNewBookmark(setToReadBookmarks);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

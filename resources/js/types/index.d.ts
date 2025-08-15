@@ -54,6 +54,7 @@ export interface Bookmark {
     url_host: string;
     is_archived?: boolean;
     created_at: string;
+    is_new?: boolean;
 }
 
 export interface Tag {
@@ -115,4 +116,11 @@ export interface Collection {
     id: number;
     name: string;
     description: string;
+}
+
+export type BookmarksView = {
+    savedBookmark?: Bookmark | null;
+    setSavedBookmark?: Dispatch<SetStateAction<Bookmark | null>>;
+    selectedBookmarks: Bookmark[];
+    setSelectedBookmarks: Dispatch<SetStateAction<Bookmark[]>>;
 }

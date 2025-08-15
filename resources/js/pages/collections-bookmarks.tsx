@@ -1,8 +1,8 @@
 import ViewBookmarks from '@/components/view-bookmarks';
 import AppLayout from '@/layouts/app-layout';
-import type { Bookmark, BreadcrumbItem, Collection, CursorPaginatedData } from '@/types';
+import type { BreadcrumbItem, Collection } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import useLoadViewBookmarks from '@/hooks/use-load-view-bookmarks';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -13,10 +13,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Collections() {
     const { collection } = usePage<{ collection: Collection }>().props;
-    const { bookmarks: initialBookmarks } = usePage<{
-        bookmarks: CursorPaginatedData<Bookmark>;
-    }>().props;
-    const [bookmarks, setBookmarks] = useState(initialBookmarks.data);
+    const { initialBookmarks, bookmarks, setBookmarks } = useLoadViewBookmarks();
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

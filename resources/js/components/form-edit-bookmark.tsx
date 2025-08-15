@@ -7,7 +7,7 @@ import { Bookmark } from '@/types';
 import { useForm } from '@inertiajs/react';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import CreatableSelect from 'react-select/creatable';
-import BookmarksContext from '@/contexts/bookmarks-context';
+import BookmarksViewContext from '@/contexts/bookmarks-view-context';
 
 interface FormEditBookmarkProps {
     open: boolean;
@@ -26,7 +26,7 @@ export default function FormEditBookmark({ open, onClose, bookmark, tags }: Form
     const [selectedOptions, setSelectedOptions] = useState<object[]>([]);
     const [tagsOptions, setTagsOptions] = useState<object[]>([]);
     const inputRef = useRef(null);
-    const { setSavedBookmark } = useContext(BookmarksContext);
+    const { setSavedBookmark } = useContext(BookmarksViewContext);
 
     useEffect(() => {
         setTagsOptions([]);

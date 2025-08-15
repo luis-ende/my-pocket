@@ -1,6 +1,6 @@
 import '../css/app.css';
 
-import BookmarksProvider from '@/providers/bookmarks-provider';
+import BookmarksViewProvider from '@/providers/bookmarks-view-provider';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
@@ -15,9 +15,9 @@ createInertiaApp({
         const root = createRoot(el);
 
         root.render(
-            <BookmarksProvider>
+            <BookmarksViewProvider>
                 <App {...props} />
-            </BookmarksProvider>,
+            </BookmarksViewProvider>,
         );
     },
     progress: {

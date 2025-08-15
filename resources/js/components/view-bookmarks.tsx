@@ -1,6 +1,6 @@
 import { TableBookmarks } from '@/components/table-bookmarks';
 import { Bookmark, CursorPaginatedData, PaginatedData } from '@/types';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import GridBookmarks from '@/components/grid-bookmarks';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LayoutGrid, Table } from 'lucide-react';
@@ -21,6 +21,13 @@ export default function ViewBookmarks({ initialBookmarks, bookmarks, setBookmark
     const tagsQueryString = initialBookmarks?.tagsQueryString;
     const [loading, setLoading] = useState(false);
     const lastItemRef = useRef<HTMLDivElement | HTMLTableRowElement | null>(null);
+    const [activeTab, setActiveTab] = useState(() => {
+        return localStorage.getItem('search-tab') || 'gridView';
+    });
+
+    useEffect(() => {
+        localStorage.setItem('search-tab', activeTab);
+    }, [activeTab]);
 
     const loadMore = useCallback(async () => {
         if (!nextPage || loading) return;
@@ -52,9 +59,13 @@ export default function ViewBookmarks({ initialBookmarks, bookmarks, setBookmark
         });
     }, [loading, nextPage, setBookmarks, tagsQueryString]);
 
+    const handleTabChange = (value: string) => {
+        setActiveTab(value);
+    }
+
     return (
         <div>
-            <Tabs defaultValue="gridView">
+            <Tabs defaultValue={activeTab} onValueChange={handleTabChange}>
                 <TabsList className="mt-5 ml-5">
                     <TabsTrigger value="gridView">
                         <Tooltip>
