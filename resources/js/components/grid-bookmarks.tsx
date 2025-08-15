@@ -14,7 +14,7 @@ import {
 import { Bookmark } from '@/types';
 import { router, usePage } from '@inertiajs/react';
 import { Archive, ArchiveRestore, BookOpenCheck, Copy, Glasses, Link, ListPlus, SquarePen, Star, StarOff, Trash2 } from 'lucide-react';
-import React, { RefObject, useEffect, useState } from 'react';
+import React, { RefObject, useState } from 'react';
 import { Toaster, toast } from 'sonner';
 
 type GridBookmarksProps = {
@@ -41,18 +41,6 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage }: GridB
 
     const [dialogEditOpen, setDialogEditOpen] = useState(false);
     const [dialogCollectionsOpen, setDialogCollectionsOpen] = useState(false);
-
-    const [tags, setTags] = useState([]);
-
-    useEffect(() => {
-        fetch('/tags/all')
-            .then((res) => {
-                if (!res.ok) throw new Error('Failed to load tags');
-                return res.json();
-            })
-            .then((data) => setTags(data.tags))
-            .catch(() => setTags([]));
-    }, []);
 
     const openDeleteDialog = (bookmark: Bookmark) => {
         setDialogDeleteState({
@@ -336,7 +324,6 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage }: GridB
                     onClose={() => {
                         setDialogEditOpen(false);
                     }}
-                    tags={tags}
                 />
             )}
 

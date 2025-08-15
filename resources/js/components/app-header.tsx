@@ -14,8 +14,9 @@ import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, router, usePage } from '@inertiajs/react';
 import { BookmarkPlus, House, Menu, Search } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import AppLogoIcon from './app-logo-icon';
+/*import { NavBookmarks } from '@/components/nav-bookmarks';*/
 
 const mainNavItems: NavItem[] = [
     {
@@ -25,7 +26,7 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
-const rightNavItems: NavItem[] = [
+const leftNavItems: NavItem[] = [
     {
         title: 'Add Bookmark',
         href: '',
@@ -44,24 +45,9 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const { auth } = page.props;
     const getInitials = useInitials();
     const [modalOpen, setModalOpen] = useState(false);
-
-    const [tags, setTags] = useState<object[]>([]);
-
     const params = new URLSearchParams(window.location.search);
     const searchTermParam = params.get('query') ?? '';
     const [searchTerm, setSearchTerm] = useState(decodeURIComponent(searchTermParam));
-
-    useEffect(() => {
-        if (modalOpen) {
-            fetch('/tags/all')
-                .then((res) => {
-                    if (!res.ok) throw new Error('Failed to load tags.');
-                    return res.json();
-                })
-                .then((data) => setTags(data.tags))
-                .catch(() => setTags([]));
-        }
-    }, [modalOpen]);
 
     const onMenuButtonClick = (key: string) => {
         switch (key) {
@@ -80,7 +66,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
 
     return (
         <>
-            <FormNewBookmark open={modalOpen} onClose={() => setModalOpen(false)} tags={tags} />
+            <FormNewBookmark open={modalOpen} onClose={() => setModalOpen(false)} />
 
             <div className="border-sidebar-border/80 fixed z-10 w-full border-b bg-white">
                 <div className="mx-auto flex h-16 items-center px-4 md:max-w-7xl">
@@ -105,20 +91,6 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                                     {item.icon && <Icon iconNode={item.icon} className="h-5 w-5" />}
                                                     <span>{item.title}</span>
                                                 </Link>
-                                            ))}
-                                        </div>
-
-                                        <div className="flex flex-row space-y-4">
-                                            {rightNavItems.map((item, index: number) => (
-                                                <Button
-                                                    key={index}
-                                                    variant="ghost"
-                                                    className="mr-2 h-[34px] w-[34px]"
-                                                    onClick={() => onMenuButtonClick(item.title)}
-                                                >
-                                                    <span className="sr-only">{item.title}</span>
-                                                    {item.icon && <Icon iconNode={item.icon} className="size-7 opacity-80 group-hover:opacity-100" />}
-                                                </Button>
                                             ))}
                                         </div>
                                     </div>
@@ -154,6 +126,22 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                     </div>
 
                     <div className="ml-auto flex items-center space-x-2">
+                        <div className="flex">
+                            {leftNavItems.map((item, index: number) => (
+                                <Tooltip key={index}>
+                                    <TooltipTrigger asChild>
+                                        <Button variant="ghost" className="mr-2 h-[34px] w-[34px] border-1 mr-1" onClick={() => onMenuButtonClick(item.title)}>
+                                            <span className="sr-only">{item.title}</span>
+                                            {item.icon && <Icon iconNode={item.icon} className="size-5 opacity-80 group-hover:opacity-100" />}
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>{item.title}</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            ))}
+                        </div>
+                        {/*<NavBookmarks />*/}
                         <div className="relative flex items-center space-x-1">
                             <Input
                                 id="search"
@@ -167,21 +155,6 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                             <Button variant="ghost" size="icon" className="group h-9 w-9 cursor-pointer" onClick={onSearchClick}>
                                 <Search className="!size-5 opacity-80 group-hover:opacity-100" />
                             </Button>
-                            <div className="hidden lg:flex">
-                                {rightNavItems.map((item, index: number) => (
-                                    <Tooltip key={index}>
-                                        <TooltipTrigger asChild>
-                                            <Button variant="ghost" className="mr-2 h-[34px] w-[34px]" onClick={() => onMenuButtonClick(item.title)}>
-                                                <span className="sr-only">{item.title}</span>
-                                                {item.icon && <Icon iconNode={item.icon} className="size-5 opacity-80 group-hover:opacity-100" />}
-                                            </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>{item.title}</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                ))}
-                            </div>
                         </div>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>

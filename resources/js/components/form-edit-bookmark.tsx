@@ -8,33 +8,25 @@ import { useForm } from '@inertiajs/react';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import CreatableSelect from 'react-select/creatable';
 import BookmarksViewContext from '@/contexts/bookmarks-view-context';
+import useLoadTags from '@/hooks/use-load-tags';
 
 interface FormEditBookmarkProps {
     open: boolean;
     onClose: () => void;
     bookmark: Bookmark;
-    tags: object[];
 }
 
-export default function FormEditBookmark({ open, onClose, bookmark, tags }: FormEditBookmarkProps) {
+export default function FormEditBookmark({ open, onClose, bookmark }: FormEditBookmarkProps) {
     const { setData, patch, processing, errors, reset } = useForm({
         url: bookmark?.url,
         tags: bookmark?.tags,
         read: bookmark?.checked,
     });
 
+    const { tagsOptions } = useLoadTags('/tags/all');
     const [selectedOptions, setSelectedOptions] = useState<object[]>([]);
-    const [tagsOptions, setTagsOptions] = useState<object[]>([]);
     const inputRef = useRef(null);
     const { setSavedBookmark } = useContext(BookmarksViewContext);
-
-    useEffect(() => {
-        setTagsOptions([]);
-        if (tags && tags.length > 0) {
-            const options = tags.map((t) => ({ label: t.tag, value: t.tag, color: '#00B8D9' }));
-            setTagsOptions(options);
-        }
-    }, [tags]);
 
     const handleChange = (selected) => {
         setSelectedOptions(selected);

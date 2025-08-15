@@ -17,14 +17,14 @@ import React, { useContext, useEffect, useState } from 'react';
 import CreatableSelect from 'react-select/creatable';
 import { toast } from 'sonner';
 import { Bookmark } from '@/types';
+import useLoadTags from '@/hooks/use-load-tags';
 
 interface FormNewBookmarkProps {
     open: boolean;
     onClose: () => void;
-    tags: object[];
 }
 
-export default function FormNewBookmark({ open, onClose, tags }: FormNewBookmarkProps) {
+export default function FormNewBookmark({ open, onClose }: FormNewBookmarkProps) {
     const { data, setData, post, processing, errors } = useForm({
         title: '',
         url: '',
@@ -32,8 +32,8 @@ export default function FormNewBookmark({ open, onClose, tags }: FormNewBookmark
         read: false,
     });
 
+    const { tagsOptions } = useLoadTags('/tags/all');
     const [selectedOptions, setSelectedOptions] = useState<object[]>([]);
-    const [tagsOptions, setTagsOptions] = useState<object[]>([]);
     const [titleLoading, setTitleLoading] = useState(false);
     const { setSavedBookmark } = useContext(BookmarksViewContext);
 
@@ -46,14 +46,6 @@ export default function FormNewBookmark({ open, onClose, tags }: FormNewBookmark
             setSelectedOptions([]);
         }
     }, [open, setData]);
-
-    useEffect(() => {
-        setTagsOptions([]);
-        if (tags && tags.length > 0) {
-            const options = tags.map((t) => ({ label: t.tag, value: t.tag, color: '#00B8D9' }));
-            setTagsOptions(options);
-        }
-    }, [tags]);
 
     const handleChange = (selected) => {
         setSelectedOptions(selected);

@@ -2,6 +2,8 @@ import ViewBookmarks from '@/components/view-bookmarks';
 import AppLayout from '@/layouts/app-layout';
 import useNewBookmark from '@/hooks/use-new-bookmark';
 import useLoadViewBookmarks from '@/hooks/use-load-view-bookmarks';
+import { BreadcrumbItem } from '@/types';
+import { Head } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
