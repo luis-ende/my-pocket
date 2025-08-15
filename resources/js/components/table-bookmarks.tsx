@@ -17,7 +17,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Bookmark } from '@/types';
-import { RefObject } from 'react';
+import { RefObject, useContext, useEffect, useState } from 'react';
+import BookmarksViewContext from '@/contexts/bookmarks-view-context';
 
 export const columns: ColumnDef<Bookmark>[] = [
     {
@@ -98,14 +99,18 @@ interface DataTableTagsProps {
     data: Bookmark[];
     lastItemRef: RefObject<HTMLTableRowElement>;
     perPage: number;
-    /*rowSelection: RowSelectionState;
-    setRowSelection: React.Dispatch<React.SetStateAction<object>>;*/
 }
 
 export function TableBookmarks({ data, lastItemRef, perPage }: DataTableTagsProps) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+    const [rowSelection, setRowSelection] = useState({});
+    const { setSelectedBookmarks } = useContext(BookmarksViewContext);
+
+    useEffect(() => {
+        setSelectedBookmarks(Object.keys(rowSelection).map((b) => data[Number(b)].id));
+    }, [rowSelection, setSelectedBookmarks, data]);
 
     const table = useReactTable({
         data,
@@ -118,10 +123,12 @@ export function TableBookmarks({ data, lastItemRef, perPage }: DataTableTagsProp
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
+        onRowSelectionChange: setRowSelection,
         state: {
             sorting,
             columnFilters,
             columnVisibility,
+            rowSelection,
         },
     });
 

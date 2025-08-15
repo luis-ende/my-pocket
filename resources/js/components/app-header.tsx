@@ -14,9 +14,10 @@ import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, router, usePage } from '@inertiajs/react';
 import { BookmarkPlus, House, Menu, Search } from 'lucide-react';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import AppLogoIcon from './app-logo-icon';
-/*import { NavBookmarks } from '@/components/nav-bookmarks';*/
+import { NavBookmarks } from '@/components/nav-bookmarks';
+import BookmarksViewContext from '@/contexts/bookmarks-view-context';
 
 const mainNavItems: NavItem[] = [
     {
@@ -48,6 +49,11 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const params = new URLSearchParams(window.location.search);
     const searchTermParam = params.get('query') ?? '';
     const [searchTerm, setSearchTerm] = useState(decodeURIComponent(searchTermParam));
+
+    const { selectedBookmarks } = useContext(BookmarksViewContext);
+    useEffect(() => {
+        console.log('selection changed: ', selectedBookmarks);
+    }, [selectedBookmarks]);
 
     const onMenuButtonClick = (key: string) => {
         switch (key) {
@@ -126,11 +132,11 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                     </div>
 
                     <div className="ml-auto flex items-center space-x-2">
-                        <div className="flex">
+                        {selectedBookmarks && selectedBookmarks.length === 0 && <div className="flex">
                             {leftNavItems.map((item, index: number) => (
                                 <Tooltip key={index}>
                                     <TooltipTrigger asChild>
-                                        <Button variant="ghost" className="mr-2 h-[34px] w-[34px] border-1 mr-1" onClick={() => onMenuButtonClick(item.title)}>
+                                        <Button variant="ghost" className="mr-1 h-[34px] w-[34px] border-1" onClick={() => onMenuButtonClick(item.title)}>
                                             <span className="sr-only">{item.title}</span>
                                             {item.icon && <Icon iconNode={item.icon} className="size-5 opacity-80 group-hover:opacity-100" />}
                                         </Button>
@@ -140,9 +146,11 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                     </TooltipContent>
                                 </Tooltip>
                             ))}
-                        </div>
-                        {/*<NavBookmarks />*/}
-                        <div className="relative flex items-center space-x-1">
+                        </div>}
+
+                        <NavBookmarks />
+
+                        {selectedBookmarks && selectedBookmarks.length === 0 && <div className="relative flex items-center space-x-1">
                             <Input
                                 id="search"
                                 name="search"
@@ -155,7 +163,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                             <Button variant="ghost" size="icon" className="group h-9 w-9 cursor-pointer" onClick={onSearchClick}>
                                 <Search className="!size-5 opacity-80 group-hover:opacity-100" />
                             </Button>
-                        </div>
+                        </div>}
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" className="size-10 rounded-full p-1">
