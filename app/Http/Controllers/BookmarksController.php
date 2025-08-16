@@ -156,6 +156,22 @@ class BookmarksController extends Controller
         return redirect()->back();
     }
 
+    public function saveBulkFav(Request $request)
+    {
+        $validated = $request->validate([
+            'bookmark_ids' => 'required|array',
+            'is_fav' => 'required|boolean',
+        ]);
+
+        Bookmark::withoutGlobalScopes()
+            ->whereIn('id', $validated['bookmark_ids'])
+            ->update([
+                'is_fav' => $validated['is_fav'],
+            ]);
+
+        return redirect()->back()->with('success', 'Selected bookmarks were marked as favorite.');
+    }
+
     public function saveRead(Request $request, int $bookmarkId)
     {
         $validated = $request->validate([
@@ -167,6 +183,8 @@ class BookmarksController extends Controller
                 'checked' => $validated['read'],
             ]);
     }
+
+    public function saveBulkRead(Request $request) {}
 
     public function saveArchive(Request $request, int $bookmarkId)
     {
@@ -186,6 +204,8 @@ class BookmarksController extends Controller
         }
     }
 
+    public function saveBulkArchive(Request $request, int $bookmarkId) {}
+
     public function saveBrokenLink(Request $request, int $bookmarkId)
     {
         $validated = $request->validate([
@@ -200,6 +220,8 @@ class BookmarksController extends Controller
 
     public function destroy(Bookmark $bookmark)
     {
+        sleep(5);
+
         try {
             if ($bookmark->delete() === true) {
                 return redirect()->back()->with('success', 'Bookmark removed.');
@@ -210,6 +232,8 @@ class BookmarksController extends Controller
             return redirect()->back()->with('error', 'Failed to delete bookmark.');
         }
     }
+
+    public function destroyBulk(Request $request) {}
 
     public function addToCollection(Request $request)
     {

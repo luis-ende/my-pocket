@@ -20,10 +20,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('search', [BookmarksController::class, 'indexSearch'])->name('bookmarks.search');
     Route::patch('bookmarks/{bookmark}', [BookmarksController::class, 'update'])->name('bookmarks.update');
     Route::patch('bookmarks/{bookmarkId}/favorite', [BookmarksController::class, 'saveFav'])->name('bookmarks.favs');
+    Route::patch('bookmarks-bulk/favorite', [BookmarksController::class, 'saveBulkFav'])->name('bookmarks.bulk.favs');
     Route::patch('bookmarks/{bookmarkId}/reads', [BookmarksController::class, 'saveRead'])->name('bookmarks.reads');
+    Route::patch('bookmarks-bulk/reads', [BookmarksController::class, 'saveBulkRead'])->name('bookmarks.bulk.reads');
     Route::patch('bookmarks/{bookmarkId}/archive', [BookmarksController::class, 'saveArchive'])->name('bookmarks.archive');
+    Route::patch('bookmarks-bulk/archive', [BookmarksController::class, 'saveBulkArchive'])->name('bookmarks.bulk.archive');
     Route::patch('bookmarks/{bookmarkId}/broken-link', [BookmarksController::class, 'saveBrokenLink'])->name('bookmarks.broken-link');
     Route::delete('bookmarks/{bookmark}', [BookmarksController::class, 'destroy'])->name('bookmarks.destroy');
+    Route::delete('bookmarks-bulk', [BookmarksController::class, 'destroyBulk'])->name('bookmarks.bulk.destroy');
     Route::get('search-by-tags', [TagsController::class, 'getBookmarksByTags'])->name('search-by-tags');
     Route::get('tags/index', [TagsController::class, 'getTagsByCount'])->name('tags.index');
     Route::get('tags/all', [TagsController::class, 'getAllTags'])->name('tags.all');
