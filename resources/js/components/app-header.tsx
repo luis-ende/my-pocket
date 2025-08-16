@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, router, usePage } from '@inertiajs/react';
 import { BookmarkPlus, House, Menu, Search } from 'lucide-react';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import AppLogoIcon from './app-logo-icon';
 import { NavBookmarks } from '@/components/nav-bookmarks';
 import BookmarksViewContext from '@/contexts/bookmarks-view-context';
@@ -49,11 +49,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const params = new URLSearchParams(window.location.search);
     const searchTermParam = params.get('query') ?? '';
     const [searchTerm, setSearchTerm] = useState(decodeURIComponent(searchTermParam));
-
     const { selectedBookmarks } = useContext(BookmarksViewContext);
-    useEffect(() => {
-        console.log('selection changed: ', selectedBookmarks);
-    }, [selectedBookmarks]);
 
     const onMenuButtonClick = (key: string) => {
         switch (key) {

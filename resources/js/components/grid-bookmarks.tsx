@@ -11,64 +11,39 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Bookmark } from '@/types';
+import { Bookmark, BookmarksViewConfig } from '@/types';
 import { router, usePage } from '@inertiajs/react';
 import { Archive, ArchiveRestore, BookOpenCheck, Copy, Glasses, Link, ListPlus, SquarePen, Star, StarOff, Trash2 } from 'lucide-react';
 import React, { RefObject, useState } from 'react';
-import { Toaster, toast } from 'sonner';
+import { toast } from 'sonner';
 
 type GridBookmarksProps = {
     bookmarks: Bookmark[];
     lastItemRef: RefObject<HTMLDivElement | null> | null;
     perPage: number;
+    viewConfig: BookmarksViewConfig;
 };
-export default function GridBookmarks({ bookmarks, lastItemRef, perPage }: GridBookmarksProps) {
+export default function GridBookmarks({ bookmarks, lastItemRef, perPage, viewConfig }: GridBookmarksProps) {
     const { url } = usePage();
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [positionDropDown, setPositionDropDown] = useState({ x: 0, y: 0 });
     const [currentBookmark, setCurrentBookmark] = useState<Bookmark | null>(null);
-
-    const [dialogDeleteState, setDialogDeleteState] = useState<{
-        isOpen: boolean;
-        bookmark: Bookmark | null;
-        isDeleting: boolean;
-    }>({
-        isOpen: false,
-        bookmark: null,
-        isDeleting: false,
-    });
-
     const [dialogEditOpen, setDialogEditOpen] = useState(false);
     const [dialogCollectionsOpen, setDialogCollectionsOpen] = useState(false);
-
-    const openDeleteDialog = (bookmark: Bookmark) => {
-        setDialogDeleteState({
-            isOpen: true,
-            bookmark: bookmark,
-            isDeleting: false,
-        });
-    };
+    const [loading, setLoading] = useState(false);
 
     const closeDeleteDialog = () => {
-        if (!dialogDeleteState.isDeleting) {
-            setDialogDeleteState({
-                isOpen: false,
-                bookmark: null,
-                isDeleting: false,
-            });
-            setTimeout(() => {
-                setDropdownOpen(false);
-            }, 300);
-        }
+        setTimeout(() => {
+            setDropdownOpen(false);
+        }, 300);
     };
 
     const handleDeleteConfirm = () => {
-        if (!dialogDeleteState.bookmark) return;
+        if (!currentBookmark) return;
 
-        setDialogDeleteState((prev) => ({ ...prev, isDeleting: true }));
-
-        router.delete(route('bookmarks.destroy', dialogDeleteState.bookmark.id), {
+        setLoading(true);
+        router.delete(route('bookmarks.destroy', currentBookmark.id), {
             preserveScroll: true,
             onSuccess: () => {
                 closeDeleteDialog();
@@ -76,7 +51,6 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage }: GridB
                 setCurrentBookmark(null);
             },
             onError: (errors) => {
-                setDialogDeleteState((prev) => ({ ...prev, isDeleting: false }));
                 toast("Bookmark couldn't be deleted!", {
                     description: errors.toString(),
                     action: {
@@ -85,6 +59,9 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage }: GridB
                     },
                 });
             },
+            onFinish: () => {
+                setLoading(false);
+            }
         });
     };
 
@@ -198,7 +175,7 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage }: GridB
                 setDialogEditOpen(true);
                 break;
             case 'delete':
-                openDeleteDialog(currentBookmark);
+                // Confirm dialog triggered by dropdown item.
                 break;
             case 'fav':
                 handleSaveFav(currentBookmark);
@@ -223,7 +200,6 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage }: GridB
 
     return (
         <div className="relative overflow-auto">
-            <Toaster />
             <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
                 <DropdownMenuTrigger asChild>
                     <button
@@ -257,7 +233,6 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage }: GridB
                     <AlertDialogDelete
                         onClose={closeDeleteDialog}
                         onConfirm={handleDeleteConfirm}
-                        isDeleting={dialogDeleteState.isDeleting}
                         title="Delete Bookmark"
                         description="This will permanently delete the bookmark and all associated data."
                         trigger={
@@ -343,6 +318,8 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage }: GridB
                             parentRef={index === ((bookmarks.length - 1) - perPage) ? lastItemRef : null}
                             bookmark={bookmark}
                             handleActionsClick={handleOpenDropDown}
+                            loading={loading}
+                            selected={viewConfig.selectedBookmarks.includes(bookmark.id)}
                         />
                     );
                 })}

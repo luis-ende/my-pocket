@@ -3,6 +3,7 @@ import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem, Collection } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import useLoadViewBookmarks from '@/hooks/use-load-view-bookmarks';
+import useViewConfig from '@/hooks/use-view-config';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -14,6 +15,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function Collections() {
     const { collection } = usePage<{ collection: Collection }>().props;
     const { initialBookmarks, bookmarks, setBookmarks } = useLoadViewBookmarks();
+    const viewConfig = useViewConfig();
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -26,7 +28,7 @@ export default function Collections() {
                 initialBookmarks={initialBookmarks}
                 bookmarks={bookmarks}
                 setBookmarks={setBookmarks}
-                infiniteScroll={true}
+                viewConfig={viewConfig}
             />
         </AppLayout>
     );

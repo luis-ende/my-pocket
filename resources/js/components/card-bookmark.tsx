@@ -10,9 +10,11 @@ interface CardBookmarkProps {
     bookmark: BookmarkType;
     parentRef: RefObject<HTMLDivElement | null> | null;
     handleActionsClick: (event: MouseEvent<HTMLButtonElement>) => void;
+    loading: boolean;
+    selected?: boolean;
 }
 
-export default function CardBookmark({ bookmark, parentRef, handleActionsClick }: CardBookmarkProps) {
+export default function CardBookmark({ bookmark, parentRef, handleActionsClick, loading, selected = false }: CardBookmarkProps) {
     const bookmarkCreatedAt = new Date(bookmark.created_at).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
@@ -20,7 +22,7 @@ export default function CardBookmark({ bookmark, parentRef, handleActionsClick }
     });
 
     return (
-        <Card key={bookmark.id} className="h-80 rounded-xl bg-neutral-50 pt-0" ref={parentRef}>
+        <Card key={bookmark.id} className={"h-80 rounded-xl pt-0" + (selected ? ' bg-blue-50' : ' bg-neutral-50')} ref={parentRef}>
             <CardHeader className="h-40 px-0 pb-0 text-center">
                 <a href={bookmark.url} target="_blank" rel="noopener noreferrer" title={bookmark.title}>
                     {bookmark.preview_image_url ? (
@@ -53,7 +55,7 @@ export default function CardBookmark({ bookmark, parentRef, handleActionsClick }
                         {bookmark.is_broken_link && <Icon iconNode={Unlink} className="size-5 stroke-3 text-red-500 opacity-80" />}
                     </div>
                     <div className="basis-1/3 text-right">
-                        <Button variant="outline" className="h-[34px] w-[34px]" onClick={handleActionsClick} data-bookmark-id={bookmark.id}>
+                        <Button disabled={loading} variant="outline" className="h-[34px] w-[34px]" onClick={handleActionsClick} data-bookmark-id={bookmark.id}>
                             <Icon iconNode={Ellipsis} className="size-7 opacity-80 group-hover:opacity-100" />
                         </Button>
                     </div>

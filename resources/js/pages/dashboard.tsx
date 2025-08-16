@@ -6,6 +6,7 @@ import { Head, usePage } from '@inertiajs/react';
 import { Archive, Bookmark as BookmarkIcon, ChartNetwork, Glasses, LibraryBig, Star, Tags, Unlink } from 'lucide-react';
 import useNewBookmark from '@/hooks/use-new-bookmark';
 import useLoadViewBookmarks from '@/hooks/use-load-view-bookmarks';
+import useViewConfig from '@/hooks/use-view-config';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -19,6 +20,7 @@ export default function Dashboard() {
     const { stats } = usePage<{
         stats: Stats;
     }>().props;
+    const viewConfig = useViewConfig();
 
     useNewBookmark(setToReadBookmarks);
 
@@ -86,7 +88,7 @@ export default function Dashboard() {
                             initialBookmarks={initialBookmarks}
                             bookmarks={toReadBookmarks}
                             setBookmarks={setToReadBookmarks}
-                            infiniteScroll={true}
+                            viewConfig={viewConfig}
                         />
                     )}
                 </div>

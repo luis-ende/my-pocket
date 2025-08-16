@@ -3,6 +3,7 @@ import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import useLoadViewBookmarks from '@/hooks/use-load-view-bookmarks';
+import useViewConfig from '@/hooks/use-view-config';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -13,6 +14,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Favorites() {
     const { initialBookmarks, bookmarks, setBookmarks } = useLoadViewBookmarks();
+    const viewConfig = useViewConfig();
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -21,7 +23,7 @@ export default function Favorites() {
                 initialBookmarks={initialBookmarks}
                 bookmarks={bookmarks}
                 setBookmarks={setBookmarks}
-                infiniteScroll={true}
+                viewConfig={viewConfig}
             />
         </AppLayout>
     );

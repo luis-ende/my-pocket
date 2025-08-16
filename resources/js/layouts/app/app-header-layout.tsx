@@ -6,6 +6,7 @@ import { AppSidebarHeader } from '@/components/app-sidebar-header';
 import FlashMessage from '@/components/flash-message';
 import { type BreadcrumbItem } from '@/types';
 import type { PropsWithChildren } from 'react';
+import { Toaster } from 'sonner';
 
 export default function AppHeaderLayout({ children, breadcrumbs }: PropsWithChildren<{ breadcrumbs?: BreadcrumbItem[] }>) {
     return (
@@ -13,6 +14,7 @@ export default function AppHeaderLayout({ children, breadcrumbs }: PropsWithChil
             <AppSidebar />
             <AppContent variant="sidebar">
                 <FlashMessage />
+                <Toaster />
                 <AppHeader breadcrumbs={breadcrumbs} />
                 <AppSidebarHeader breadcrumbs={breadcrumbs} />
                 {children}

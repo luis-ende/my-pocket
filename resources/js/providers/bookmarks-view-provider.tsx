@@ -1,11 +1,10 @@
 import BookmarksViewContext from '@/contexts/bookmarks-view-context';
-import { useState } from 'react';
-import { type Bookmark, BookmarksView } from '@/types';
+import { PropsWithChildren, useState } from 'react';
+import { BookmarksView } from '@/types';
 
-const BookmarksViewProvider = ({ children }) => {
+const BookmarksViewProvider = ({ children }: PropsWithChildren) => {
     const [savedBookmark, setSavedBookmark] = useState(null);
-    const [selectedBookmarks, setSelectedBookmarks] = useState<Bookmark[]>([]);
-
+    const [selectedBookmarks, setSelectedBookmarks] = useState<number[]>([]);
     const bookmarksView: BookmarksView = {
         savedBookmark,
         setSavedBookmark,

@@ -9,8 +9,16 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { ReactNode } from 'react';
 
-const AlertDialogDelete = ({ onClose, onConfirm, isDeleting = false, title = 'Are you absolutely sure?', description, itemName = '', trigger }) => {
+type AlertDialogDeleteProps = {
+    onClose: () => void;
+    onConfirm: () => void;
+    title: string;
+    description: string;
+    trigger: ReactNode;
+};
+const AlertDialogDelete = ({ onClose, onConfirm, title, description, trigger }: AlertDialogDeleteProps) => {
     return (
         <AlertDialog
             onOpenChange={(open) => {
@@ -25,13 +33,13 @@ const AlertDialogDelete = ({ onClose, onConfirm, isDeleting = false, title = 'Ar
                 <AlertDialogHeader>
                     <AlertDialogTitle>{title}</AlertDialogTitle>
                     <AlertDialogDescription>
-                        {itemName ? `${description} "${itemName}" will be permanently removed.` : description}
+                        {description}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={onConfirm} disabled={isDeleting} className="bg-red-600 hover:bg-red-700 focus:ring-red-600">
-                        {isDeleting ? 'Deleting...' : 'Delete'}
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={onConfirm} className="bg-red-600 hover:bg-red-700 focus:ring-red-600">
+                        Delete
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

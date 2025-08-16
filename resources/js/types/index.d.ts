@@ -1,5 +1,6 @@
 import { LucideIcon } from 'lucide-react';
 import type { Config } from 'ziggy-js';
+import { Dispatch } from 'react';
 
 export interface Auth {
     user: User;
@@ -121,6 +122,13 @@ export interface Collection {
 export type BookmarksView = {
     savedBookmark?: Bookmark | null;
     setSavedBookmark?: Dispatch<SetStateAction<Bookmark | null>>;
-    selectedBookmarks: Bookmark[];
-    setSelectedBookmarks: Dispatch<SetStateAction<Bookmark[]>>;
+    selectedBookmarks: number[];
+    setSelectedBookmarks: Dispatch<SetStateAction<number[]>>;
+}
+
+export interface BookmarksViewConfig {
+    path: string;
+    viewMode: string;
+    infiniteScroll: boolean;
+    selectedBookmarks: number[];
 }

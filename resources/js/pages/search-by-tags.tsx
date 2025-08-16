@@ -3,8 +3,10 @@ import ViewBookmarks from '@/components/view-bookmarks';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, Bookmark, CursorPaginatedData, Tag } from '@/types';
 import { Head, router } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
+import useViewConfig from '@/hooks/use-view-config';
+import BookmarksViewContext from '@/contexts/bookmarks-view-context';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -18,6 +20,8 @@ export default function SearchByTags() {
     const [initialBookmarks, setInitialBookmarks] = useState<CursorPaginatedData<Bookmark> | null>(null);
     const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
     const [rowSelection, setRowSelection] = useState({});
+    const viewConfig = useViewConfig();
+    const { setSelectedBookmarks } = useContext(BookmarksViewContext);
 
     const setSelection= (fetchTags: Tag[]) => {
         const url = new URL(window.location.href);
@@ -51,6 +55,7 @@ export default function SearchByTags() {
     }, []);
 
     useEffect(() => {
+        setSelectedBookmarks([]);
         setBookmarks([]);
 
         if (!tags || tags.length === 0 || Object.entries(rowSelection).length === 0) {
@@ -78,7 +83,7 @@ export default function SearchByTags() {
         }
 
         void loadBookmarks();
-    }, [rowSelection, tags]);
+    }, [rowSelection, tags, setSelectedBookmarks]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -111,7 +116,7 @@ export default function SearchByTags() {
                                 initialBookmarks={initialBookmarks}
                                 bookmarks={bookmarks}
                                 setBookmarks={setBookmarks}
-                                infiniteScroll={true}
+                                viewConfig={viewConfig}
                             />
                         )}
                     </div>

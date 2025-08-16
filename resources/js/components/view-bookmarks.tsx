@@ -1,6 +1,6 @@
 import { TableBookmarks } from '@/components/table-bookmarks';
-import { Bookmark, CursorPaginatedData, PaginatedData } from '@/types';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Bookmark, BookmarksViewConfig, CursorPaginatedData, PaginatedData } from '@/types';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import GridBookmarks from '@/components/grid-bookmarks';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LayoutGrid, Table } from 'lucide-react';
@@ -8,26 +8,40 @@ import { Icon } from '@/components/icon';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { router } from '@inertiajs/react';
+import BookmarksViewContext from '@/contexts/bookmarks-view-context';
+import { saveViewConfig } from '@/hooks/use-view-config';
 
 type ViewBookmarksProps = {
     initialBookmarks: CursorPaginatedData<Bookmark> | PaginatedData<Bookmark>;
     bookmarks: Bookmark[];
     setBookmarks: React.Dispatch<React.SetStateAction<Bookmark[]>> | null;
-    infiniteScroll: boolean;
+    viewConfig: BookmarksViewConfig;
 };
-export default function ViewBookmarks({ initialBookmarks, bookmarks, setBookmarks, infiniteScroll }: ViewBookmarksProps) {
+export default function ViewBookmarks({ initialBookmarks, bookmarks, setBookmarks, viewConfig }: ViewBookmarksProps) {
     const [nextPage, setNextPage] = useState(initialBookmarks.next_page_url);
     const [perPage, setPerPage] = useState(initialBookmarks.per_page);
     const tagsQueryString = initialBookmarks?.tagsQueryString;
     const [loading, setLoading] = useState(false);
     const lastItemRef = useRef<HTMLDivElement | HTMLTableRowElement | null>(null);
-    const [activeTab, setActiveTab] = useState(() => {
-        return localStorage.getItem('search-tab') || 'gridView';
-    });
+    const [activeTab, setActiveTab] = useState(() => viewConfig.viewMode || 'gridView');
+    const { selectedBookmarks } = useContext(BookmarksViewContext);
 
     useEffect(() => {
-        localStorage.setItem('search-tab', activeTab);
-    }, [activeTab]);
+        viewConfig.viewMode = activeTab;
+        saveViewConfig(viewConfig);
+    }, [viewConfig, activeTab]);
+
+    useEffect(() => {
+        viewConfig.selectedBookmarks = selectedBookmarks;
+        saveViewConfig(viewConfig);
+    }, [selectedBookmarks, viewConfig]);
+
+    useEffect(() => {
+        return () => {
+            viewConfig.selectedBookmarks = [];
+            saveViewConfig(viewConfig);
+        }
+    }, [viewConfig]);
 
     const loadMore = useCallback(async () => {
         if (!nextPage || loading) return;
@@ -93,14 +107,24 @@ export default function ViewBookmarks({ initialBookmarks, bookmarks, setBookmark
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="gridView">
-                    <GridBookmarks bookmarks={bookmarks} lastItemRef={lastItemRef} perPage={perPage} />
+                    <GridBookmarks
+                        bookmarks={bookmarks}
+                        lastItemRef={lastItemRef}
+                        perPage={perPage}
+                        viewConfig={viewConfig}
+                    />
                 </TabsContent>
                 <TabsContent value="tableView">
-                    <TableBookmarks data={bookmarks} lastItemRef={lastItemRef} perPage={perPage}></TableBookmarks>
+                    <TableBookmarks
+                        data={bookmarks}
+                        lastItemRef={lastItemRef}
+                        perPage={perPage}
+                        viewConfig={viewConfig}>
+                    </TableBookmarks>
                 </TabsContent>
             </Tabs>
 
-            {infiniteScroll && nextPage && (
+            {viewConfig.infiniteScroll && nextPage && (
                 <div className="mb-6 text-center">
                     <Button className="w-60" variant="default" onClick={loadMore} disabled={loading}>
                         {loading ? 'Loading...' : 'Load more...'}

@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Bookmark } from '@/types';
+import { Bookmark, BookmarksViewConfig } from '@/types';
 import { RefObject, useContext, useEffect, useState } from 'react';
 import BookmarksViewContext from '@/contexts/bookmarks-view-context';
 
@@ -99,18 +99,31 @@ interface DataTableTagsProps {
     data: Bookmark[];
     lastItemRef: RefObject<HTMLTableRowElement>;
     perPage: number;
+    viewConfig: BookmarksViewConfig;
 }
 
-export function TableBookmarks({ data, lastItemRef, perPage }: DataTableTagsProps) {
+export function TableBookmarks({ data, lastItemRef, perPage, viewConfig }: DataTableTagsProps) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-    const [rowSelection, setRowSelection] = useState({});
     const { setSelectedBookmarks } = useContext(BookmarksViewContext);
+    const [loading, setLoading] = useState(false);
+    const [rowSelection, setRowSelection] = useState(() => {
+        setLoading(true);
+        const indexes = viewConfig.selectedBookmarks.map((b: number) =>
+            data.findIndex((item: Bookmark) => item.id == b));
+        let sel = {};
+        indexes.forEach((index: number) => index >= 0 ? sel = { ...sel, [index]: true } : sel );
+        setLoading(false);
+
+        return sel;
+    });
 
     useEffect(() => {
+        if (loading) return;
+
         setSelectedBookmarks(Object.keys(rowSelection).map((b) => data[Number(b)].id));
-    }, [rowSelection, setSelectedBookmarks, data]);
+    }, [rowSelection, setSelectedBookmarks, data, loading]);
 
     const table = useReactTable({
         data,
