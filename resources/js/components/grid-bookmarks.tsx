@@ -302,13 +302,15 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage, viewCon
                 />
             )}
 
-            <FormBookmarkCollectionAdd
-                open={dialogCollectionsOpen}
-                onClose={() => {
-                    setDialogCollectionsOpen(false);
-                }}
-                bookmark={currentBookmark}
-            />
+            {currentBookmark && (
+                <FormBookmarkCollectionAdd
+                    open={dialogCollectionsOpen}
+                    onClose={() => {
+                        setDialogCollectionsOpen(false);
+                    }}
+                    bookmarkIds={[currentBookmark.id]}
+                />
+            )}
 
             <div className="xs:grid-cols-1 grid gap-6 px-10 py-10 sm:grid-cols-2 sm:gap-3 xl:grid-cols-4">
                 {bookmarks.map((bookmark: Bookmark, index: number) => {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AddToCollectionPostRequest;
 use App\Http\Requests\BookmarkPatchRequest;
 use App\Http\Requests\BookmarkPostRequest;
 use App\Models\Bookmark;
@@ -142,6 +143,47 @@ class BookmarksController extends Controller
         }
     }
 
+    public function updateBulk(Request $request)
+    {
+        $validated = $request->validate([
+            'bookmark_ids' => 'required|array',
+            'tags' => 'nullable|string',
+            'checked' => 'nullable|boolean',
+            'is_fav' => 'nullable|boolean',
+            'is_archived' => 'nullable|boolean',
+        ]);
+
+        $toUpdate = [];
+        if ($validated['tags'] !== null) {
+            $toUpdate['tags'] = $validated['tags'];
+        }
+
+        if ($validated['checked'] !== null) {
+            $toUpdate['checked'] = $validated['checked'];
+        }
+
+        if ($validated['is_fav'] !== null) {
+            $toUpdate['is_fav'] = $validated['is_fav'];
+        }
+
+        if ($validated['is_archived'] !== null) {
+            $toUpdate['is_archived'] = $validated['is_archived'];
+        }
+
+        if (! empty($toUpdate)) {
+            $result = Bookmark::withoutGlobalScopes()
+                ->whereIn('id', $validated['bookmark_ids'])->update($toUpdate);
+
+            if ($result > 0) {
+                return redirect()->back()->with('success', "{$result} bookmarks updated.");
+            } else {
+                return redirect()->back()->with('error', "Bookmarks couldn't be updated.");
+            }
+        }
+
+        return redirect()->back()->with('error', "Bookmarks couldn't be updated.");
+    }
+
     public function saveFav(Request $request, int $bookmarkId)
     {
         $validated = $request->validate([
@@ -156,22 +198,6 @@ class BookmarksController extends Controller
         return redirect()->back();
     }
 
-    public function saveBulkFav(Request $request)
-    {
-        $validated = $request->validate([
-            'bookmark_ids' => 'required|array',
-            'is_fav' => 'required|boolean',
-        ]);
-
-        Bookmark::withoutGlobalScopes()
-            ->whereIn('id', $validated['bookmark_ids'])
-            ->update([
-                'is_fav' => $validated['is_fav'],
-            ]);
-
-        return redirect()->back()->with('success', 'Selected bookmarks were marked as favorite.');
-    }
-
     public function saveRead(Request $request, int $bookmarkId)
     {
         $validated = $request->validate([
@@ -183,8 +209,6 @@ class BookmarksController extends Controller
                 'checked' => $validated['read'],
             ]);
     }
-
-    public function saveBulkRead(Request $request) {}
 
     public function saveArchive(Request $request, int $bookmarkId)
     {
@@ -204,8 +228,6 @@ class BookmarksController extends Controller
         }
     }
 
-    public function saveBulkArchive(Request $request, int $bookmarkId) {}
-
     public function saveBrokenLink(Request $request, int $bookmarkId)
     {
         $validated = $request->validate([
@@ -220,38 +242,60 @@ class BookmarksController extends Controller
 
     public function destroy(Bookmark $bookmark)
     {
-        sleep(5);
-
         try {
             if ($bookmark->delete() === true) {
                 return redirect()->back()->with('success', 'Bookmark removed.');
             }
 
             return redirect()->back()->with('error', 'Bookmark could not be removed.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return redirect()->back()->with('error', 'Failed to delete bookmark.');
         }
     }
 
-    public function destroyBulk(Request $request) {}
-
-    public function addToCollection(Request $request)
+    public function destroyBulk(Request $request)
     {
         $validated = $request->validate([
-            'bookmarkId' => 'required|integer|exists:bookmarks,id',
-            'collectionId' => 'required|integer|exists:collections,id',
+            'bookmark_ids' => 'required|array',
         ]);
 
-        DB::delete('DELETE FROM bookmark_collection WHERE bookmark_id = ?',
-            [$validated['bookmarkId']]);
-        DB::table('bookmark_collection')->insert([
-            'bookmark_id' => $validated['bookmarkId'],
-            'collection_id' => $validated['collectionId'],
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        try {
+            $result = Bookmark::withoutGlobalScopes()
+                ->whereIn('id', $validated['bookmark_ids'])
+                ->delete();
+            if ($result >= 1) {
+                return redirect()->back()->with('success', 'Bookmarks removed.');
+            }
 
-        return redirect()->back()->with('success', 'Bookmark was added to collection.');
+            return redirect()->back()->with('error', 'Bookmarks could not be removed.');
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Failed to delete bookmarks.');
+        }
+    }
+
+    public function addToCollection(AddToCollectionPostRequest $request)
+    {
+        $validated = $request->validated();
+        try {
+            DB::table('bookmark_collection')
+                ->whereIn('bookmark_id', $validated['bookmarkIds'])
+                ->delete();
+
+            foreach ($validated['bookmarkIds'] as $bookmarkId) {
+                DB::table('bookmark_collection')->insert([
+                    'bookmark_id' => $bookmarkId,
+                    'collection_id' => $validated['collectionId'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            $count = count($validated['bookmarkIds']);
+
+            return redirect()->back()->with('success', "{$count} bookmarks added to collection.");
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Failed to add bookmarks to collection.');
+        }
     }
 
     public function getCollections(int $bookmarkId)

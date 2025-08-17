@@ -2,19 +2,19 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Bookmark, Collection } from '@/types';
+import { Collection } from '@/types';
 import { useForm } from '@inertiajs/react';
 import React, { useEffect, useState } from 'react';
 
 interface FormBookmarkCollectionProps {
     open: boolean;
     onClose: () => void;
-    bookmark: Bookmark | null;
+    bookmarkIds: number[];
 }
 
-export default function FormBookmarkCollectionAdd({ open, onClose, bookmark }: FormBookmarkCollectionProps) {
+export default function FormBookmarkCollectionAdd({ open, onClose, bookmarkIds }: FormBookmarkCollectionProps) {
     const { data, setData, post, processing, errors, reset } = useForm({
-        bookmarkId: bookmark?.id,
+        bookmarkIds: bookmarkIds,
         collectionId: 0,
     });
 
@@ -25,9 +25,11 @@ export default function FormBookmarkCollectionAdd({ open, onClose, bookmark }: F
     }, []);
 
     useEffect(() => {
-        if (open && bookmark) {
-            setData('bookmarkId', bookmark.id);
-            fetch(route('bookmarks.collections', bookmark.id))
+        setData('bookmarkIds', bookmarkIds);
+        setData('collectionId', 0);
+
+        if (open && bookmarkIds.length === 1) {
+            fetch(route('bookmarks.collections', bookmarkIds[0]))
                 .then((res) => {
                     if (!res.ok) throw new Error('Failed to load bookmark collections.');
                     return res.json();
@@ -35,7 +37,7 @@ export default function FormBookmarkCollectionAdd({ open, onClose, bookmark }: F
                 .then((data) => setData('collectionId', data.collectionId))
                 .catch(() => setData('collectionId', 0));
         }
-    }, [bookmark, open, setData]);
+    }, [bookmarkIds, open, setData]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -86,13 +88,13 @@ export default function FormBookmarkCollectionAdd({ open, onClose, bookmark }: F
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
-                        {errors.bookmarkId && <p className="text-sm text-red-500">{errors.bookmarkId}</p>}
+                        {errors.bookmarkIds && <p className="text-sm text-red-500">{errors.bookmarkIds}</p>}
                     </fieldset>
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={() => onClose()}>
                             Cancel
                         </Button>
-                        <Button type="submit" disabled={processing}>
+                        <Button type="submit" disabled={data.collectionId === 0 || processing}>
                             Save
                         </Button>
                     </DialogFooter>

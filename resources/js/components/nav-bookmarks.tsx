@@ -1,50 +1,41 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/icon';
-import { Archive, Glasses, ListPlus, Star, Tag, Trash2 } from 'lucide-react';
+import { ListPlus, SquarePen, Trash2 } from 'lucide-react';
 import React, { useContext, useState } from 'react';
 import BookmarksViewContext from '@/contexts/bookmarks-view-context';
 import { router } from '@inertiajs/react';
-import { Bookmark } from '@/types';
+import FormEditBulk from '@/components/form-edit-bulk';
+import FormBookmarkCollectionAdd from '@/components/form-bookmark-collection-add';
 
 export function NavBookmarks() {
     const { selectedBookmarks } = useContext(BookmarksViewContext);
     const [loading, setLoading] = useState(false);
+    const [dialogEditOpen, setDialogEditOpen] = useState(false);
+    const [dialogCollectionsOpen, setDialogCollectionsOpen] = useState(false);
 
     const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         switch (event.currentTarget.id) {
-            case 'buttonTag':
+            case 'buttonBulkEdit':
+                setDialogEditOpen(true);
                 break;
-            case 'buttonRead':
+            case 'buttonAddToC':
+                setDialogCollectionsOpen(true);
                 break;
-            case 'buttonFav':
-                setLoading(true)
-                router.patch(
-                    route('bookmarks.bulk.favs'),
-                    {
-                        bookmark_ids: selectedBookmarks.map((item: Bookmark) => item.id),
-                        is_fav: true,
-                    },
+            case 'buttonDelete':
+                // todo show confirm dialog
+                router.post(
+                    route('bookmarks.bulk.destroy'), { bookmark_ids: selectedBookmarks, },
                     {
                         preserveScroll: true,
                         onSuccess: () => {
-                            // todo: update bookmarks to reflect update
-                            /*bookmark.is_fav = !bookmark.is_fav;
-                            if (url.includes('/favorites')) {
-                                removeBookmark(bookmark.id);
-                            }*/
+                            // todo: throw event (via Context) to notify components that need to process active bookmarks to reflect updates
                         },
                         onFinish: () => {
                             setLoading(false);
                         }
                     },
                 );
-                break;
-            case 'buttonAddToC':
-                break;
-            case 'buttonDelete':
-                break;
-            case 'buttonArch':
                 break;
         }
     }
@@ -57,40 +48,18 @@ export function NavBookmarks() {
                 </Button>
             </TooltipTrigger>
             <TooltipContent>
-                <p>Bookmarks seleccionados</p>
+                <p>Selected bookmarks</p>
             </TooltipContent>
         </Tooltip>
         <Tooltip>
             <TooltipTrigger asChild>
-                <Button disabled={loading} id="buttonTag" variant="ghost" className="h-[34px] w-[34px] border-1 mr-1" onClick={handleButtonClick}>
-                    <span className="sr-only">Tag</span>
-                    <Icon iconNode={Tag} className="size-5 opacity-80 group-hover:opacity-100" />
+                <Button disabled={loading} id="buttonBulkEdit" variant="ghost" className="h-[34px] w-[34px] border-1 mr-1" onClick={handleButtonClick}>
+                    <span className="sr-only">Bulk Edit</span>
+                    <Icon iconNode={SquarePen} className="size-5 opacity-80 group-hover:opacity-100" />
                 </Button>
             </TooltipTrigger>
             <TooltipContent>
-                <p>Tag</p>
-            </TooltipContent>
-        </Tooltip>
-        <Tooltip>
-            <TooltipTrigger asChild>
-                <Button disabled={loading} id="buttonRead" variant="ghost" className="h-[34px] w-[34px] border-1 mr-1" onClick={handleButtonClick}>
-                    <span className="sr-only">Read</span>
-                    <Icon iconNode={Glasses} className="size-5 opacity-80 group-hover:opacity-100" />
-                </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-                <p>Mark as read</p>
-            </TooltipContent>
-        </Tooltip>
-        <Tooltip>
-            <TooltipTrigger asChild>
-                <Button disabled={loading} id="buttonFav" variant="ghost" className="h-[34px] w-[34px] border-1 mr-1" onClick={handleButtonClick}>
-                    <span className="sr-only">Favorite</span>
-                    <Icon iconNode={Star} className="size-5 opacity-80 group-hover:opacity-100" />
-                </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-                <p>Favorite</p>
+                <p>Edit multiple bookmarks</p>
             </TooltipContent>
         </Tooltip>
         <Tooltip>
@@ -112,19 +81,26 @@ export function NavBookmarks() {
                 </Button>
             </TooltipTrigger>
             <TooltipContent>
-                <p>Delete</p>
+                <p>Delete bookmarks</p>
             </TooltipContent>
         </Tooltip>
-        <Tooltip>
-            <TooltipTrigger asChild>
-                <Button disabled={loading} id="buttonArch" variant="ghost" className="h-[34px] w-[34px] border-1 mr-1" onClick={handleButtonClick}>
-                    <span className="sr-only">Archive</span>
-                    <Icon iconNode={Archive} className="size-5 opacity-80 group-hover:opacity-100" />
-                </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-                <p>Archive</p>
-            </TooltipContent>
-        </Tooltip>
+
+        <FormEditBulk
+            open={dialogEditOpen}
+            onClose={() => {
+                setDialogEditOpen(false);
+            }}
+            bookmarkIds={selectedBookmarks}
+        />
+
+        {selectedBookmarks.length > 0 && (
+            <FormBookmarkCollectionAdd
+                open={dialogCollectionsOpen}
+                onClose={() => {
+                    setDialogCollectionsOpen(false);
+                }}
+                bookmarkIds={selectedBookmarks}
+            />
+        )}
     </div>;
 }

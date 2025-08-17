@@ -1,32 +1,40 @@
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import BookmarksViewContext from '@/contexts/bookmarks-view-context';
-import useLoadTags from '@/hooks/use-load-tags';
-import { Bookmark } from '@/types';
 import { useForm } from '@inertiajs/react';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CreatableSelect from 'react-select/creatable';
+import useLoadTags from '@/hooks/use-load-tags';
 
 interface FormEditBookmarkProps {
     open: boolean;
     onClose: () => void;
-    bookmark: Bookmark;
+    bookmarkIds: number[];
 }
 
-export default function FormEditBookmark({ open, onClose, bookmark }: FormEditBookmarkProps) {
-    const { setData, patch, processing, errors, reset } = useForm({
-        url: bookmark?.url,
-        tags: bookmark?.tags,
-        read: bookmark?.checked,
+export default function FormEditBulk({ open, onClose, bookmarkIds }: FormEditBookmarkProps) {
+    const { data, setData, patch, processing, errors, reset } = useForm({
+        bookmark_ids: bookmarkIds,
+        tags: null,
+        checked: null,
+        is_fav: null,
+        is_archived: null,
     });
 
     const { tagsOptions } = useLoadTags('/tags/all');
     const [selectedOptions, setSelectedOptions] = useState<object[]>([]);
-    const inputRef = useRef(null);
-    const { setSavedBookmark } = useContext(BookmarksViewContext);
+
+    useEffect(() => {
+        if (open) {
+            setData('bookmark_ids', bookmarkIds);
+            setData('tags', null);
+            setData('checked', null);
+            setData('is_fav', null);
+            setData('is_archived', null);
+            setSelectedOptions([]);
+        }
+    }, [open, setData, bookmarkIds]);
 
     const handleChange = (selected) => {
         setSelectedOptions(selected);
@@ -35,44 +43,23 @@ export default function FormEditBookmark({ open, onClose, bookmark }: FormEditBo
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        patch(route('bookmarks.update', bookmark.id), {
+        patch(route('bookmarks.bulk.update'), {
             preserveScroll: true,
-            onSuccess: (page) => {
-                if (page.props?.flash?.saved_bookmark) {
-                    const savedBookmark = page.props.flash.saved_bookmark as Bookmark;
-                    setSavedBookmark(savedBookmark);
-                    bookmark.tags = savedBookmark.tags;
-                    bookmark.checked = savedBookmark.checked;
-                    bookmark.is_fav = savedBookmark.is_fav;
-                    bookmark.is_archived = savedBookmark.is_archived;
-                    bookmark.preview_image_url = savedBookmark.preview_image_url;
-                }
+            onSuccess: () => {
                 reset();
                 onClose();
             },
         });
     };
 
-    useEffect(() => {
-        if (bookmark?.tags) {
-            setSelectedOptions(bookmark?.tags.split('|').map((t: string) => ({ label: t, value: t, color: '#00B8D9' })));
-        } else {
-            setSelectedOptions([]);
-        }
-    }, [bookmark]);
-
     return (
         <Dialog modal open={open}>
             <DialogContent forceMount>
                 <DialogHeader>
-                    <DialogTitle>Edit Bookmark</DialogTitle>
-                    <DialogDescription>{bookmark?.title}</DialogDescription>
+                    <DialogTitle>Bulk Edit</DialogTitle>
+                    <DialogDescription>Edit bookmarks</DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <fieldset>
-                        <Label htmlFor="url">URL</Label>
-                        <Input className="bg-gray-100" ref={inputRef} id="url" type="url" value={bookmark?.url} readOnly={true} />
-                    </fieldset>
                     <fieldset>
                         <Label htmlFor="tags">Tags</Label>
                         <CreatableSelect
@@ -88,9 +75,19 @@ export default function FormEditBookmark({ open, onClose, bookmark }: FormEditBo
                         {errors.tags && <p className="text-sm text-red-500">{errors.tags}</p>}
                     </fieldset>
                     <fieldset className="flex items-center gap-3">
-                        <Checkbox id="read" defaultChecked={bookmark?.checked} onCheckedChange={(e) => setData('read', e)} />
+                        <Checkbox id="read" className={data.checked === null ? 'bg-blue-200' : ''} onCheckedChange={(e) => setData('checked', e)} />
                         <Label htmlFor="read">Marked as read</Label>
-                        {errors.read && <p className="text-sm text-red-500">{errors.read}</p>}
+                        {errors.checked && <p className="text-sm text-red-500">{errors.checked}</p>}
+                    </fieldset>
+                    <fieldset className="flex items-center gap-3">
+                        <Checkbox id="isFav" className={data.is_fav === null ? 'bg-blue-200' : ''} onCheckedChange={(e) => setData('is_fav', e)} />
+                        <Label htmlFor="isFav">Marked as favorite</Label>
+                        {errors.is_fav && <p className="text-sm text-red-500">{errors.is_fav}</p>}
+                    </fieldset>
+                    <fieldset className="flex items-center gap-3">
+                        <Checkbox id="isArchived" className={data.is_archived === null ? 'bg-blue-200' : ''} onCheckedChange={(e) => setData('is_archived', e)} />
+                        <Label htmlFor="isArchived">Marked as archived</Label>
+                        {errors.is_archived && <p className="text-sm text-red-500">{errors.is_archived}</p>}
                     </fieldset>
                     <DialogFooter>
                         <Button
