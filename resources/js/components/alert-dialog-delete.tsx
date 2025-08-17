@@ -9,10 +9,11 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 type AlertDialogDeleteProps = {
-    onClose: () => void;
+    onClose?: () => void;
     onConfirm: () => void;
     title: string;
     description: string;
@@ -22,12 +23,28 @@ const AlertDialogDelete = ({ onClose, onConfirm, title, description, trigger }: 
     return (
         <AlertDialog
             onOpenChange={(open) => {
-                if (!open) {
+                if (!open && onClose) {
                     onClose();
                 }
             }}
         >
-            <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
+
+            {trigger?.type.name === 'Button' ?
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <AlertDialogTrigger asChild>
+                            {trigger}
+                        </AlertDialogTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>Delete bookmarks</p>
+                    </TooltipContent>
+                </Tooltip>
+                :
+                <AlertDialogTrigger asChild>
+                    {trigger}
+                </AlertDialogTrigger>
+            }
 
             <AlertDialogContent>
                 <AlertDialogHeader>

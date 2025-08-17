@@ -7,6 +7,7 @@ import BookmarksViewContext from '@/contexts/bookmarks-view-context';
 import { router } from '@inertiajs/react';
 import FormEditBulk from '@/components/form-edit-bulk';
 import FormBookmarkCollectionAdd from '@/components/form-bookmark-collection-add';
+import AlertDialogDelete from '@/components/alert-dialog-delete';
 
 export function NavBookmarks() {
     const { selectedBookmarks } = useContext(BookmarksViewContext);
@@ -23,21 +24,24 @@ export function NavBookmarks() {
                 setDialogCollectionsOpen(true);
                 break;
             case 'buttonDelete':
-                // todo show confirm dialog
-                router.post(
-                    route('bookmarks.bulk.destroy'), { bookmark_ids: selectedBookmarks, },
-                    {
-                        preserveScroll: true,
-                        onSuccess: () => {
-                            // todo: throw event (via Context) to notify components that need to process active bookmarks to reflect updates
-                        },
-                        onFinish: () => {
-                            setLoading(false);
-                        }
-                    },
-                );
+                // Confirm dialog triggered by dropdown item.
                 break;
         }
+    }
+
+    const handleDeleteConfirm = () => {
+        router.post(
+            route('bookmarks.bulk.destroy'), { bookmark_ids: selectedBookmarks, },
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    // todo: throw event (via Context) to notify components that need to process active bookmarks to reflect updates
+                },
+                onFinish: () => {
+                    setLoading(false);
+                }
+            },
+        );
     }
 
     return selectedBookmarks && selectedBookmarks.length > 0 && <div className="flex text-gray-700">
@@ -73,17 +77,18 @@ export function NavBookmarks() {
                 <p>Add to Collection</p>
             </TooltipContent>
         </Tooltip>
-        <Tooltip>
-            <TooltipTrigger asChild>
+
+        <AlertDialogDelete
+            onConfirm={handleDeleteConfirm}
+            title="Delete bookmarks"
+            description="This will permanently delete all selected bookmarks and their associated data."
+            trigger={
                 <Button disabled={loading} id="buttonDelete" variant="ghost" className="h-[34px] w-[34px] border-1 mr-1" onClick={handleButtonClick}>
                     <span className="sr-only">Delete</span>
                     <Icon iconNode={Trash2} className="size-5 opacity-80 group-hover:opacity-100" />
                 </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-                <p>Delete bookmarks</p>
-            </TooltipContent>
-        </Tooltip>
+            }
+        />
 
         <FormEditBulk
             open={dialogEditOpen}
