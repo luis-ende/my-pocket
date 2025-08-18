@@ -8,6 +8,8 @@ echo "---Pulling repository"
 git pull origin main
 echo "---Optimizing autoloader"
 composer install --optimize-autoloader --no-dev
+echo "---Run npm install---"
+npm install
 echo "---Generating assets---"
 npm run build
 echo "---Shutting down containers"
