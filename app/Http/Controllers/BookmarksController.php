@@ -264,7 +264,7 @@ class BookmarksController extends Controller
                 ->whereIn('id', $validated['bookmark_ids'])
                 ->delete();
             if ($result >= 1) {
-                return redirect()->back()->with('success', 'Bookmarks removed.');
+                return redirect()->back()->with('success', "{$result} bookmarks removed.");
             }
 
             return redirect()->back()->with('error', 'Bookmarks could not be removed.');

@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { router } from '@inertiajs/react';
 import BookmarksViewContext from '@/contexts/bookmarks-view-context';
 import { saveViewConfig } from '@/hooks/use-view-config';
+import deleteBookmark from '@/hooks/use-delete-bookmarks';
 
 type ViewBookmarksProps = {
     initialBookmarks: CursorPaginatedData<Bookmark> | PaginatedData<Bookmark>;
@@ -24,12 +25,12 @@ export default function ViewBookmarks({ initialBookmarks, bookmarks, setBookmark
     const [loading, setLoading] = useState(false);
     const lastItemRef = useRef<HTMLDivElement | HTMLTableRowElement | null>(null);
     const [activeTab, setActiveTab] = useState(() => viewConfig.viewMode || 'gridView');
-    const { selectedBookmarks } = useContext(BookmarksViewContext);
+    const { selectedBookmarks, dirtyBookmarksState, setDirtyBookmarksState } = useContext(BookmarksViewContext);
 
     useEffect(() => {
         viewConfig.viewMode = activeTab;
         saveViewConfig(viewConfig);
-    }, [viewConfig, activeTab]);
+    }, [activeTab, viewConfig]);
 
     useEffect(() => {
         viewConfig.selectedBookmarks = selectedBookmarks;
@@ -42,6 +43,30 @@ export default function ViewBookmarks({ initialBookmarks, bookmarks, setBookmark
             saveViewConfig(viewConfig);
         }
     }, [viewConfig]);
+
+    useEffect(() => {
+        if (dirtyBookmarksState.dirty) {
+            switch (dirtyBookmarksState.operation) {
+                case 'delete':
+                    if (setBookmarks && dirtyBookmarksState.ids.length > 0) {
+                        setBookmarks((prev: Bookmark[]) => {
+                            const res = [ ...prev ];
+                            dirtyBookmarksState.ids.forEach((id: number) => {
+                                deleteBookmark(res, id);
+                            });
+
+                            return res;
+                        });
+                        setDirtyBookmarksState({
+                            dirty: false,
+                            operation: '',
+                            ids: null,
+                        });
+                    }
+                    break;
+            }
+        }
+    }, [dirtyBookmarksState, setDirtyBookmarksState, setBookmarks]);
 
     const loadMore = useCallback(async () => {
         if (!nextPage || loading) return;

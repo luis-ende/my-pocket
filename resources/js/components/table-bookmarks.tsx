@@ -106,11 +106,13 @@ export function TableBookmarks({ data, lastItemRef, perPage, viewConfig }: DataT
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-    const { setSelectedBookmarks } = useContext(BookmarksViewContext);
+    const { setSelectedBookmarks, dirtyBookmarksState } = useContext(BookmarksViewContext);
     const [loading, setLoading] = useState(false);
+    const [shouldRun, setShouldRun] = useState(true);
+
     const [rowSelection, setRowSelection] = useState(() => {
         setLoading(true);
-        const indexes = viewConfig.selectedBookmarks.map((b: number) =>
+        const indexes: number[] = viewConfig.selectedBookmarks.map((b: number) =>
             data.findIndex((item: Bookmark) => item.id == b));
         let sel = {};
         indexes.forEach((index: number) => index >= 0 ? sel = { ...sel, [index]: true } : sel );
@@ -118,12 +120,6 @@ export function TableBookmarks({ data, lastItemRef, perPage, viewConfig }: DataT
 
         return sel;
     });
-
-    useEffect(() => {
-        if (loading) return;
-
-        setSelectedBookmarks(Object.keys(rowSelection).map((b) => data[Number(b)].id));
-    }, [rowSelection, setSelectedBookmarks, data, loading]);
 
     const table = useReactTable({
         data,
@@ -144,6 +140,24 @@ export function TableBookmarks({ data, lastItemRef, perPage, viewConfig }: DataT
             rowSelection,
         },
     });
+
+    useEffect(() => {
+        if (loading) return;
+        if (!shouldRun) return;
+
+        setSelectedBookmarks(Object.keys(rowSelection).map((b: string) => data[Number(b)].id));
+    }, [rowSelection, setSelectedBookmarks, data, loading, shouldRun]);
+
+    useEffect(() => {
+        if (dirtyBookmarksState.dirty === true && dirtyBookmarksState.operation === 'delete') {
+            setShouldRun(false);
+            table.resetRowSelection();
+            setSelectedBookmarks([]);
+            setTimeout(() => {
+                setShouldRun(true);
+            }, 5000);
+        }
+    }, [dirtyBookmarksState, table, setSelectedBookmarks]);
 
     return (
         <div className="w-full p-5">

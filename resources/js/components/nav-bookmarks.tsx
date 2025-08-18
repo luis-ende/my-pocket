@@ -10,7 +10,7 @@ import FormBookmarkCollectionAdd from '@/components/form-bookmark-collection-add
 import AlertDialogDelete from '@/components/alert-dialog-delete';
 
 export function NavBookmarks() {
-    const { selectedBookmarks } = useContext(BookmarksViewContext);
+    const { selectedBookmarks, setDirtyBookmarksState } = useContext(BookmarksViewContext);
     const [loading, setLoading] = useState(false);
     const [dialogEditOpen, setDialogEditOpen] = useState(false);
     const [dialogCollectionsOpen, setDialogCollectionsOpen] = useState(false);
@@ -35,7 +35,11 @@ export function NavBookmarks() {
             {
                 preserveScroll: true,
                 onSuccess: () => {
-                    // todo: throw event (via Context) to notify components that need to process active bookmarks to reflect updates
+                    setDirtyBookmarksState({
+                        dirty: true,
+                        operation: 'delete',
+                        ids: selectedBookmarks,
+                    });
                 },
                 onFinish: () => {
                     setLoading(false);

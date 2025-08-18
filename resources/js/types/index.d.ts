@@ -124,6 +124,8 @@ export type BookmarksView = {
     setSavedBookmark?: Dispatch<SetStateAction<Bookmark | null>>;
     selectedBookmarks: number[];
     setSelectedBookmarks: Dispatch<SetStateAction<number[]>>;
+    dirtyBookmarksState: DirtyBookmarkState;
+    setDirtyBookmarksState: Dispatch<SetStateAction<DirtyBookmarkState | null>>;
 }
 
 export interface BookmarksViewConfig {
@@ -131,4 +133,10 @@ export interface BookmarksViewConfig {
     viewMode: string;
     infiniteScroll: boolean;
     selectedBookmarks: number[];
+}
+
+export interface DirtyBookmarkState {
+    dirty: boolean;
+    operation: string;
+    ids: number[] | null;
 }

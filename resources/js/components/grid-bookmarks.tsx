@@ -16,6 +16,7 @@ import { router, usePage } from '@inertiajs/react';
 import { Archive, ArchiveRestore, BookOpenCheck, Copy, Glasses, Link, ListPlus, SquarePen, Star, StarOff, Trash2 } from 'lucide-react';
 import React, { RefObject, useState } from 'react';
 import { toast } from 'sonner';
+import deleteBookmark from '@/hooks/use-delete-bookmarks';
 
 type GridBookmarksProps = {
     bookmarks: Bookmark[];
@@ -47,7 +48,7 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage, viewCon
             preserveScroll: true,
             onSuccess: () => {
                 closeDeleteDialog();
-                if (currentBookmark) removeBookmark(currentBookmark.id);
+                if (currentBookmark) deleteBookmark(bookmarks, currentBookmark.id);
                 setCurrentBookmark(null);
             },
             onError: (errors) => {
@@ -74,7 +75,7 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage, viewCon
                 onSuccess: () => {
                     bookmark.is_fav = !bookmark.is_fav;
                     if (url.includes('/favorites')) {
-                        removeBookmark(bookmark.id);
+                        deleteBookmark(bookmarks, bookmark.id);
                     }
                     setCurrentBookmark(null);
                 },
@@ -91,7 +92,7 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage, viewCon
                 onSuccess: () => {
                     bookmark.checked = !bookmark.checked;
                     if (url.includes('/dashboard')) {
-                        removeBookmark(bookmark.id);
+                        deleteBookmark(bookmarks, bookmark.id);
                     }
                     setCurrentBookmark(null);
                 },
@@ -106,7 +107,7 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage, viewCon
             {
                 preserveScroll: true,
                 onSuccess: () => {
-                    removeBookmark(bookmark.id);
+                    deleteBookmark(bookmarks, bookmark.id);
                     setCurrentBookmark(null);
                 },
             },
@@ -124,13 +125,6 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage, viewCon
                 },
             },
         );
-    };
-
-    const removeBookmark = (bookmarkId: number) => {
-        const index = bookmarks.findIndex((item) => item.id == bookmarkId);
-        if (index !== -1) {
-            bookmarks.splice(index, 1);
-        }
     };
 
     const handleOpenDropDown = (event: React.MouseEvent<HTMLButtonElement>) => {
