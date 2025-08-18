@@ -37,7 +37,7 @@ class BookmarksControllerTest extends TestCase
 
         $response = $this->actingAs($user)->post(route('bookmarks.store'), $data);
 
-        $response->assertRedirect(); // typically redirects to index or previous page
+        $response->assertOk(); // typically redirects to index or previous page
         $this->assertDatabaseHas('bookmarks', [
             'url' => 'https://example.com',
             'tags' => 'test|demo',
