@@ -9,6 +9,7 @@ export default function FlashMessage() {
 
     useEffect(() => {
         setMessage(null);
+        setMessageType('');
         if (flash?.success) {
             setMessageType('Success');
             setMessage(flash.success);
@@ -20,15 +21,23 @@ export default function FlashMessage() {
         }
     }, [flash]);
 
-    if (!message) return null;
+    useEffect(() => {
+        if (!message) return;
 
-    return toast( `${messageType}`, {
-        icon: messageType === 'Success' ? <CheckCircle className="h-6 w-6 text-green-500" /> : <CircleX className="h-6 w-6 text-red-500" />,
-        description: message,
-        onAutoClose: () => setMessage(null),
-        action: {
-            label: 'Close',
-            onClick: () => setMessage(null),
-        },
-    });
+        const id = toast(`${messageType}`, {
+            icon: messageType === 'Success'
+                ? <CheckCircle className="h-6 w-6 text-green-500" />
+                : <CircleX className="h-6 w-6 text-red-500" />,
+            description: message,
+            onAutoClose: () => { setMessage(null); setMessageType(''); },
+            action: {
+                label: 'Close',
+                onClick: () => { setMessage(null); setMessageType(''); },
+            },
+        });
+
+        return () => { toast.dismiss(id) };
+    }, [message, messageType]);
+
+    return null;
 }
