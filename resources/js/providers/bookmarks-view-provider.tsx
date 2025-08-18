@@ -8,7 +8,9 @@ const BookmarksViewProvider = ({ children }: PropsWithChildren) => {
     const [dirtyBookmarksState, setDirtyBookmarksState] = useState<DirtyBookmarkState>({
         dirty: false,
         operation: '',
+        resetSelection: false,
         ids: null,
+        data: null,
     });
     const bookmarksView: BookmarksView = {
         savedBookmark,

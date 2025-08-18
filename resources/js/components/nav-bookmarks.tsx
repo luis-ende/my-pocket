@@ -38,6 +38,7 @@ export function NavBookmarks() {
                     setDirtyBookmarksState({
                         dirty: true,
                         operation: 'delete',
+                        resetSelection: true,
                         ids: selectedBookmarks,
                     });
                 },

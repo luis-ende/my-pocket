@@ -108,7 +108,6 @@ export function TableBookmarks({ data, lastItemRef, perPage, viewConfig }: DataT
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
     const { setSelectedBookmarks, dirtyBookmarksState } = useContext(BookmarksViewContext);
     const [loading, setLoading] = useState(false);
-    const [shouldRun, setShouldRun] = useState(true);
 
     const [rowSelection, setRowSelection] = useState(() => {
         setLoading(true);
@@ -143,19 +142,14 @@ export function TableBookmarks({ data, lastItemRef, perPage, viewConfig }: DataT
 
     useEffect(() => {
         if (loading) return;
-        if (!shouldRun) return;
 
         setSelectedBookmarks(Object.keys(rowSelection).map((b: string) => data[Number(b)].id));
-    }, [rowSelection, setSelectedBookmarks, data, loading, shouldRun]);
+    }, [rowSelection, setSelectedBookmarks, data, loading]);
 
     useEffect(() => {
-        if (dirtyBookmarksState.dirty === true && dirtyBookmarksState.operation === 'delete') {
-            setShouldRun(false);
+        if (dirtyBookmarksState.dirty === true && dirtyBookmarksState.resetSelection) {
             table.resetRowSelection();
             setSelectedBookmarks([]);
-            setTimeout(() => {
-                setShouldRun(true);
-            }, 5000);
         }
     }, [dirtyBookmarksState, table, setSelectedBookmarks]);
 

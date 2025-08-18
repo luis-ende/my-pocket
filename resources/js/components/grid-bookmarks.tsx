@@ -16,7 +16,7 @@ import { router, usePage } from '@inertiajs/react';
 import { Archive, ArchiveRestore, BookOpenCheck, Copy, Glasses, Link, ListPlus, SquarePen, Star, StarOff, Trash2 } from 'lucide-react';
 import React, { RefObject, useState } from 'react';
 import { toast } from 'sonner';
-import deleteBookmark from '@/hooks/use-delete-bookmarks';
+import deleteBookmarks from '@/hooks/use-delete-bookmarks';
 
 type GridBookmarksProps = {
     bookmarks: Bookmark[];
@@ -48,7 +48,7 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage, viewCon
             preserveScroll: true,
             onSuccess: () => {
                 closeDeleteDialog();
-                if (currentBookmark) deleteBookmark(bookmarks, currentBookmark.id);
+                if (currentBookmark) deleteBookmarks(bookmarks, currentBookmark.id);
                 setCurrentBookmark(null);
             },
             onError: (errors) => {
@@ -75,7 +75,7 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage, viewCon
                 onSuccess: () => {
                     bookmark.is_fav = !bookmark.is_fav;
                     if (url.includes('/favorites')) {
-                        deleteBookmark(bookmarks, bookmark.id);
+                        deleteBookmarks(bookmarks, bookmark.id);
                     }
                     setCurrentBookmark(null);
                 },
@@ -92,7 +92,7 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage, viewCon
                 onSuccess: () => {
                     bookmark.checked = !bookmark.checked;
                     if (url.includes('/dashboard')) {
-                        deleteBookmark(bookmarks, bookmark.id);
+                        deleteBookmarks(bookmarks, bookmark.id);
                     }
                     setCurrentBookmark(null);
                 },
@@ -107,7 +107,7 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage, viewCon
             {
                 preserveScroll: true,
                 onSuccess: () => {
-                    deleteBookmark(bookmarks, bookmark.id);
+                    deleteBookmarks(bookmarks, bookmark.id);
                     setCurrentBookmark(null);
                 },
             },

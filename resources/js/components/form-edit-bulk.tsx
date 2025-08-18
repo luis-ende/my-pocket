@@ -3,9 +3,10 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { useForm } from '@inertiajs/react';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import CreatableSelect from 'react-select/creatable';
 import useLoadTags from '@/hooks/use-load-tags';
+import BookmarksViewContext from '@/contexts/bookmarks-view-context';
 
 interface FormEditBookmarkProps {
     open: boolean;
@@ -24,6 +25,7 @@ export default function FormEditBulk({ open, onClose, bookmarkIds }: FormEditBoo
 
     const { tagsOptions } = useLoadTags('/tags/all');
     const [selectedOptions, setSelectedOptions] = useState<object[]>([]);
+    const { setDirtyBookmarksState } = useContext(BookmarksViewContext);
 
     useEffect(() => {
         if (open) {
@@ -46,6 +48,19 @@ export default function FormEditBulk({ open, onClose, bookmarkIds }: FormEditBoo
         patch(route('bookmarks.bulk.update'), {
             preserveScroll: true,
             onSuccess: () => {
+                const { bookmark_ids, ...dto } = data;
+                const path = window.location.pathname;
+                const resetSelection = (path.includes('/favorites') && dto.is_fav === false)
+                    || (path.includes('/archive') && dto.is_archived === false)
+                    || (path.includes('/dashboard') && dto.checked === false);
+
+                setDirtyBookmarksState({
+                    dirty: true,
+                    operation: 'update',
+                    resetSelection: resetSelection,
+                    ids: bookmark_ids,
+                    data: dto,
+                });
                 reset();
                 onClose();
             },

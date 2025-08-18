@@ -10,7 +10,8 @@ import { Button } from '@/components/ui/button';
 import { router } from '@inertiajs/react';
 import BookmarksViewContext from '@/contexts/bookmarks-view-context';
 import { saveViewConfig } from '@/hooks/use-view-config';
-import deleteBookmark from '@/hooks/use-delete-bookmarks';
+import deleteBookmarks from '@/hooks/use-delete-bookmarks';
+import updateBookmarks from '@/hooks/use-update-bookmarks';
 
 type ViewBookmarksProps = {
     initialBookmarks: CursorPaginatedData<Bookmark> | PaginatedData<Bookmark>;
@@ -45,26 +46,45 @@ export default function ViewBookmarks({ initialBookmarks, bookmarks, setBookmark
     }, [viewConfig]);
 
     useEffect(() => {
-        if (dirtyBookmarksState.dirty) {
-            switch (dirtyBookmarksState.operation) {
-                case 'delete':
-                    if (setBookmarks && dirtyBookmarksState.ids.length > 0) {
-                        setBookmarks((prev: Bookmark[]) => {
-                            const res = [ ...prev ];
-                            dirtyBookmarksState.ids.forEach((id: number) => {
-                                deleteBookmark(res, id);
-                            });
+        if (!dirtyBookmarksState.dirty || !setBookmarks) return;
 
-                            return res;
-                        });
-                        setDirtyBookmarksState({
-                            dirty: false,
-                            operation: '',
-                            ids: null,
-                        });
+        const removeViewBookmarks = (
+            setBookmarks: React.Dispatch<React.SetStateAction<Bookmark[]>>, ids: number[]) => {
+            setBookmarks((prev: Bookmark[]) => {
+                const res = [...prev];
+                ids.forEach((id: number) => deleteBookmarks(res, id));
+
+                return res;
+            });
+        };
+
+        let resetDirty = false;
+        switch (dirtyBookmarksState.operation) {
+            case 'delete':
+                if (dirtyBookmarksState.ids.length > 0) {
+                    removeViewBookmarks(setBookmarks, dirtyBookmarksState.ids)
+                }
+                resetDirty = true;
+                break;
+            case 'update':
+                if (dirtyBookmarksState.ids.length > 0 && dirtyBookmarksState.data) {
+                    if (dirtyBookmarksState.resetSelection) {
+                        removeViewBookmarks(setBookmarks, dirtyBookmarksState.ids);
+                    } else {
+                        updateBookmarks(setBookmarks, dirtyBookmarksState.ids, dirtyBookmarksState.data);
                     }
-                    break;
-            }
+                }
+                resetDirty = true;
+                break;
+        }
+
+        if (resetDirty) {
+            setDirtyBookmarksState({
+                dirty: false,
+                operation: '',
+                resetSelection: false,
+                ids: null,
+            });
         }
     }, [dirtyBookmarksState, setDirtyBookmarksState, setBookmarks]);
 

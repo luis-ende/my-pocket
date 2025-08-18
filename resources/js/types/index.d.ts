@@ -138,5 +138,14 @@ export interface BookmarksViewConfig {
 export interface DirtyBookmarkState {
     dirty: boolean;
     operation: string;
+    resetSelection: boolean;
     ids: number[] | null;
+    data: BookmarkBulkDTO | null;
+}
+
+export type BookmarkBulkDTO = {
+    tags?: string,
+    checked?: boolean;
+    is_fav?: boolean;
+    is_archived?: boolean;
 }

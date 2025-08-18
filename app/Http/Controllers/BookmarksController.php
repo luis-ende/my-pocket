@@ -102,8 +102,6 @@ class BookmarksController extends Controller
                 'saved_bookmark' => $savedBookmark,
             ]);
         });
-
-        return redirect()->back()->with('error', 'Bookmark couldn\'t be created.');
     }
 
     public function update(BookmarkPatchRequest $request, Bookmark $bookmark, LinkPreviewImageExtractor $linkPreviewImageExtractor)
