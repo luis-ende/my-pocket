@@ -51,11 +51,11 @@ class BookmarksController extends Controller
             $searchTerm = '';
         }
 
+        $searchTerm = urldecode($searchTerm);
         $bookmarks = [];
         if (! empty($searchTerm)) {
             $bookmarks = Bookmark::search($searchTerm)
                 ->query(function ($query) {
-                    // Also include archived bookmarks
                     $query->withoutGlobalScope(BookmarkNotArchivedScope::class);
                 })
                 ->latest()
