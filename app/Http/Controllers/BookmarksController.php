@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AddToCollectionPostRequest;
+use App\Http\Requests\BookmarkCollectionsPostRequest;
 use App\Http\Requests\BookmarkPatchRequest;
 use App\Http\Requests\BookmarkPostRequest;
 use App\Models\Bookmark;
@@ -271,7 +271,7 @@ class BookmarksController extends Controller
         }
     }
 
-    public function addToCollection(AddToCollectionPostRequest $request)
+    public function addToCollection(BookmarkCollectionsPostRequest $request)
     {
         $validated = $request->validated();
         try {
@@ -293,6 +293,21 @@ class BookmarksController extends Controller
             return redirect()->back()->with('success', "{$count} bookmarks added to collection.");
         } catch (\Throwable $e) {
             return redirect()->back()->with('error', 'Failed to add bookmarks to collection.');
+        }
+    }
+
+    public function removeFromCollection(BookmarkCollectionsPostRequest $request)
+    {
+        $validated = $request->validated();
+        try {
+            $count = DB::table('bookmark_collection')
+                ->where('collection_id', $validated['collectionId'])
+                ->whereIn('bookmark_id', $validated['bookmarkIds'])
+                ->delete();
+
+            return redirect()->back()->with('success', "{$count} bookmarks removed from collection.");
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Failed to remove bookmarks from collection.');
         }
     }
 

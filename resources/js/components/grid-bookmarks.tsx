@@ -13,10 +13,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Bookmark, BookmarksViewConfig } from '@/types';
 import { router, usePage } from '@inertiajs/react';
-import { Archive, ArchiveRestore, BookOpenCheck, Copy, Glasses, Link, ListPlus, SquarePen, Star, StarOff, Trash2 } from 'lucide-react';
+import { Archive, ArchiveRestore, BookOpenCheck, Copy, Glasses, Link, ListPlus, ListMinus, SquarePen, Star, StarOff, Trash2 } from 'lucide-react';
 import React, { RefObject, useState } from 'react';
 import { toast } from 'sonner';
 import deleteBookmarks from '@/hooks/use-delete-bookmarks';
+import useCollectionBookmarksPage from '@/hooks/use-collection-bookmarks-page';
 
 type GridBookmarksProps = {
     bookmarks: Bookmark[];
@@ -33,6 +34,7 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage, viewCon
     const [dialogEditOpen, setDialogEditOpen] = useState(false);
     const [dialogCollectionsOpen, setDialogCollectionsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    const { isCollectionBookmarksPage, handleRemoveBookmarkFromCollection } = useCollectionBookmarksPage();
 
     const closeDeleteDialog = () => {
         setTimeout(() => {
@@ -161,6 +163,13 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage, viewCon
             });
     };
 
+    const onRemovedBookmarkFromCollection = () => {
+        if (!currentBookmark) return;
+
+        deleteBookmarks(bookmarks, currentBookmark.id);
+        setCurrentBookmark(null);
+    }
+
     const handleDropDownItemClick = (key: string) => {
         if (!currentBookmark) return;
 
@@ -179,6 +188,9 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage, viewCon
                 break;
             case 'addToCol':
                 setDialogCollectionsOpen(true);
+                break;
+            case 'removeFromCol':
+                // Confirm dialog triggered by dropdown item.
                 break;
             case 'copy':
                 handleCopyLink(currentBookmark);
@@ -264,6 +276,25 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage, viewCon
                         <Icon iconNode={ListPlus} className="size-5 opacity-90 group-hover:opacity-100" />
                         Add to Collection
                     </DropdownMenuItem>
+                    {isCollectionBookmarksPage && <AlertDialogDelete
+                        onClose={closeDeleteDialog}
+                        onConfirm={() => {
+                            if (!currentBookmark) return;
+                            handleRemoveBookmarkFromCollection([currentBookmark.id], setLoading, onRemovedBookmarkFromCollection)
+                        }}
+                        title="Remove bookmark from collection"
+                        description="This will permanently remove the bookmark from the current collection. Are you sure?"
+                        trigger={
+                            <DropdownMenuItem
+                                onSelect={(e) => { e.preventDefault(); }}
+                                onClick={() => handleDropDownItemClick('removeFromCol')}
+                            >
+                                <Icon iconNode={ListMinus} className="size-5 opacity-90 group-hover:opacity-100" />
+                                Remove from Collection
+                            </DropdownMenuItem>
+                        }
+                    />}
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => handleDropDownItemClick('copy')}>
                         <Icon iconNode={Copy} className="size-5 opacity-90 group-hover:opacity-100" />
                         Copy Link

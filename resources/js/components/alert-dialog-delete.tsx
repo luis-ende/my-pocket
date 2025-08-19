@@ -37,7 +37,7 @@ const AlertDialogDelete = ({ onClose, onConfirm, title, description, trigger }: 
                         </AlertDialogTrigger>
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p>Delete bookmarks</p>
+                        <p>{title}</p>
                     </TooltipContent>
                 </Tooltip>
                 :

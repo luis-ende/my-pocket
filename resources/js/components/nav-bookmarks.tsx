@@ -1,19 +1,21 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/icon';
-import { ListPlus, SquarePen, Trash2 } from 'lucide-react';
+import { ListPlus, ListMinus, SquarePen, Trash2 } from 'lucide-react';
 import React, { useContext, useState } from 'react';
 import BookmarksViewContext from '@/contexts/bookmarks-view-context';
 import { router } from '@inertiajs/react';
 import FormEditBulk from '@/components/form-edit-bulk';
 import FormBookmarkCollectionAdd from '@/components/form-bookmark-collection-add';
 import AlertDialogDelete from '@/components/alert-dialog-delete';
+import useCollectionBookmarksPage from '@/hooks/use-collection-bookmarks-page';
 
 export function NavBookmarks() {
     const { selectedBookmarks, setDirtyBookmarksState } = useContext(BookmarksViewContext);
     const [loading, setLoading] = useState(false);
     const [dialogEditOpen, setDialogEditOpen] = useState(false);
     const [dialogCollectionsOpen, setDialogCollectionsOpen] = useState(false);
+    const { isCollectionBookmarksPage, handleRemoveBookmarkFromCollection } = useCollectionBookmarksPage();
 
     const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         switch (event.currentTarget.id) {
@@ -22,6 +24,9 @@ export function NavBookmarks() {
                 break;
             case 'buttonAddToC':
                 setDialogCollectionsOpen(true);
+                break;
+            case 'buttonRemoveFromC':
+                // Confirm dialog triggered by dropdown item.
                 break;
             case 'buttonDelete':
                 // Confirm dialog triggered by dropdown item.
@@ -47,6 +52,15 @@ export function NavBookmarks() {
                 }
             },
         );
+    }
+
+    const onRemovedBookmarkFromCollection = () => {
+        setDirtyBookmarksState({
+            dirty: true,
+            operation: 'delete',
+            resetSelection: true,
+            ids: selectedBookmarks,
+        });
     }
 
     return selectedBookmarks && selectedBookmarks.length > 0 && <div className="flex text-gray-700">
@@ -82,6 +96,19 @@ export function NavBookmarks() {
                 <p>Add to Collection</p>
             </TooltipContent>
         </Tooltip>
+        {isCollectionBookmarksPage && <Tooltip>
+            <AlertDialogDelete
+                onConfirm={() => handleRemoveBookmarkFromCollection(selectedBookmarks, setLoading, onRemovedBookmarkFromCollection)}
+                title="Remove bookmarks from collection"
+                description="This will permanently remove the selected bookmarks from the current collection. Are you sure?"
+                trigger={
+                    <Button disabled={loading} id="buttonRemoveFromC" variant="ghost" className="h-[34px] w-[34px] border-1 mr-1" onClick={handleButtonClick}>
+                        <span className="sr-only">Remove from Collection</span>
+                        <Icon iconNode={ListMinus} className="size-5 opacity-80 group-hover:opacity-100" />
+                    </Button>
+                }
+            />
+        </Tooltip>}
 
         <AlertDialogDelete
             onConfirm={handleDeleteConfirm}

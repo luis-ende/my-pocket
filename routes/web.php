@@ -36,6 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('collections/{collection}', [CollectionController::class, 'destroy'])->name('collections.destroy');
     Route::get('collections/{collectionId}/bookmarks', [CollectionController::class, 'getCollectionBookmarks'])->name('collections.bookmarks');
     Route::post('bookmarks/add-to-collection', [BookmarksController::class, 'addToCollection'])->name('bookmarks.addToCollection');
+    Route::post('bookmarks/remove-from-collection', [BookmarksController::class, 'removeFromCollection'])->name('bookmarks.removeFromCollection');
     Route::get('bookmarks/{bookmarkId}/collections', [BookmarksController::class, 'getCollections'])->name('bookmarks.collections');
     Route::get('bookmarks/bookmark-title', [BookmarksController::class, 'getBookmarkTitle'])->name('bookmarks.title');
 });
