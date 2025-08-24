@@ -2,7 +2,7 @@ import { usePage } from '@inertiajs/react';
 import { CheckCircle, CircleX  } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-export default function FlashMessage() {
+export default function AppFlashMessage() {
     const { flash } = usePage().props;
     const [message, setMessage] = useState(null);
     const [messageType, setMessageType] = useState('');
