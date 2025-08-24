@@ -46,7 +46,7 @@ export const columns: ColumnDef<Bookmark>[] = [
                 </Button>
             );
         },
-        cell: ({ row }) => <a href={row.original.url} target="_blank" className="">{row.getValue('title')}</a>,
+        cell: ({ row }) => <div className="w-xl truncated-paragraph"><a href={row.original.url} target="_blank" className="">{row.getValue('title')}</a></div>,
     },
     {
         accessorKey: 'url_host',

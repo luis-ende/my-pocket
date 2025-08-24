@@ -157,3 +157,9 @@
         @apply bg-background text-foreground;
     }
 }
+
+.truncated-paragraph {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
