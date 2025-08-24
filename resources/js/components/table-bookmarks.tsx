@@ -19,6 +19,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Bookmark, BookmarksViewConfig } from '@/types';
 import { RefObject, useContext, useEffect, useState } from 'react';
 import BookmarksViewContext from '@/contexts/bookmarks-view-context';
+import useViewConfig from '@/hooks/use-view-config';
 
 export const columns: ColumnDef<Bookmark>[] = [
     {
@@ -102,12 +103,13 @@ interface DataTableTagsProps {
     viewConfig: BookmarksViewConfig;
 }
 
-export function TableBookmarks({ data, lastItemRef, perPage, viewConfig }: DataTableTagsProps) {
+export function TableBookmarks({ data, lastItemRef, perPage }: DataTableTagsProps) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
     const { setSelectedBookmarks, dirtyBookmarksState } = useContext(BookmarksViewContext);
     const [loading, setLoading] = useState(false);
+    const viewConfig = useViewConfig();
 
     const [rowSelection, setRowSelection] = useState(() => {
         setLoading(true);

@@ -1,10 +1,10 @@
 import AppLayout from '@/layouts/app-layout';
 import type { Bookmark, BreadcrumbItem, PaginatedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import ViewBookmarks from '@/components/view-bookmarks';
 import useViewConfig from '@/hooks/use-view-config';
-import BookmarksViewContext from '@/contexts/bookmarks-view-context';
+import useChangeActivePage from '@/hooks/use-change-active-page';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -18,9 +18,9 @@ export default function Search() {
 
     const params = new URLSearchParams(window.location.search);
     const searchTermParam = params.get('query') ?? '';
-    const [searchTerm] = useState(decodeURIComponent(searchTermParam));
-    const viewConfig = { ...useViewConfig(), infiniteScroll: false };
-    const { setSelectedBookmarks } = useContext(BookmarksViewContext);
+    const [ searchTerm ] = useState(decodeURIComponent(searchTermParam));
+    const [ viewConfig ] = useState({ ...useViewConfig(), infiniteScroll: false });
+    useChangeActivePage(viewConfig);
 
     const pageNumbers = useMemo(() => {
         const current = bookmarks.current_page;
@@ -52,10 +52,6 @@ export default function Search() {
 
         return pages;
     }, [bookmarks.current_page, bookmarks.last_page]);
-
-    useEffect(() => {
-        setSelectedBookmarks([]);
-    }, [setSelectedBookmarks]);
 
     const getPageUrl = (page: string) => {
         const url = new URL(window.location.href);

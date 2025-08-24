@@ -14,10 +14,11 @@ import {
 import { Bookmark, BookmarksViewConfig } from '@/types';
 import { router, usePage } from '@inertiajs/react';
 import { Archive, ArchiveRestore, BookOpenCheck, Copy, Glasses, Link, ListPlus, ListMinus, SquarePen, Star, StarOff, Trash2 } from 'lucide-react';
-import React, { RefObject, useState } from 'react';
+import React, { RefObject, useContext, useState } from 'react';
 import { toast } from 'sonner';
 import deleteBookmarks from '@/hooks/use-delete-bookmarks';
 import useCollectionBookmarksPage from '@/hooks/use-collection-bookmarks-page';
+import BookmarksViewContext from '@/contexts/bookmarks-view-context';
 
 type GridBookmarksProps = {
     bookmarks: Bookmark[];
@@ -25,7 +26,7 @@ type GridBookmarksProps = {
     perPage: number;
     viewConfig: BookmarksViewConfig;
 };
-export default function GridBookmarks({ bookmarks, lastItemRef, perPage, viewConfig }: GridBookmarksProps) {
+export default function GridBookmarks({ bookmarks, lastItemRef, perPage }: GridBookmarksProps) {
     const { url } = usePage();
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -35,6 +36,7 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage, viewCon
     const [dialogCollectionsOpen, setDialogCollectionsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const { isCollectionBookmarksPage, handleRemoveBookmarkFromCollection } = useCollectionBookmarksPage();
+    const { selectedBookmarks } = useContext(BookmarksViewContext);
 
     const closeDeleteDialog = () => {
         setTimeout(() => {
@@ -346,7 +348,7 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage, viewCon
                             bookmark={bookmark}
                             handleActionsClick={handleOpenDropDown}
                             loading={loading}
-                            selected={viewConfig.selectedBookmarks.includes(bookmark.id)}
+                            selected={selectedBookmarks.includes(bookmark.id)}
                         />
                     );
                 })}

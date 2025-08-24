@@ -4,6 +4,8 @@ import type { BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import useLoadViewBookmarks from '@/hooks/use-load-view-bookmarks';
 import useViewConfig from '@/hooks/use-view-config';
+import { useState } from 'react';
+import useChangeActivePage from '@/hooks/use-change-active-page';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -14,7 +16,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Archive() {
     const { initialBookmarks, bookmarks, setBookmarks } = useLoadViewBookmarks();
-    const viewConfig = useViewConfig();
+    const [ viewConfig ] = useState(useViewConfig());
+    useChangeActivePage(viewConfig);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

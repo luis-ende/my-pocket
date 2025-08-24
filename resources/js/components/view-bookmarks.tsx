@@ -29,21 +29,8 @@ export default function ViewBookmarks({ initialBookmarks, bookmarks, setBookmark
     const { selectedBookmarks, dirtyBookmarksState, setDirtyBookmarksState } = useContext(BookmarksViewContext);
 
     useEffect(() => {
-        viewConfig.viewMode = activeTab;
-        saveViewConfig(viewConfig);
-    }, [activeTab, viewConfig]);
-
-    useEffect(() => {
-        viewConfig.selectedBookmarks = selectedBookmarks;
-        saveViewConfig(viewConfig);
-    }, [selectedBookmarks, viewConfig]);
-
-    useEffect(() => {
-        return () => {
-            viewConfig.selectedBookmarks = [];
-            saveViewConfig(viewConfig);
-        }
-    }, [viewConfig]);
+        saveViewConfig({ ...viewConfig, viewMode: activeTab, selectedBookmarks: selectedBookmarks });
+    }, [selectedBookmarks, activeTab, viewConfig]);
 
     useEffect(() => {
         if (!dirtyBookmarksState.dirty || !setBookmarks) return;
@@ -152,20 +139,10 @@ export default function ViewBookmarks({ initialBookmarks, bookmarks, setBookmark
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="gridView">
-                    <GridBookmarks
-                        bookmarks={bookmarks}
-                        lastItemRef={lastItemRef}
-                        perPage={perPage}
-                        viewConfig={viewConfig}
-                    />
+                    <GridBookmarks bookmarks={bookmarks} lastItemRef={lastItemRef} perPage={perPage} />
                 </TabsContent>
                 <TabsContent value="tableView">
-                    <TableBookmarks
-                        data={bookmarks}
-                        lastItemRef={lastItemRef}
-                        perPage={perPage}
-                        viewConfig={viewConfig}>
-                    </TableBookmarks>
+                    <TableBookmarks data={bookmarks} lastItemRef={lastItemRef} perPage={perPage}></TableBookmarks>
                 </TabsContent>
             </Tabs>
 

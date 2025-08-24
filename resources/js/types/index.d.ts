@@ -130,7 +130,7 @@ export type BookmarksView = {
 
 export interface BookmarksViewConfig {
     path: string;
-    viewMode: string;
+    viewMode: 'gridView' | 'tableView';
     infiniteScroll: boolean;
     selectedBookmarks: number[];
 }

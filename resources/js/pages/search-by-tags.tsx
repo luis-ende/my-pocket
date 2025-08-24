@@ -7,6 +7,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import useViewConfig from '@/hooks/use-view-config';
 import BookmarksViewContext from '@/contexts/bookmarks-view-context';
+import useChangeActivePage from '@/hooks/use-change-active-page';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -20,7 +21,8 @@ export default function SearchByTags() {
     const [initialBookmarks, setInitialBookmarks] = useState<CursorPaginatedData<Bookmark> | null>(null);
     const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
     const [rowSelection, setRowSelection] = useState({});
-    const viewConfig = useViewConfig();
+    const [ viewConfig ] = useState(useViewConfig());
+    useChangeActivePage(viewConfig);
     const { setSelectedBookmarks } = useContext(BookmarksViewContext);
 
     const setSelection= (fetchTags: Tag[]) => {

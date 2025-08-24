@@ -83,14 +83,12 @@ export default function Dashboard() {
                             <h2 className="text-l text-gray-600">Your most recent pending reads</h2>
                         </div>
                     </div>
-                    {toReadBookmarks && (
-                        <ViewBookmarks
-                            initialBookmarks={initialBookmarks}
-                            bookmarks={toReadBookmarks}
-                            setBookmarks={setToReadBookmarks}
-                            viewConfig={viewConfig}
-                        />
-                    )}
+                    <ViewBookmarks
+                        initialBookmarks={initialBookmarks}
+                        bookmarks={toReadBookmarks}
+                        setBookmarks={setToReadBookmarks}
+                        viewConfig={viewConfig}
+                    />
                 </div>
             </div>
         </AppLayout>
