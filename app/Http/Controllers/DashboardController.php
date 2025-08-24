@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Bookmark;
@@ -24,6 +26,9 @@ class DashboardController extends Controller
         ]);
     }
 
+    /**
+     * Get counters for the Dashboard statistics section.
+     */
     protected function getStats(): array
     {
         $bookmarksCount = Bookmark::query()

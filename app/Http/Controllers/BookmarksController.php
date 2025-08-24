@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\BookmarkCollectionsPostRequest;
@@ -10,9 +12,14 @@ use App\Models\Scopes\BookmarkNotArchivedScope;
 use App\Services\FetchUrlTitleService;
 use App\Services\LinkPreviewImageExtractor;
 use App\Services\LinkUrlCleanService;
+use Illuminate\Foundation\Application;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class BookmarksController extends Controller
 {
@@ -27,7 +34,7 @@ class BookmarksController extends Controller
         ]);
     }
 
-    public function indexArchive()
+    public function indexArchive(): Response
     {
         $bookmarks = Bookmark::query()
             ->where('is_archived', true)
@@ -40,7 +47,7 @@ class BookmarksController extends Controller
         ]);
     }
 
-    public function indexSearch(Request $request)
+    public function indexSearch(Request $request): Response
     {
         try {
             $validated = $request->validate([
@@ -67,7 +74,7 @@ class BookmarksController extends Controller
         ]);
     }
 
-    public function indexFavorites()
+    public function indexFavorites(): Response
     {
         $bookmarks = Bookmark::query()
             ->where('is_fav', true)
@@ -79,9 +86,12 @@ class BookmarksController extends Controller
         ]);
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function store(BookmarkPostRequest $request,
         LinkPreviewImageExtractor $linkPreviewImageExtractor,
-        LinkUrlCleanService $linkUrlCleanService)
+        LinkUrlCleanService $linkUrlCleanService): void
     {
 
         $validated = $request->validated();
@@ -104,6 +114,9 @@ class BookmarksController extends Controller
         });
     }
 
+    /**
+     * @return Application|RedirectResponse|Redirector|object|void
+     */
     public function update(BookmarkPatchRequest $request, Bookmark $bookmark, LinkPreviewImageExtractor $linkPreviewImageExtractor)
     {
         $referer = $request->header('referer');
@@ -137,11 +150,13 @@ class BookmarksController extends Controller
                 'saved_bookmark' => $savedBookmark,
             ]);
         } catch (\Exception $e) {
-            return redirect($path)->with('error', 'Failed to update bookmark.');
+            return redirect($path)->with([
+                'error' => 'Failed to update bookmark.',
+            ]);
         }
     }
 
-    public function updateBulk(Request $request)
+    public function updateBulk(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'bookmark_ids' => 'required|array',
@@ -182,7 +197,7 @@ class BookmarksController extends Controller
         return redirect()->back()->with('error', "Bookmarks couldn't be updated.");
     }
 
-    public function saveFav(Request $request, int $bookmarkId)
+    public function saveFav(Request $request, int $bookmarkId): RedirectResponse
     {
         $validated = $request->validate([
             'is_fav' => 'required|boolean',
@@ -196,7 +211,7 @@ class BookmarksController extends Controller
         return redirect()->back();
     }
 
-    public function saveRead(Request $request, int $bookmarkId)
+    public function saveRead(Request $request, int $bookmarkId): void
     {
         $validated = $request->validate([
             'read' => 'required|boolean',
@@ -208,7 +223,7 @@ class BookmarksController extends Controller
             ]);
     }
 
-    public function saveArchive(Request $request, int $bookmarkId)
+    public function saveArchive(Request $request, int $bookmarkId): RedirectResponse
     {
         $validated = $request->validate([
             'archive' => 'required|boolean',
@@ -226,7 +241,7 @@ class BookmarksController extends Controller
         }
     }
 
-    public function saveBrokenLink(Request $request, int $bookmarkId)
+    public function saveBrokenLink(Request $request, int $bookmarkId): void
     {
         $validated = $request->validate([
             'is_broken_link' => 'required|boolean',
@@ -238,7 +253,7 @@ class BookmarksController extends Controller
             ]);
     }
 
-    public function destroy(Bookmark $bookmark)
+    public function destroy(Bookmark $bookmark): RedirectResponse
     {
         try {
             if ($bookmark->delete() === true) {
@@ -251,7 +266,7 @@ class BookmarksController extends Controller
         }
     }
 
-    public function destroyBulk(Request $request)
+    public function destroyBulk(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'bookmark_ids' => 'required|array',
@@ -271,7 +286,7 @@ class BookmarksController extends Controller
         }
     }
 
-    public function addToCollection(BookmarkCollectionsPostRequest $request)
+    public function addToCollection(BookmarkCollectionsPostRequest $request): RedirectResponse
     {
         $validated = $request->validated();
         try {
@@ -296,7 +311,7 @@ class BookmarksController extends Controller
         }
     }
 
-    public function removeFromCollection(BookmarkCollectionsPostRequest $request)
+    public function removeFromCollection(BookmarkCollectionsPostRequest $request): RedirectResponse
     {
         $validated = $request->validated();
         try {
@@ -311,7 +326,7 @@ class BookmarksController extends Controller
         }
     }
 
-    public function getCollections(int $bookmarkId)
+    public function getCollections(int $bookmarkId): JsonResponse
     {
         $collectionId = Bookmark::query()->findOrFail($bookmarkId)
             ->collections()
@@ -324,7 +339,7 @@ class BookmarksController extends Controller
         ]);
     }
 
-    public function getBookmarkTitle(Request $request, FetchUrlTitleService $fetchUrlTitleService)
+    public function getBookmarkTitle(Request $request, FetchUrlTitleService $fetchUrlTitleService): JsonResponse
     {
         $validated = $request->validate([
             'target' => 'required|string|url',

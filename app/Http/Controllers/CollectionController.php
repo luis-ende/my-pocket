@@ -1,15 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CollectionPostRequest;
 use App\Models\Bookmark;
 use App\Models\Collection;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class CollectionController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $collections = Collection::query()
             ->select('id', 'description', 'name')
@@ -23,10 +28,10 @@ class CollectionController extends Controller
         ]);
     }
 
-    public function list()
+    public function list(): JsonResponse
     {
         $collections = Collection::query()
-            ->select('id', 'name')
+            ->select(['id', 'name'])
             ->orderBy('name')
             ->get();
 
@@ -35,7 +40,7 @@ class CollectionController extends Controller
         ]);
     }
 
-    public function getCollectionBookmarks(int $collectionId)
+    public function getCollectionBookmarks(int $collectionId): Response
     {
         $collection = Collection::query()
             ->select(['id', 'name', 'description'])
@@ -52,7 +57,7 @@ class CollectionController extends Controller
         ]);
     }
 
-    public function store(CollectionPostRequest $request)
+    public function store(CollectionPostRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 
@@ -61,7 +66,7 @@ class CollectionController extends Controller
         return redirect()->back()->with('success', 'Collection created.');
     }
 
-    public function update(CollectionPostRequest $request, Collection $collection)
+    public function update(CollectionPostRequest $request, Collection $collection): RedirectResponse
     {
         $validated = $request->validated();
 
@@ -77,7 +82,7 @@ class CollectionController extends Controller
         }
     }
 
-    public function destroy(Collection $collection)
+    public function destroy(Collection $collection): RedirectResponse
     {
         try {
             if ($collection->delete() === true) {

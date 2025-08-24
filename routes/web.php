@@ -29,9 +29,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('search-by-tags', [TagsController::class, 'getBookmarksByTags'])->name('search-by-tags');
     Route::get('tags/index', [TagsController::class, 'getTagsByCount'])->name('tags.index');
     Route::get('tags/all', [TagsController::class, 'getAllTags'])->name('tags.all');
-    Route::get('collections', [CollectionController::class, 'index'])->name('collections');
+    Route::get('collections', [CollectionController::class, 'index'])->name('collections.index');
     Route::get('collections/list', [CollectionController::class, 'list'])->name('collections.list');
-    Route::post('collections', [CollectionController::class, 'store'])->name('collections');
+    Route::post('collections', [CollectionController::class, 'store'])->name('collections.store');
     Route::patch('collections/{collection}', [CollectionController::class, 'update'])->name('collections.update');
     Route::delete('collections/{collection}', [CollectionController::class, 'destroy'])->name('collections.destroy');
     Route::get('collections/{collectionId}/bookmarks', [CollectionController::class, 'getCollectionBookmarks'])->name('collections.bookmarks');
