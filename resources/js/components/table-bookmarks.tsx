@@ -182,9 +182,15 @@ export function TableBookmarks({ data, lastItemRef, perPage }: DataTableTagsProp
                     <TableBody>
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row, index: number) => (
-                                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'} ref={index === ((table.getRowModel().rows.length - 1) - perPage) ? lastItemRef : null}>
+                                <TableRow
+                                    key={row.id}
+                                    data-state={row.getIsSelected() && 'selected'}
+                                    ref={index === table.getRowModel().rows.length - 1 - perPage ? lastItemRef : null}
+                                >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                                        <TableCell key={cell.id} className="max-w-60 overflow-hidden">
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                        </TableCell>
                                     ))}
                                 </TableRow>
                             ))
