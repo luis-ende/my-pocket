@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Bookmark, BookmarksViewConfig } from '@/types';
+import { Bookmark } from '@/types';
 import { RefObject, useContext, useEffect, useState } from 'react';
 import BookmarksViewContext from '@/contexts/bookmarks-view-context';
 import useViewConfig from '@/hooks/use-view-config';
@@ -100,7 +100,6 @@ interface DataTableTagsProps {
     data: Bookmark[];
     lastItemRef: RefObject<HTMLTableRowElement>;
     perPage: number;
-    viewConfig: BookmarksViewConfig;
 }
 
 export function TableBookmarks({ data, lastItemRef, perPage }: DataTableTagsProps) {

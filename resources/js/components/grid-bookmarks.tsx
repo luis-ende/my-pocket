@@ -11,7 +11,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Bookmark, BookmarksViewConfig } from '@/types';
+import { Bookmark } from '@/types';
 import { router, usePage } from '@inertiajs/react';
 import { Archive, ArchiveRestore, BookOpenCheck, Copy, Glasses, Link, ListPlus, ListMinus, SquarePen, Star, StarOff, Trash2 } from 'lucide-react';
 import React, { RefObject, useContext, useState } from 'react';
@@ -24,7 +24,6 @@ type GridBookmarksProps = {
     bookmarks: Bookmark[];
     lastItemRef: RefObject<HTMLDivElement | null> | null;
     perPage: number;
-    viewConfig: BookmarksViewConfig;
 };
 export default function GridBookmarks({ bookmarks, lastItemRef, perPage }: GridBookmarksProps) {
     const { url } = usePage();
