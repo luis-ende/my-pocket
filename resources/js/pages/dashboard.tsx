@@ -90,7 +90,7 @@ export default function Dashboard() {
                             <h2 className="text-l text-gray-600">A curated daily selection for you</h2>
                         </div>
                     </div>
-                    <GridBookmarks bookmarks={recommendedBookmarks} lastItemRef={null} perPage={4} />
+                    <GridBookmarks bookmarks={recommendedBookmarks} lastItemRef={null} perPage={recommendedBookmarks.length} />
                 </div>
 
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
