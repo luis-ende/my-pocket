@@ -26,7 +26,7 @@ export default function ViewBookmarks({ initialBookmarks, bookmarks, setBookmark
     const [loading, setLoading] = useState(false);
     const lastItemRef = useRef<HTMLDivElement | HTMLTableRowElement | null>(null);
     const [activeTab, setActiveTab] = useState(() => viewConfig.viewMode || 'gridView');
-    const { selectedBookmarks, dirtyBookmarksState, setDirtyBookmarksState } = useContext(BookmarksViewContext);
+    const { selectedBookmarks, dirtyBookmarksState, setDirtyBookmarksState, resetDirtyState } = useContext(BookmarksViewContext);
 
     useEffect(() => {
         saveViewConfig({ ...viewConfig, viewMode: activeTab, selectedBookmarks: selectedBookmarks });
@@ -45,13 +45,12 @@ export default function ViewBookmarks({ initialBookmarks, bookmarks, setBookmark
             });
         };
 
-        let resetDirty = false;
         switch (dirtyBookmarksState.operation) {
             case 'delete':
                 if (dirtyBookmarksState.ids.length > 0) {
                     removeViewBookmarks(setBookmarks, dirtyBookmarksState.ids)
                 }
-                resetDirty = true;
+                resetDirtyState();
                 break;
             case 'update':
                 if (dirtyBookmarksState.ids.length > 0 && dirtyBookmarksState.data) {
@@ -61,19 +60,10 @@ export default function ViewBookmarks({ initialBookmarks, bookmarks, setBookmark
                         updateBookmarks(setBookmarks, dirtyBookmarksState.ids, dirtyBookmarksState.data);
                     }
                 }
-                resetDirty = true;
+                resetDirtyState();
                 break;
         }
-
-        if (resetDirty) {
-            setDirtyBookmarksState({
-                dirty: false,
-                operation: '',
-                resetSelection: false,
-                ids: null,
-            });
-        }
-    }, [dirtyBookmarksState, setDirtyBookmarksState, setBookmarks]);
+    }, [dirtyBookmarksState, setDirtyBookmarksState, setBookmarks, resetDirtyState]);
 
     const loadMore = useCallback(async () => {
         if (!nextPage || loading) return;

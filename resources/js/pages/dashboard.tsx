@@ -19,11 +19,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Dashboard() {
     const { initialBookmarks, bookmarks: toReadBookmarks, setBookmarks: setToReadBookmarks } = useLoadViewBookmarks();
-    console.log('props', usePage().props)
     const { recommended: recommendedBookmarks } = usePage<{
         recommended: Bookmark[],
     }>().props;
-    console.log('recommendedBookmarks', recommendedBookmarks);
     const { stats } = usePage<{
         stats: Stats;
     }>().props;

@@ -12,6 +12,17 @@ const BookmarksViewProvider = ({ children }: PropsWithChildren) => {
         ids: null,
         data: null,
     });
+
+    const resetDirtyState = () => {
+        setDirtyBookmarksState({
+            dirty: false,
+            operation: '',
+            resetSelection: false,
+            ids: null,
+            data: null,
+        });
+    };
+
     const bookmarksView: BookmarksView = {
         savedBookmark,
         setSavedBookmark,
@@ -19,6 +30,7 @@ const BookmarksViewProvider = ({ children }: PropsWithChildren) => {
         setSelectedBookmarks,
         dirtyBookmarksState,
         setDirtyBookmarksState,
+        resetDirtyState,
     };
 
     return <BookmarksViewContext.Provider value={bookmarksView}>
