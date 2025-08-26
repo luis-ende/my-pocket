@@ -1,8 +1,6 @@
 # My Pocket
 
-A free self-made app for saving and managing web bookmarks. 
-
-# Development
+A self-made app for saving and organizing web bookmarks. 
 
 ## Stack
 
@@ -11,15 +9,23 @@ A free self-made app for saving and managing web bookmarks.
 - React
 - PostgreSQL
 
-## Launch
-
-`./vendor/bin/sail up -d`
-
-# Features
+## Features
  
 - Save, tag and manage bookmarks
-- Manage bookmarks with broken links
-- Mark bookmarks as read, favorite
+- Mark bookmarks as read, favorite, broken, archived
 - Group bookmarks in collections
+- Manage bookmarks with broken links
+- Dashboard with bookmarks stats and recommendations
 - Search bookmarks by specific tags
+- Global bookmark search by keyword
 - Import bookmarks from CSV source files
+
+## Development
+
+Use Sail as dev environment:
+`./vendor/bin/sail up -d`
+`npm run dev`
+
+## Deployment
+
+See deployment script: `scripts/deploy_docker.sh` 
