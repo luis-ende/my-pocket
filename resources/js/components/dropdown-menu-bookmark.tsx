@@ -9,13 +9,13 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Archive, ArchiveRestore, BookOpenCheck, Copy, Glasses, Link, ListPlus, ListMinus, SquarePen, Star, StarOff, Trash2 } from 'lucide-react';
-import { Bookmark } from '@/types';
 import React, { ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 import FormEditBookmark from '@/components/form-edit-bookmark';
 import FormBookmarkCollectionAdd from '@/components/form-bookmark-collection-add';
 import useBookmarkActions from '@/hooks/use-bookmark-actions';
 import useCollectionBookmarksPage from '@/hooks/use-collection-bookmarks-page';
 import BookmarksViewContext from '@/contexts/bookmarks-view-context';
+import { Bookmark } from '@/types';
 
 type ContextMenuBookmarkProps = {
     currentBookmark: Bookmark,
@@ -25,7 +25,7 @@ type ContextMenuBookmarkProps = {
     setLoading: (loading: boolean) => void,
 };
 
-export default function ContextMenuBookmark({ currentBookmark, menuTrigger, dropdownOpen, setDropdownOpen, setLoading }: ContextMenuBookmarkProps) {
+export default function DropdownMenuBookmark({ currentBookmark, menuTrigger, dropdownOpen, setDropdownOpen, setLoading }: ContextMenuBookmarkProps) {
     const [dialogEditOpen, setDialogEditOpen] = useState(false);
     const [dialogCollectionsOpen, setDialogCollectionsOpen] = useState(false);
     const { isCollectionBookmarksPage } = useCollectionBookmarksPage();
@@ -33,6 +33,8 @@ export default function ContextMenuBookmark({ currentBookmark, menuTrigger, drop
     const { dirtyBookmarksState } = useContext(BookmarksViewContext);
 
     const handleDropDownItemClick = (key: string) => {
+        if (!currentBookmark) return;
+
         switch (key) {
             case 'edit':
                 setDialogEditOpen(true);
@@ -90,7 +92,7 @@ export default function ContextMenuBookmark({ currentBookmark, menuTrigger, drop
 
     return (
         <div>
-            <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+            {currentBookmark && (<DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
                 <DropdownMenuTrigger asChild>
                     { menuTrigger }
                 </DropdownMenuTrigger>
@@ -184,7 +186,7 @@ export default function ContextMenuBookmark({ currentBookmark, menuTrigger, drop
                         {currentBookmark?.is_archived ? 'Un-Archive' : 'Archive'}
                     </DropdownMenuItem>
                 </DropdownMenuContent>
-            </DropdownMenu>
+            </DropdownMenu>)}
 
             {currentBookmark && (
                 <FormEditBookmark

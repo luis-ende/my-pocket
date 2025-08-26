@@ -2,7 +2,8 @@ import CardBookmark from '@/components/card-bookmark';
 import { Bookmark } from '@/types';
 import React, { RefObject, useContext, useEffect, useState } from 'react';
 import BookmarksViewContext from '@/contexts/bookmarks-view-context';
-import ContextMenuBookmark from '@/components/context-menu-bookmark';
+import DropdownMenuBookmark from '@/components/dropdown-menu-bookmark';
+import useDropDownMenuState from '@/hooks/use-dropdown-menu-state';
 
 type GridBookmarksProps = {
     bookmarks: Bookmark[];
@@ -11,28 +12,9 @@ type GridBookmarksProps = {
 };
 
 export default function GridBookmarks({ bookmarks, lastItemRef, perPage }: GridBookmarksProps) {
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [positionDropDown, setPositionDropDown] = useState({ x: 0, y: 0 });
-    const [currentBookmark, setCurrentBookmark] = useState<Bookmark | null>(null);
     const [loading, setLoading] = useState(false);
     const { selectedBookmarks, dirtyBookmarksState } = useContext(BookmarksViewContext);
-
-    const handleOpenDropDown = (event: React.MouseEvent<HTMLButtonElement>) => {
-        const selectedBookmark = bookmarks.find((b) => b.id.toString() === event.currentTarget.dataset.bookmarkId);
-        if (!selectedBookmark) {
-            return;
-        }
-
-        setCurrentBookmark(selectedBookmark);
-        const rect = event.currentTarget.getBoundingClientRect();
-        const scrollTop = event.currentTarget.scrollTop || 0;
-        const scrollLeft = event.currentTarget.scrollLeft || 0;
-        setPositionDropDown({
-            x: rect.left + scrollLeft,
-            y: rect.bottom + scrollTop,
-        });
-        setDropdownOpen(true);
-    };
+    const { dropdownOpen, setDropdownOpen, positionDropDown, currentBookmark, setCurrentBookmark, handleOpenDropDown } = useDropDownMenuState();
 
     useEffect(() => {
         if (!dirtyBookmarksState.dirty) return;
@@ -43,11 +25,11 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage }: GridB
                 setCurrentBookmark(null);
                 break;
         }
-    }, [dirtyBookmarksState]);
+    }, [dirtyBookmarksState, setCurrentBookmark]);
 
     return (
         <div className="relative overflow-auto">
-            {currentBookmark && <ContextMenuBookmark
+            {currentBookmark && <DropdownMenuBookmark
                 currentBookmark={currentBookmark}
                 menuTrigger={
                 <button
@@ -75,7 +57,7 @@ export default function GridBookmarks({ bookmarks, lastItemRef, perPage }: GridB
                             key={bookmark.id}
                             parentRef={index === ((bookmarks.length - 1) - perPage) ? lastItemRef : null}
                             bookmark={bookmark}
-                            handleActionsClick={handleOpenDropDown}
+                            handleActionsClick={(e) => handleOpenDropDown(e, bookmarks)}
                             loading={loading}
                             selected={selectedBookmarks.includes(bookmark.id)}
                         />

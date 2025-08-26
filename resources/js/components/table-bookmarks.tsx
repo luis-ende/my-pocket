@@ -9,7 +9,7 @@ import {
     useReactTable,
     VisibilityState,
 } from '@tanstack/react-table';
-import { ArrowUpDown } from 'lucide-react';
+import { ArrowUpDown, Ellipsis } from 'lucide-react';
 import * as React from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,9 @@ import { Bookmark } from '@/types';
 import { RefObject, useContext, useEffect, useState } from 'react';
 import BookmarksViewContext from '@/contexts/bookmarks-view-context';
 import useViewConfig from '@/hooks/use-view-config';
+import { Icon } from '@/components/icon';
+import DropdownMenuBookmark from '@/components/dropdown-menu-bookmark';
+import useDropDownMenuState from '@/hooks/use-dropdown-menu-state';
 
 export const columns: ColumnDef<Bookmark>[] = [
     {
@@ -109,6 +112,7 @@ export function TableBookmarks({ data, lastItemRef, perPage }: DataTableTagsProp
     const { setSelectedBookmarks, dirtyBookmarksState } = useContext(BookmarksViewContext);
     const [loading, setLoading] = useState(false);
     const viewConfig = useViewConfig();
+    const { dropdownOpen, setDropdownOpen, positionDropDown, currentBookmark, handleOpenDropDown } = useDropDownMenuState();
 
     const [rowSelection, setRowSelection] = useState(() => {
         setLoading(true);
@@ -120,6 +124,18 @@ export function TableBookmarks({ data, lastItemRef, perPage }: DataTableTagsProp
 
         return sel;
     });
+
+    columns[0].cell = ({ row }) => (
+        <div className="flex flex-row w-14">
+            <Button variant="outline" className="h-[12px] w-[12px] mr-2" data-bookmark-id={row.original.id}
+                    onClick={(e) =>
+                        handleOpenDropDown(e, table.getRowModel().rows.map(r => r.original)) }
+            >
+                <Icon iconNode={Ellipsis} className="size-5 opacity-80 group-hover:opacity-100" />
+            </Button>
+            <Checkbox className="align-top" checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />
+        </div>
+    )
 
     const table = useReactTable({
         data,
@@ -156,6 +172,27 @@ export function TableBookmarks({ data, lastItemRef, perPage }: DataTableTagsProp
 
     return (
         <div className="w-full p-5">
+            {currentBookmark && <DropdownMenuBookmark
+                currentBookmark={currentBookmark}
+                menuTrigger={
+                    <button
+                        aria-label="Open actions"
+                        style={{
+                            position: 'fixed',
+                            left: positionDropDown.x,
+                            top: positionDropDown.y,
+                            width: '1px',
+                            height: '1px',
+                            padding: '0',
+                            border: 'none',
+                            background: 'none',
+                        }}
+                    ></button>}
+                dropdownOpen={dropdownOpen}
+                setDropdownOpen={setDropdownOpen}
+                setLoading={setLoading}
+            />}
+
             <div className="flex items-center py-4">
                 <Input
                     placeholder="Filter..."
