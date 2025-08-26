@@ -1,12 +1,14 @@
 import ViewBookmarks from '@/components/view-bookmarks';
 import { Icon } from '@/components/icon';
 import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem, Stats } from '@/types';
+import type { Bookmark, BreadcrumbItem, Stats } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import { Archive, Bookmark as BookmarkIcon, ChartNetwork, Glasses, LibraryBig, Star, Tags, Unlink } from 'lucide-react';
+import { Archive, Bookmark as BookmarkIcon, ChartNetwork, Glasses, LibraryBig, Star, Tags, Unlink, Lightbulb } from 'lucide-react';
 import useNewBookmark from '@/hooks/use-new-bookmark';
 import useLoadViewBookmarks from '@/hooks/use-load-view-bookmarks';
 import useViewConfig from '@/hooks/use-view-config';
+import GridBookmarks from '@/components/grid-bookmarks';
+import React from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -17,6 +19,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Dashboard() {
     const { initialBookmarks, bookmarks: toReadBookmarks, setBookmarks: setToReadBookmarks } = useLoadViewBookmarks();
+    console.log('props', usePage().props)
+    const { recommended: recommendedBookmarks } = usePage<{
+        recommended: Bookmark[],
+    }>().props;
+    console.log('recommendedBookmarks', recommendedBookmarks);
     const { stats } = usePage<{
         stats: Stats;
     }>().props;
@@ -73,6 +80,17 @@ export default function Dashboard() {
                             <div>Broken</div>
                         </div>
                     </div>
+                </div>
+
+                <div className="border-sidebar-border/70 dark:border-sidebar-border relative rounded-xl border">
+                    <div className="flex flex-row pt-5 pl-5">
+                        <Icon iconNode={Lightbulb} className="bg size-10 opacity-70 group-hover:opacity-100" />
+                        <div className="pl-3">
+                            <h1 className="text-xl font-bold">Recommended</h1>
+                            <h2 className="text-l text-gray-600">A curated daily selection for you</h2>
+                        </div>
+                    </div>
+                    <GridBookmarks bookmarks={recommendedBookmarks} lastItemRef={null} perPage={4} />
                 </div>
 
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">

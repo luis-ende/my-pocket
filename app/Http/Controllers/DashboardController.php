@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Models\Bookmark;
 use App\Models\Collection;
 use App\Models\Scopes\BookmarkNotArchivedScope;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -20,9 +21,14 @@ class DashboardController extends Controller
             ->latest()
             ->cursorPaginate(8);
 
+        $recommended = Cache::remember('recommended', 86400, function () {
+            return $this->getRecommended();
+        });
+
         return Inertia::render('dashboard', [
             'bookmarks' => $bookmarks,
             'stats' => $this->getStats(),
+            'recommended' => $recommended,
         ]);
     }
 
@@ -54,14 +60,14 @@ class DashboardController extends Controller
             ->where('is_fav', true)
             ->count();
 
-        $archivedCount = Cache::remember('archived_count', 86400, static function () {
+        $archivedCount = Cache::remember('archived_count', 86400, function () {
             return Bookmark::query()
                 ->where('is_archived', true)
                 ->withoutGlobalScope(BookmarkNotArchivedScope::class)
                 ->count();
         });
 
-        $brokenCount = Cache::remember('broken_count', 86400, static function () {
+        $brokenCount = Cache::remember('broken_count', 86400, function () {
             return Bookmark::query()
                 ->where('is_broken_link', true)
                 ->withoutGlobalScope(BookmarkNotArchivedScope::class)
@@ -77,5 +83,33 @@ class DashboardController extends Controller
             'archived_count' => $archivedCount,
             'broken_count' => $brokenCount,
         ];
+    }
+
+    protected function getRecommended(): SupportCollection
+    {
+        $queryBookmark = '
+            SELECT * FROM bookmarks
+                    WHERE id IN (
+                        SELECT id FROM bookmarks
+                        WHERE ((is_archived = false OR is_archived IS NULL)
+                                   AND (is_broken_link = false OR is_broken_link IS NULL))
+                        OFFSET floor(random() * (SELECT count(*) FROM bookmarks WHERE ((is_archived = false OR is_archived IS NULL)
+                                   AND (is_broken_link = false OR is_broken_link IS NULL))))
+                        LIMIT 1
+                    )
+        ';
+
+        $rows = Bookmark::from(DB::raw("(
+                    {$queryBookmark}
+                    UNION ALL
+                    {$queryBookmark}
+                    UNION ALL
+                    {$queryBookmark}
+                    UNION ALL
+                    {$queryBookmark}
+                ) as t"))
+            ->get();
+
+        return $rows;
     }
 }
