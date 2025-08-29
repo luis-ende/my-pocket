@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { type Bookmark as BookmarkType } from '@/types';
-import { Bookmark, Ellipsis, Unlink } from 'lucide-react';
+import { Bookmark, Ellipsis, Unlink, Star, Archive } from 'lucide-react';
 import { MouseEvent, RefObject } from 'react';
 
 interface CardBookmarkProps {
@@ -51,8 +51,10 @@ export default function CardBookmark({ bookmark, parentRef, handleActionsClick, 
             </CardContent>
             <CardFooter className="px-10">
                 <div className="flex w-full flex-row">
-                    <div className="basis-2/3">
-                        {bookmark.is_broken_link && <Icon iconNode={Unlink} className="size-5 stroke-3 text-red-500 opacity-80" />}
+                    <div className="basis-2/3 flex gap-2">
+                        {bookmark.is_broken_link && <Icon iconNode={Unlink} className="size-5 stroke-2 text-red-500 opacity-80" />}
+                        {bookmark.is_fav && <Icon iconNode={Star} className="size-5 stroke-2 text-yellow-500 opacity-80" />}
+                        {bookmark.is_archived && <Icon iconNode={Archive} className="size-5 stroke-2 text-gray-500 opacity-80" />}
                     </div>
                     <div className="basis-1/3 text-right">
                         <Button disabled={loading} variant="outline" className="h-[34px] w-[34px]" onClick={handleActionsClick} data-bookmark-id={bookmark.id}>
