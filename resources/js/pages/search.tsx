@@ -5,6 +5,8 @@ import React, { useMemo, useState } from 'react';
 import ViewBookmarks from '@/components/view-bookmarks';
 import useViewConfig from '@/hooks/use-view-config';
 import useChangeActivePage from '@/hooks/use-change-active-page';
+import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { Icon } from '@/components/icon';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -84,9 +86,9 @@ export default function Search() {
                         {bookmarks.prev_page_url && (
                             <Link
                                 href={bookmarks.prev_page_url}
-                                className="rounded bg-gray-500 px-3 py-2 text-white transition-colors hover:bg-gray-600"
+                                className="rounded text-sm font-bold px-2 py-2 text-black transition-colors hover:bg-gray-200"
                             >
-                                &lt;
+                                <Icon iconNode={ChevronLeft} className="size-5" />
                             </Link>
                         )}
 
@@ -95,16 +97,16 @@ export default function Search() {
                                 {page !== '...' ? (
                                     <Link
                                         href={getPageUrl(String(page))}
-                                        className={`rounded px-3 py-2 transition-colors ${
+                                        className={`rounded px-2 py-2 transition-colors ${
                                             page === bookmarks.current_page
-                                                ? 'bg-gray-600 text-white'
-                                                : 'bg-transparent text-gray-700 hover:bg-gray-300'
+                                                ? 'border font-bold'
+                                                : 'bg-transparent text-black hover:bg-gray-200'
                                         }`}
                                     >
                                         {page}
                                     </Link>
                                 ) : (
-                                    <span className="px-3 py-2 text-gray-500">...</span>
+                                    <span className="px-2 py-2 text-black">...</span>
                                 )}
                             </React.Fragment>
                         ))}
@@ -112,9 +114,9 @@ export default function Search() {
                         {bookmarks.next_page_url && (
                             <Link
                                 href={bookmarks.next_page_url}
-                                className="rounded bg-gray-500 px-3 py-2 text-white transition-colors hover:bg-gray-600"
+                                className="rounded font-bold px-2 py-2 text-black transition-colors hover:bg-gray-200"
                             >
-                                &gt;
+                                <Icon iconNode={ChevronRight} className="size-5" />
                             </Link>
                         )}
                     </nav>
