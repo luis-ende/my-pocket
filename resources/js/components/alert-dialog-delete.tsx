@@ -9,7 +9,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import React, { ReactNode } from 'react';
+import React, { isValidElement, ReactNode } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 type AlertDialogDeleteProps = {
@@ -20,6 +20,21 @@ type AlertDialogDeleteProps = {
     trigger: ReactNode;
 };
 const AlertDialogDelete = ({ onClose, onConfirm, title, description, trigger }: AlertDialogDeleteProps) => {
+    function printTypeName(node: ReactNode) {
+        if (isValidElement(node)) {
+            const elType = node.type;
+            if (typeof elType === 'function' && 'name' in elType) {
+                // Custom component (function/class) – has a `name`
+                return elType.name;
+            } else if (typeof elType === 'string') {
+                // Built-in HTML element (like "div")
+                return elType;
+            }
+        }
+    }
+
+    console.log('trigger', printTypeName(trigger))
+
     return (
         <AlertDialog
             onOpenChange={(open) => {
@@ -28,8 +43,7 @@ const AlertDialogDelete = ({ onClose, onConfirm, title, description, trigger }: 
                 }
             }}
         >
-
-            {trigger?.type.name === 'Button' ?
+            {printTypeName(trigger) === 'Button' ?
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <AlertDialogTrigger asChild>
