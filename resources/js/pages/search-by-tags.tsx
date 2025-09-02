@@ -3,10 +3,10 @@ import ViewBookmarks from '@/components/views/view-bookmarks';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, Bookmark, CursorPaginatedData, Tag } from '@/types';
 import { Head, router } from '@inertiajs/react';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import useViewConfig from '@/hooks/use-view-config';
-import BookmarksViewContext from '@/contexts/bookmarks-view-context';
+import { useBookmarksViewContext } from '@/contexts/bookmarks-view-context';
 import useChangeActivePage from '@/hooks/use-change-active-page';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -23,16 +23,18 @@ export default function SearchByTags() {
     const [rowSelection, setRowSelection] = useState({});
     const [ viewConfig ] = useState(useViewConfig());
     useChangeActivePage(viewConfig);
-    const { setSelectedBookmarks } = useContext(BookmarksViewContext);
+    const { setSelectedBookmarks } = useBookmarksViewContext();
 
     const setSelection= (fetchTags: Tag[]) => {
         const url = new URL(window.location.href);
         const urlParams = new URLSearchParams(new URL(url).search);
-        const selection = {};
+        const selection: { [key: number]: boolean } = {};
         for (const [key, value] of urlParams) {
             if (key.startsWith('tags[')) {
-                const index = fetchTags.findIndex(t => t.id === value);
-                selection[index] = true;
+                const index = fetchTags.findIndex((t) => t.id.toString() === value);
+                if (index !== -1) {
+                    selection[index] = true;
+                }
             }
         }
         setRowSelection(selection);

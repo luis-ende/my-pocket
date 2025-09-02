@@ -1,9 +1,9 @@
-import { Dispatch, SetStateAction, useContext, useEffect } from 'react';
-import BookmarksViewContext from '@/contexts/bookmarks-view-context';
+import { Dispatch, SetStateAction, useEffect } from 'react';
+import { useBookmarksViewContext } from '@/contexts/bookmarks-view-context';
 import { Bookmark } from '@/types';
 
 export default function useNewBookmark(setBookmarks: Dispatch<SetStateAction<Bookmark[]>>) {
-    const { savedBookmark } = useContext(BookmarksViewContext);
+    const { savedBookmark } = useBookmarksViewContext();
     useEffect(() => {
         if (savedBookmark) {
             if (savedBookmark.is_new == true && !savedBookmark.checked) {

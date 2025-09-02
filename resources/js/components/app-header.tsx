@@ -14,10 +14,10 @@ import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, router, usePage } from '@inertiajs/react';
 import { BookmarkPlus, House, Menu, Search } from 'lucide-react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import AppLogoIcon from './app-logo-icon';
 import { NavBookmarks } from '@/components/nav-bookmarks';
-import BookmarksViewContext from '@/contexts/bookmarks-view-context';
+import { useBookmarksViewContext } from '@/contexts/bookmarks-view-context';
 
 const mainNavItems: NavItem[] = [
     {
@@ -49,7 +49,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const params = new URLSearchParams(window.location.search);
     const searchTermParam = params.get('query') ?? '';
     const [searchTerm, setSearchTerm] = useState(decodeURIComponent(searchTermParam));
-    const { selectedBookmarks } = useContext(BookmarksViewContext);
+    const { selectedBookmarks } = useBookmarksViewContext();
 
     const onMenuButtonClick = (key: string) => {
         switch (key) {

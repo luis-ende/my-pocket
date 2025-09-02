@@ -148,7 +148,6 @@ export default function GridCollections() {
                     <AlertDialogDelete
                         onClose={closeDeleteDialog}
                         onConfirm={handleDeleteConfirm}
-                        isDeleting={dialogDeleteState.isDeleting}
                         title="Delete Bookmark"
                         description="This will permanently delete the bookmark and all associated data."
                         trigger={

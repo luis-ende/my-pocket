@@ -2,8 +2,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/icon';
 import { ListPlus, ListMinus, SquarePen, Trash2 } from 'lucide-react';
-import React, { useContext, useState } from 'react';
-import BookmarksViewContext from '@/contexts/bookmarks-view-context';
+import React, { useState } from 'react';
+import { useBookmarksViewContext } from '@/contexts/bookmarks-view-context';
 import { router } from '@inertiajs/react';
 import FormEditBulk from '@/components/forms/form-edit-bulk';
 import FormBookmarkCollectionAdd from '@/components/forms/form-bookmark-collection-add';
@@ -11,7 +11,7 @@ import AlertDialogDelete from '@/components/alert-dialog-delete';
 import useCollectionBookmarksPage from '@/hooks/use-collection-bookmarks-page';
 
 export function NavBookmarks() {
-    const { selectedBookmarks, setDirtyBookmarksState } = useContext(BookmarksViewContext);
+    const { selectedBookmarks, setDirtyBookmarksState } = useBookmarksViewContext();
     const [loading, setLoading] = useState(false);
     const [dialogEditOpen, setDialogEditOpen] = useState(false);
     const [dialogCollectionsOpen, setDialogCollectionsOpen] = useState(false);

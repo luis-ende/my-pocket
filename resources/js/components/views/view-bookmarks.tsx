@@ -1,6 +1,6 @@
 import { TableBookmarks } from '@/components/views/table-bookmarks';
 import { Bookmark, BookmarksViewConfig, CursorPaginatedData, PaginatedData } from '@/types';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import GridBookmarks from '@/components/views/grid-bookmarks';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LayoutGrid, Table } from 'lucide-react';
@@ -8,7 +8,7 @@ import { Icon } from '@/components/icon';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { router } from '@inertiajs/react';
-import BookmarksViewContext from '@/contexts/bookmarks-view-context';
+import { useBookmarksViewContext } from '@/contexts/bookmarks-view-context';
 import { saveViewConfig } from '@/hooks/use-view-config';
 import deleteBookmarks from '@/hooks/use-delete-bookmarks';
 import updateBookmarks from '@/hooks/use-update-bookmarks';
@@ -26,7 +26,7 @@ export default function ViewBookmarks({ initialBookmarks, bookmarks, setBookmark
     const [loading, setLoading] = useState(false);
     const lastItemRef = useRef<HTMLDivElement | HTMLTableRowElement | null>(null);
     const [activeTab, setActiveTab] = useState(() => viewConfig.viewMode || 'gridView');
-    const { selectedBookmarks, dirtyBookmarksState, setDirtyBookmarksState, resetDirtyState } = useContext(BookmarksViewContext);
+    const { selectedBookmarks, dirtyBookmarksState, setDirtyBookmarksState, resetDirtyState } = useBookmarksViewContext();
 
     useEffect(() => {
         saveViewConfig({ ...viewConfig, viewMode: activeTab, selectedBookmarks: selectedBookmarks });
@@ -95,7 +95,7 @@ export default function ViewBookmarks({ initialBookmarks, bookmarks, setBookmark
         });
     }, [loading, nextPage, setBookmarks, tagsQueryString]);
 
-    const handleTabChange = (value: 'gridView' | 'tableView') => {
+    const handleTabChange = (value) => {
         setActiveTab(value);
     }
 

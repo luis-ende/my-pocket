@@ -11,9 +11,9 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import BookmarksViewContext from '@/contexts/bookmarks-view-context';
+import { useBookmarksViewContext } from '@/contexts/bookmarks-view-context';
 import { useForm } from '@inertiajs/react';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CreatableSelect from 'react-select/creatable';
 import { toast } from 'sonner';
 import { Bookmark } from '@/types';
@@ -35,7 +35,7 @@ export default function FormNewBookmark({ open, onClose }: FormNewBookmarkProps)
     const { tagsOptions } = useLoadTags('/tags/all');
     const [selectedOptions, setSelectedOptions] = useState<object[]>([]);
     const [titleLoading, setTitleLoading] = useState(false);
-    const { setSavedBookmark } = useContext(BookmarksViewContext);
+    const { setSavedBookmark } = useBookmarksViewContext();
 
     useEffect(() => {
         if (open) {

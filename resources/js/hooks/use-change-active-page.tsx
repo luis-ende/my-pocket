@@ -1,10 +1,10 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { saveViewConfig } from '@/hooks/use-view-config';
 import { BookmarksViewConfig } from '@/types';
-import BookmarksViewContext from '@/contexts/bookmarks-view-context';
+import { useBookmarksViewContext } from '@/contexts/bookmarks-view-context';
 
 export default function useChangeActivePage(viewConfig: BookmarksViewConfig) {
-    const { setSelectedBookmarks } = useContext(BookmarksViewContext);
+    const { setSelectedBookmarks } = useBookmarksViewContext();
 
     useEffect(() => {
         return () => {
