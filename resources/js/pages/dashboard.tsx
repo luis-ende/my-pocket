@@ -1,4 +1,4 @@
-import ViewBookmarks from '@/components/view-bookmarks';
+import ViewBookmarks from '@/components/views/view-bookmarks';
 import { Icon } from '@/components/icon';
 import AppLayout from '@/layouts/app-layout';
 import type { Bookmark, BreadcrumbItem, Stats } from '@/types';
@@ -7,7 +7,7 @@ import { Archive, Bookmark as BookmarkIcon, ChartNetwork, Glasses, LibraryBig, S
 import useNewBookmark from '@/hooks/use-new-bookmark';
 import useLoadViewBookmarks from '@/hooks/use-load-view-bookmarks';
 import useViewConfig from '@/hooks/use-view-config';
-import GridBookmarks from '@/components/grid-bookmarks';
+import GridBookmarks from '@/components/views/grid-bookmarks';
 import React from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [

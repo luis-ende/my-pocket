@@ -1,5 +1,5 @@
-import FormNewCollection from '@/components/form-new-collection';
-import GridCollections from '@/components/grid-collections';
+import FormNewCollection from '@/components/forms/form-new-collection';
+import GridCollections from '@/components/views/grid-collections';
 import { Icon } from '@/components/icon';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';

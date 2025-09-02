@@ -9,12 +9,12 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Archive, ArchiveRestore, BookOpenCheck, Copy, Glasses, Link, ListPlus, ListMinus, SquarePen, Star, StarOff, Trash2 } from 'lucide-react';
-import React, { ReactNode, useCallback, useContext, useEffect, useState } from 'react';
-import FormEditBookmark from '@/components/form-edit-bookmark';
-import FormBookmarkCollectionAdd from '@/components/form-bookmark-collection-add';
+import React, { ReactNode, useCallback, useEffect, useState } from 'react';
+import FormEditBookmark from '@/components/forms/form-edit-bookmark';
+import FormBookmarkCollectionAdd from '@/components/forms/form-bookmark-collection-add';
 import useBookmarkActions from '@/hooks/use-bookmark-actions';
 import useCollectionBookmarksPage from '@/hooks/use-collection-bookmarks-page';
-import BookmarksViewContext from '@/contexts/bookmarks-view-context';
+import { useBookmarksViewContext } from '@/contexts/bookmarks-view-context';
 import { Bookmark } from '@/types';
 
 type ContextMenuBookmarkProps = {
@@ -30,7 +30,7 @@ export default function DropdownMenuBookmark({ currentBookmark, menuTrigger, dro
     const [dialogCollectionsOpen, setDialogCollectionsOpen] = useState(false);
     const { isCollectionBookmarksPage } = useCollectionBookmarksPage();
     const { handleSaveFav, handleSaveRead, handleCopyLink, handleArchive, handleRestoreBrokenLink, handleDeleteConfirm, handleRemoveFromCollection } = useBookmarkActions();
-    const { dirtyBookmarksState } = useContext(BookmarksViewContext);
+    const { dirtyBookmarksState } = useBookmarksViewContext();
 
     const handleDropDownItemClick = (key: string) => {
         if (!currentBookmark) return;

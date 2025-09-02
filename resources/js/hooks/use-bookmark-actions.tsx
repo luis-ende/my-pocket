@@ -1,14 +1,13 @@
 import { Bookmark } from '@/types';
-import { useContext } from 'react';
 import { router } from '@inertiajs/react';
 import { toast } from 'sonner';
 import useCollectionBookmarksPage from '@/hooks/use-collection-bookmarks-page';
-import BookmarksViewContext from '@/contexts/bookmarks-view-context';
+import { useBookmarksViewContext } from '@/contexts/bookmarks-view-context';
 
 export default function useBookmarkActions() {
     const path = window.location.pathname;
     const { handleRemoveBookmarkFromCollection } = useCollectionBookmarksPage();
-    const { setDirtyBookmarksState } = useContext(BookmarksViewContext);
+    const { setDirtyBookmarksState } = useBookmarksViewContext();
 
     const handleDeleteConfirm = (bookmark: Bookmark, setLoading: (loading: boolean) => void) => {
         setLoading(true);

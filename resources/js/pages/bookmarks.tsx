@@ -1,4 +1,4 @@
-import ViewBookmarks from '@/components/view-bookmarks';
+import ViewBookmarks from '@/components/views/view-bookmarks';
 import AppLayout from '@/layouts/app-layout';
 import useNewBookmark from '@/hooks/use-new-bookmark';
 import useLoadViewBookmarks from '@/hooks/use-load-view-bookmarks';

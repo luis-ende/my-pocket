@@ -1,6 +1,6 @@
 import AlertDialogDelete from '@/components/alert-dialog-delete';
-import CardCollection from '@/components/card-collection';
-import FormEditCollection from '@/components/form-edit-collection';
+import CardCollection from '@/components/cards/card-collection';
+import FormEditCollection from '@/components/forms/form-edit-collection';
 import { Icon } from '@/components/icon';
 import {
     DropdownMenu,
@@ -148,7 +148,6 @@ export default function GridCollections() {
                     <AlertDialogDelete
                         onClose={closeDeleteDialog}
                         onConfirm={handleDeleteConfirm}
-                        isDeleting={dialogDeleteState.isDeleting}
                         title="Delete Bookmark"
                         description="This will permanently delete the bookmark and all associated data."
                         trigger={

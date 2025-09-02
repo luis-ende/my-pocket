@@ -1,4 +1,4 @@
-import ViewBookmarks from '@/components/view-bookmarks';
+import ViewBookmarks from '@/components/views/view-bookmarks';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';

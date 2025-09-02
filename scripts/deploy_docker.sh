@@ -6,6 +6,8 @@ echo "Starting My Pocket deployment"
 cd /opt/ensoo/my-pocket
 echo "---Pulling repository"
 git pull origin main
+echo "---Deleting unused not optimized image files"
+find storage/app/public/media/ -mindepth 2 -maxdepth 2 -type f ! -path "*/conversions/*" -delete
 echo "---Optimizing autoloader"
 composer install --optimize-autoloader --no-dev
 echo "---Run npm install---"

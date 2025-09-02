@@ -3,11 +3,11 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import BookmarksViewContext from '@/contexts/bookmarks-view-context';
+import { useBookmarksViewContext } from '@/contexts/bookmarks-view-context';
 import useLoadTags from '@/hooks/use-load-tags';
 import { Bookmark } from '@/types';
 import { useForm } from '@inertiajs/react';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import CreatableSelect from 'react-select/creatable';
 
 interface FormEditBookmarkProps {
@@ -26,7 +26,7 @@ export default function FormEditBookmark({ open, onClose, bookmark }: FormEditBo
     const { tagsOptions } = useLoadTags('/tags/all');
     const [selectedOptions, setSelectedOptions] = useState<object[]>([]);
     const inputRef = useRef(null);
-    const { setSavedBookmark } = useContext(BookmarksViewContext);
+    const { setSavedBookmark } = useBookmarksViewContext();
 
     const handleChange = (selected) => {
         setSelectedOptions(selected);

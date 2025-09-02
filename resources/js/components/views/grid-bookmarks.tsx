@@ -1,7 +1,7 @@
-import CardBookmark from '@/components/card-bookmark';
+import CardBookmark from '@/components/cards/card-bookmark';
 import { Bookmark } from '@/types';
-import React, { RefObject, useContext, useEffect, useState } from 'react';
-import BookmarksViewContext from '@/contexts/bookmarks-view-context';
+import React, { RefObject, useEffect, useState } from 'react';
+import { useBookmarksViewContext } from '@/contexts/bookmarks-view-context';
 import DropdownMenuBookmark from '@/components/dropdown-menu-bookmark';
 import useDropDownMenuState from '@/hooks/use-dropdown-menu-state';
 
@@ -13,7 +13,7 @@ type GridBookmarksProps = {
 
 export default function GridBookmarks({ bookmarks, lastItemRef, perPage }: GridBookmarksProps) {
     const [loading, setLoading] = useState(false);
-    const { selectedBookmarks, dirtyBookmarksState } = useContext(BookmarksViewContext);
+    const { selectedBookmarks, dirtyBookmarksState } = useBookmarksViewContext();
     const { dropdownOpen, setDropdownOpen, positionDropDown, currentBookmark, setCurrentBookmark, handleOpenDropDown } = useDropDownMenuState();
 
     useEffect(() => {
