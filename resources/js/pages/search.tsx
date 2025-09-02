@@ -2,7 +2,7 @@ import AppLayout from '@/layouts/app-layout';
 import type { Bookmark, BreadcrumbItem, PaginatedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import React, { useMemo, useState } from 'react';
-import ViewBookmarks from '@/components/view-bookmarks';
+import ViewBookmarks from '@/components/views/view-bookmarks';
 import useViewConfig from '@/hooks/use-view-config';
 import useChangeActivePage from '@/hooks/use-change-active-page';
 import { ChevronRight, ChevronLeft } from 'lucide-react';

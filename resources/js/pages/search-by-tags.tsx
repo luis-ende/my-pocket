@@ -1,5 +1,5 @@
-import { DataTableTags } from '@/components/datatable-tags';
-import ViewBookmarks from '@/components/view-bookmarks';
+import { DataTableTags } from '@/components/views/datatable-tags';
+import ViewBookmarks from '@/components/views/view-bookmarks';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, Bookmark, CursorPaginatedData, Tag } from '@/types';
 import { Head, router } from '@inertiajs/react';

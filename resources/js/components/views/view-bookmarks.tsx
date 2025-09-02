@@ -1,7 +1,7 @@
-import { TableBookmarks } from '@/components/table-bookmarks';
+import { TableBookmarks } from '@/components/views/table-bookmarks';
 import { Bookmark, BookmarksViewConfig, CursorPaginatedData, PaginatedData } from '@/types';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import GridBookmarks from '@/components/grid-bookmarks';
+import GridBookmarks from '@/components/views/grid-bookmarks';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LayoutGrid, Table } from 'lucide-react';
 import { Icon } from '@/components/icon';
