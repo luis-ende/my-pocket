@@ -1,4 +1,4 @@
-import CardBookmark from '@/components/card-bookmark';
+import CardBookmark from '@/components/cards/card-bookmark';
 import { Bookmark } from '@/types';
 import React, { RefObject, useContext, useEffect, useState } from 'react';
 import BookmarksViewContext from '@/contexts/bookmarks-view-context';

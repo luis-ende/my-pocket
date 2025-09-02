@@ -1,5 +1,5 @@
 import AlertDialogDelete from '@/components/alert-dialog-delete';
-import CardCollection from '@/components/card-collection';
+import CardCollection from '@/components/cards/card-collection';
 import FormEditCollection from '@/components/forms/form-edit-collection';
 import { Icon } from '@/components/icon';
 import {
