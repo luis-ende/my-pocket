@@ -1,4 +1,4 @@
-import FormNewCollection from '@/components/form-new-collection';
+import FormNewCollection from '@/components/forms/form-new-collection';
 import GridCollections from '@/components/grid-collections';
 import { Icon } from '@/components/icon';
 import { Button } from '@/components/ui/button';

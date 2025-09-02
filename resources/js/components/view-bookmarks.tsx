@@ -95,7 +95,7 @@ export default function ViewBookmarks({ initialBookmarks, bookmarks, setBookmark
         });
     }, [loading, nextPage, setBookmarks, tagsQueryString]);
 
-    const handleTabChange = (value: string) => {
+    const handleTabChange = (value: 'gridView' | 'tableView') => {
         setActiveTab(value);
     }
 

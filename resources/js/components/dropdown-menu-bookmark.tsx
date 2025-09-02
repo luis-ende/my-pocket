@@ -10,8 +10,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Archive, ArchiveRestore, BookOpenCheck, Copy, Glasses, Link, ListPlus, ListMinus, SquarePen, Star, StarOff, Trash2 } from 'lucide-react';
 import React, { ReactNode, useCallback, useContext, useEffect, useState } from 'react';
-import FormEditBookmark from '@/components/form-edit-bookmark';
-import FormBookmarkCollectionAdd from '@/components/form-bookmark-collection-add';
+import FormEditBookmark from '@/components/forms/form-edit-bookmark';
+import FormBookmarkCollectionAdd from '@/components/forms/form-bookmark-collection-add';
 import useBookmarkActions from '@/hooks/use-bookmark-actions';
 import useCollectionBookmarksPage from '@/hooks/use-collection-bookmarks-page';
 import BookmarksViewContext from '@/contexts/bookmarks-view-context';

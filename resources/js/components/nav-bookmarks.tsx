@@ -5,8 +5,8 @@ import { ListPlus, ListMinus, SquarePen, Trash2 } from 'lucide-react';
 import React, { useContext, useState } from 'react';
 import BookmarksViewContext from '@/contexts/bookmarks-view-context';
 import { router } from '@inertiajs/react';
-import FormEditBulk from '@/components/form-edit-bulk';
-import FormBookmarkCollectionAdd from '@/components/form-bookmark-collection-add';
+import FormEditBulk from '@/components/forms/form-edit-bulk';
+import FormBookmarkCollectionAdd from '@/components/forms/form-bookmark-collection-add';
 import AlertDialogDelete from '@/components/alert-dialog-delete';
 import useCollectionBookmarksPage from '@/hooks/use-collection-bookmarks-page';
 

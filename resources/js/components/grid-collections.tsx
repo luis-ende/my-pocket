@@ -1,6 +1,6 @@
 import AlertDialogDelete from '@/components/alert-dialog-delete';
 import CardCollection from '@/components/card-collection';
-import FormEditCollection from '@/components/form-edit-collection';
+import FormEditCollection from '@/components/forms/form-edit-collection';
 import { Icon } from '@/components/icon';
 import {
     DropdownMenu,
