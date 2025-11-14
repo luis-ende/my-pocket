@@ -46,6 +46,10 @@ jobs:
           EOF
           chmod 600 ~/.ssh/config
 
+      - name: Debug SSH connection
+        run: |
+          ssh -vvv prod true
+
       - name: Deploy
         run: |
           ssh prod "cd ${{ secrets.PROD_PATH }}/scripts && ./deploy_docker.sh"
