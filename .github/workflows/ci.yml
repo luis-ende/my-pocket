@@ -21,10 +21,10 @@ jobs:
           PROD_PORT: ${{ secrets.PROD_SSH_PORT }} # optional, default 22
         run: |
           touch ~/.ssh/known_hosts
-          if [ -z "${PROD_PORT}" ]; then
-            ssh-keyscan -t rsa ${PROD_HOST} >> ~/.ssh/known_hosts
+          if [ -z "$PROD_PORT" ]; then
+            ssh-keyscan -t rsa $PROD_HOST >> ~/.ssh/known_hosts
           else
-            ssh-keyscan -p ${PROD_PORT} -t rsa ${PROD_HOST} >> ~/.ssh/known_hosts
+            ssh-keyscan -p $PROD_PORT -t rsa $PROD_HOST >> ~/.ssh/known_hosts
           fi
           chmod 644 ~/.ssh/known_hosts
 
@@ -36,10 +36,10 @@ jobs:
         run: |
           cat > ~/.ssh/config <<'EOF'
           Host prod
-            HostName ${PROD_HOST}
-            User ${PROD_USER}
+            HostName $PROD_HOST
+            User $PROD_USER
             IdentityFile ~/.ssh/id_rsa
-            Port 22
+            Port $PROD_PORT
             ForwardAgent no
             ServerAliveInterval 60
             ServerAliveCountMax 3
