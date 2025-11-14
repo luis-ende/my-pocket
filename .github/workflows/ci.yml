@@ -9,19 +9,43 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Configure SSH
+      - name: Setup SSH directory and key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.PROD_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          printf "Host prod\n  HostName %s\n  User %s\n  IdentityFile ~/.ssh/id_rsa\n  StrictHostKeyChecking no\n" \
-          "${{ secrets.PROD_HOST }}" \
-          "${{ secrets.PROD_USER }}" \
-          > ~/.ssh/config
 
-      - name: Deploy to server
+      - name: Add server to known_hosts (verify fingerprint)
+        env:
+          PROD_HOST: ${{ secrets.PROD_HOST }}
+          PROD_PORT: ${{ secrets.PROD_SSH_PORT }} # optional, default 22
+        run: |
+          touch ~/.ssh/known_hosts
+          if [ -z "${PROD_PORT}" ]; then
+            ssh-keyscan -t rsa ${PROD_HOST} >> ~/.ssh/known_hosts
+          else
+            ssh-keyscan -p ${PROD_PORT} -t rsa ${PROD_HOST} >> ~/.ssh/known_hosts
+          fi
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Create SSH config
+        env:
+          PROD_HOST: ${{ secrets.PROD_HOST }}
+          PROD_USER: ${{ secrets.PROD_USER }}
+          PROD_PORT: ${{ secrets.PROD_SSH_PORT }}
+        run: |
+          cat > ~/.ssh/config <<'EOF'
+          Host prod
+            HostName ${PROD_HOST}
+            User ${PROD_USER}
+            IdentityFile ~/.ssh/id_rsa
+            Port ${PROD_PORT}
+            ForwardAgent no
+            ServerAliveInterval 60
+            ServerAliveCountMax 3
+          EOF
+          chmod 600 ~/.ssh/config
+
+      - name: Deploy
         run: |
           ssh prod "cd ${{ secrets.PROD_PATH }}/scripts && ./deploy_docker.sh"
