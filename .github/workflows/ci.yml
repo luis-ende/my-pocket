@@ -1,0 +1,27 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.PROD_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          printf "Host prod\n  HostName %s\n  User %s\n  IdentityFile ~/.ssh/id_rsa\n  StrictHostKeyChecking no\n" \
+          "${{ secrets.PROD_HOST }}" \
+          "${{ secrets.PROD_USER }}" \
+          > ~/.ssh/config
+
+      - name: Deploy to server
+        run: |
+          ssh prod "cd ${{ secrets.PROD_PATH }}/scripts && ./deploy_docker.sh"
