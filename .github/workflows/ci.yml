@@ -12,17 +12,17 @@ jobs:
       - name: Setup SSH directory and key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.PROD_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          echo "${{ secrets.PROD_SSH_KEY }}" > ~/.ssh/deploy-helper-vps.key
+          chmod 600 ~/.ssh/deploy-helper-vps.key
 
       - name: Verify SSH key
         run: |
           echo "First line of key:"
-          head -n 1 ~/.ssh/id_rsa
+          head -n 1 ~/.ssh/deploy-helper-vps.key
           echo "Last line of key:"
-          tail -n 1 ~/.ssh/id_rsa
+          tail -n 1 ~/.ssh/deploy-helper-vps.key
           echo "Key fingerprint:"
-          ssh-keygen -l -f ~/.ssh/id_rsa || echo "ERROR: Invalid key format!"
+          ssh-keygen -l -f ~/.ssh/deploy-helper-vps.key || echo "ERROR: Invalid key format!"
 
       - name: Add server to known_hosts
         run: |
@@ -47,13 +47,9 @@ jobs:
           Host prod
             HostName ${{ secrets.PROD_HOST }}
             User ${{ secrets.PROD_USER }}
-            IdentityFile ~/.ssh/id_rsa
-            ${PORT_LINE}
-            StrictHostKeyChecking yes
-            UserKnownHostsFile ~/.ssh/known_hosts
-            ForwardAgent no
-            ServerAliveInterval 60
-            ServerAliveCountMax 3
+            Port ${PORT_LINE}
+            IdentityFile ~/.ssh/deploy-helper-vps.key
+            StrictHostKeyChecking no
           EOF
           chmod 600 ~/.ssh/config
 
