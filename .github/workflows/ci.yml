@@ -47,7 +47,7 @@ jobs:
           Host prod
             HostName ${{ secrets.PROD_HOST }}
             User ${{ secrets.PROD_USER }}
-            Port ${PORT_LINE}
+            Port ${{ secrets.PROD_PORT }}
             IdentityFile ~/.ssh/deploy-helper-vps.key
             StrictHostKeyChecking no
           EOF
