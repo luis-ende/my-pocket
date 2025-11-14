@@ -35,16 +35,16 @@ jobs:
           PROD_PORT: ${{ secrets.PROD_SSH_PORT }}
         run: |
           cat > ~/.ssh/config <<EOF
-          Host prod
-            HostName $PROD_HOST
-            User $PROD_USER
-            IdentityFile ~/.ssh/id_rsa
-            Port $PROD_PORT
-            ForwardAgent no
-            ServerAliveInterval 60
-            ServerAliveCountMax 3
-          EOF
-          chmod 600 ~/.ssh/config
+        Host prod
+        HostName $PROD_HOST
+        User $PROD_USER
+        IdentityFile ~/.ssh/id_rsa
+        Port $PROD_PORT
+        ForwardAgent no
+        ServerAliveInterval 60
+        ServerAliveCountMax 3
+        EOF
+        chmod 600 ~/.ssh/config
 
       - name: Debug SSH connection
         run: |
