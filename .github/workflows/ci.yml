@@ -34,13 +34,12 @@ jobs:
           PROD_USER: ${{ secrets.PROD_USER }}
           PROD_PORT: ${{ secrets.PROD_SSH_PORT }}
         run: |
-          echo "port " + ${PROD_PORT}
           cat > ~/.ssh/config <<'EOF'
           Host prod
             HostName ${PROD_HOST}
             User ${PROD_USER}
             IdentityFile ~/.ssh/id_rsa
-            Port ${PROD_PORT}
+            Port 22
             ForwardAgent no
             ServerAliveInterval 60
             ServerAliveCountMax 3
