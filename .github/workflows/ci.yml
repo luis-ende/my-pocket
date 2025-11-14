@@ -15,6 +15,15 @@ jobs:
           echo "${{ secrets.PROD_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
+      - name: Verify SSH key
+        run: |
+          echo "First line of key:"
+          head -n 1 ~/.ssh/id_rsa
+          echo "Last line of key:"
+          tail -n 1 ~/.ssh/id_rsa
+          echo "Key fingerprint:"
+          ssh-keygen -l -f ~/.ssh/id_rsa || echo "ERROR: Invalid key format!"
+
       - name: Add server to known_hosts
         run: |
           touch ~/.ssh/known_hosts
