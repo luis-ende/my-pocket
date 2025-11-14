@@ -34,7 +34,7 @@ jobs:
           PROD_USER: ${{ secrets.PROD_USER }}
           PROD_PORT: ${{ secrets.PROD_SSH_PORT }}
         run: |
-          cat > ~/.ssh/config <<'EOF'
+          cat > ~/.ssh/config <<EOF
           Host prod
             HostName $PROD_HOST
             User $PROD_USER
