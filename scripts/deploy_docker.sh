@@ -11,6 +11,8 @@ find storage/app/public/media/ -mindepth 2 -maxdepth 2 -type f ! -path "*/conver
 echo "---Optimizing autoloader"
 composer install --optimize-autoloader --no-dev
 echo "---Run npm install---"
+source ~/.nvm/nvm.sh
+npm --version
 npm install
 echo "---Generating assets---"
 npm run build
