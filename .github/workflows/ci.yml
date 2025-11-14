@@ -15,40 +15,43 @@ jobs:
           echo "${{ secrets.PROD_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-      - name: Add server to known_hosts (verify fingerprint)
-        env:
-          PROD_HOST: ${{ secrets.PROD_HOST }}
-          PROD_PORT: ${{ secrets.PROD_SSH_PORT }} # optional, default 22
+      - name: Add server to known_hosts
         run: |
           touch ~/.ssh/known_hosts
+          PROD_PORT="${{ secrets.PROD_SSH_PORT }}"
           if [ -z "$PROD_PORT" ]; then
-            ssh-keyscan -t rsa $PROD_HOST >> ~/.ssh/known_hosts
+            ssh-keyscan -t rsa "${{ secrets.PROD_HOST }}" >> ~/.ssh/known_hosts
           else
-            ssh-keyscan -p $PROD_PORT -t rsa $PROD_HOST >> ~/.ssh/known_hosts
+            ssh-keyscan -p "$PROD_PORT" -t rsa "${{ secrets.PROD_HOST }}" >> ~/.ssh/known_hosts
           fi
           chmod 644 ~/.ssh/known_hosts
 
       - name: Create SSH config
-        env:
-          PROD_HOST: ${{ secrets.PROD_HOST }}
-          PROD_USER: ${{ secrets.PROD_USER }}
-          PROD_PORT: ${{ secrets.PROD_SSH_PORT }}
         run: |
+          PROD_PORT="${{ secrets.PROD_SSH_PORT }}"
+          PORT_LINE=""
+          if [ -n "$PROD_PORT" ]; then
+            PORT_LINE="Port $PROD_PORT"
+          fi
+
           cat > ~/.ssh/config <<EOF
-        Host prod
-        HostName $PROD_HOST
-        User $PROD_USER
-        IdentityFile ~/.ssh/id_rsa
-        Port $PROD_PORT
-        ForwardAgent no
-        ServerAliveInterval 60
-        ServerAliveCountMax 3
-        EOF
-        chmod 600 ~/.ssh/config
+          Host prod
+            HostName ${{ secrets.PROD_HOST }}
+            User ${{ secrets.PROD_USER }}
+            IdentityFile ~/.ssh/id_rsa
+            ${PORT_LINE}
+            StrictHostKeyChecking yes
+            UserKnownHostsFile ~/.ssh/known_hosts
+            ForwardAgent no
+            ServerAliveInterval 60
+            ServerAliveCountMax 3
+          EOF
+          chmod 600 ~/.ssh/config
 
       - name: Debug SSH connection
         run: |
-          ssh -vvv prod true
+          echo "Testing SSH connection..."
+          ssh -vvv prod "echo 'Connection successful'"
 
       - name: Deploy
         run: |
