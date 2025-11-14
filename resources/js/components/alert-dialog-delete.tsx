@@ -20,7 +20,7 @@ type AlertDialogDeleteProps = {
     trigger: ReactNode;
 };
 const AlertDialogDelete = ({ onClose, onConfirm, title, description, trigger }: AlertDialogDeleteProps) => {
-    function printTypeName(node: ReactNode) {
+    function getTypeName(node: ReactNode) {
         if (isValidElement(node)) {
             const elType = node.type;
             if (typeof elType === 'function' && 'name' in elType) {
@@ -33,8 +33,6 @@ const AlertDialogDelete = ({ onClose, onConfirm, title, description, trigger }: 
         }
     }
 
-    console.log('trigger', printTypeName(trigger))
-
     return (
         <AlertDialog
             onOpenChange={(open) => {
@@ -43,7 +41,7 @@ const AlertDialogDelete = ({ onClose, onConfirm, title, description, trigger }: 
                 }
             }}
         >
-            {printTypeName(trigger) === 'Button' ?
+            {getTypeName(trigger) === 'Button' ?
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <AlertDialogTrigger asChild>
