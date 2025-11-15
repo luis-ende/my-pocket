@@ -20,8 +20,3 @@ RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 # Copy the PHP files of your project in the public directory
 COPY . /app
-
-RUN groupadd -g $GID appgroup && \
-    useradd -ms /bin/bash --no-user-group -g appgroup -u $UID appuser
-
-USER appuser
