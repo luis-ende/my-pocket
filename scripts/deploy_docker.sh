@@ -10,6 +10,13 @@ echo "---Deleting unused not optimized image files"
 find storage/app/public/media/ -mindepth 2 -maxdepth 2 -type f ! -path "*/conversions/*" -delete
 echo "---Optimizing autoloader"
 composer install --optimize-autoloader --no-dev
+echo "---Run npm install---"
+export NVM_DIR="$HOME/.nvm"
+# load nvm
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+# load node
+nvm use --lts > /dev/null
+npm --version
 npm install
 echo "---Generating assets---"
 npm run build
