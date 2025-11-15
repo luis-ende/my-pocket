@@ -11,11 +11,15 @@ find storage/app/public/media/ -mindepth 2 -maxdepth 2 -type f ! -path "*/conver
 echo "---Optimizing autoloader"
 composer install --optimize-autoloader --no-dev
 echo "---Run npm install---"
+echo "------Export vars---"
 export NVM_DIR="$HOME/.nvm"
+echo "------Load nvm---"
 # load nvm
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 # load node
+echo "------Use node 20.19---"
 nvm use 20.19 > /dev/null
+echo "------Output node version---"
 npm --version
 npm install
 echo "---Generating assets---"
