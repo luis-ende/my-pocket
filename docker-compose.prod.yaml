@@ -6,7 +6,6 @@ services:
         UID: ${UID}
         GID: ${GID}
     image: dunglas/frankenphp
-    user: "${UID}:${GID}"
     restart: always
     ports:
       - "8080:80" # HTTP
