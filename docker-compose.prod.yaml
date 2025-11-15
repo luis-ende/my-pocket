@@ -2,6 +2,9 @@ services:
   php:
     build:
       dockerfile: prod.Dockerfile
+      args:
+        UID: ${UID}
+        GID: ${GID}
     image: dunglas/frankenphp
     user: "${UID}:${GID}"
     restart: always
@@ -13,6 +16,9 @@ services:
       - caddy_data:/data
       - caddy_config:/config
       - ./storage/app:/app/storage/app
+    environment:
+      UID: ${UID}
+      GID: ${GID}
     networks:
       - mypocket
     depends_on:

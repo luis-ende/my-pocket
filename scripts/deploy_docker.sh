@@ -29,7 +29,9 @@ docker compose -f docker-compose.prod.yaml down
 echo "---Building images"
 docker compose -f docker-compose.prod.yaml build --no-cache
 echo "---Starting containers"
-UID=$(id -u) GID=$(id -g) docker compose -f docker-compose.prod.yaml up --wait
+export UID=$(id -u)
+export GID=$(id -g)
+docker compose -f docker-compose.prod.yaml up --wait
 docker exec my-pocket-php-1 php artisan storage:link
 echo "---Running migrations"
 docker exec my-pocket-php-1 php artisan migrate --force --no-interaction
