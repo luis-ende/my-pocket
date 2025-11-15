@@ -15,7 +15,7 @@ export NVM_DIR="$HOME/.nvm"
 # load nvm
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 # load node
-nvm use --lts > /dev/null
+nvm use 20.19 > /dev/null
 npm --version
 npm install
 echo "---Generating assets---"
