@@ -1,5 +1,13 @@
 FROM dunglas/frankenphp
 
+ARG UID=1000
+ARG GID=1000
+
+RUN groupadd -g $GID appgroup && \
+    useradd -ms /bin/bash --no-user-group -g appgroup -u $UID appuser
+
+USER appuser
+
 RUN install-php-extensions \
 	pdo_pgsql \
 	gd \

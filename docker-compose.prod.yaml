@@ -3,6 +3,7 @@ services:
     build:
       dockerfile: prod.Dockerfile
     image: dunglas/frankenphp
+    user: "${UID}:${GID}"
     restart: always
     ports:
       - "8080:80" # HTTP
