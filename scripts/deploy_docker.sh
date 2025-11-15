@@ -26,7 +26,7 @@ echo "---Building images"
 docker compose -f docker-compose.prod.yaml build --no-cache
 echo "---Starting containers"
 docker compose -f docker-compose.prod.yaml up --wait
-docker exec -it my-pocket-php-1 php artisan storage:link
+docker exec my-pocket-php-1 php artisan storage:link
 echo "---Running migrations"
-docker exec -it my-pocket-php-1 php artisan migrate --force
+docker exec my-pocket-php-1 php artisan migrate --force --no-interaction
 echo "Deployment finished"
