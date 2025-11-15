@@ -27,11 +27,9 @@ npm run build
 echo "---Shutting down containers"
 docker compose -f docker-compose.prod.yaml down
 echo "---Building images"
-docker compose -f docker-compose.prod.yaml build --no-cache
+ docker compose -f docker-compose.prod.yaml build --no-cache
 echo "---Starting containers"
-export UID=$(id -u)
-export GID=$(id -g)
-docker compose -f docker-compose.prod.yaml up --wait
+UID=$(id -u) GID=$(id -g) docker compose -f docker-compose.prod.yaml up --wait
 docker exec my-pocket-php-1 php artisan storage:link
 echo "---Running migrations"
 docker exec my-pocket-php-1 php artisan migrate --force --no-interaction

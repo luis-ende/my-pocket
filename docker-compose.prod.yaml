@@ -3,9 +3,10 @@ services:
     build:
       dockerfile: prod.Dockerfile
       args:
-        UID: ${UID}
-        GID: ${GID}
+        USER_ID: ${UID:-1000}
+        GROUP_ID: ${GID:-1000}
     image: dunglas/frankenphp
+    user: "${UID:-1000}:${GID:-1000}"
     restart: always
     ports:
       - "8080:80" # HTTP
@@ -15,9 +16,6 @@ services:
       - caddy_data:/data
       - caddy_config:/config
       - ./storage/app:/app/storage/app
-    environment:
-      UID: ${UID}
-      GID: ${GID}
     networks:
       - mypocket
     depends_on:
