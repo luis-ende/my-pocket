@@ -60,4 +60,4 @@ jobs:
 
       - name: Deploy
         run: |
-          ssh prod "cd ${{ secrets.PROD_PATH }}/scripts && ./deploy_docker.sh"
+          ssh prod "bash -lc 'cd ${{ secrets.PROD_PATH }}/scripts && ./deploy_docker.sh'"
