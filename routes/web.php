@@ -22,7 +22,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('bookmarks-bulk', [BookmarksController::class, 'updateBulk'])->name('bookmarks.bulk.update');
     Route::patch('bookmarks/{bookmarkId}/favorite', [BookmarksController::class, 'saveFav'])->name('bookmarks.favs');
     Route::patch('bookmarks/{bookmarkId}/reads', [BookmarksController::class, 'saveRead'])->name('bookmarks.reads');
-    Route::patch('bookmarks/{bookmarkId}/archive', [BookmarksController::class, 'saveArchive'])->name('bookmarks.archive');
+    Route::patch('bookmarks/{bookmarkId}/archive', [BookmarksController::class, 'saveArchive'])->name('bookmarks.archive.save');
     Route::patch('bookmarks/{bookmarkId}/broken-link', [BookmarksController::class, 'saveBrokenLink'])->name('bookmarks.broken-link');
     Route::delete('bookmarks/{bookmark}', [BookmarksController::class, 'destroy'])->name('bookmarks.destroy');
     Route::post('bookmarks-bulk', [BookmarksController::class, 'destroyBulk'])->name('bookmarks.bulk.destroy');

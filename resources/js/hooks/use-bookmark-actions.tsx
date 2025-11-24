@@ -80,7 +80,7 @@ export default function useBookmarkActions() {
 
     const handleArchive = (bookmark: Bookmark) => {
         router.patch(
-            route('bookmarks.archive', bookmark.id),
+            route('bookmarks.archive.save', bookmark.id),
             { archive: !bookmark.is_archived },
             {
                 preserveScroll: true,
