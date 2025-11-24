@@ -7,7 +7,7 @@ cd /opt/ensoo/my-pocket
 echo "---Pulling repository"
 git pull origin main
 echo "---Deleting unused not optimized image files"
-docker exec -T my-pocket-php-1 chown -R $(id -u):$(id -g) storage/app/public/media
+docker exec my-pocket-php-1 chown -R $(id -u):$(id -g) /app/storage/app/public/media
 find storage/app/public/media/ -mindepth 2 -maxdepth 2 -type f ! -path "*/conversions/*" -delete
 echo "---Optimizing autoloader"
 composer install --optimize-autoloader --no-dev
