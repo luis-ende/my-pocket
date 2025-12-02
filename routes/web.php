@@ -39,6 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('bookmarks/remove-from-collection', [BookmarksController::class, 'removeFromCollection'])->name('bookmarks.removeFromCollection');
     Route::get('bookmarks/{bookmarkId}/collections', [BookmarksController::class, 'getCollections'])->name('bookmarks.collections');
     Route::get('bookmarks/bookmark-title', [BookmarksController::class, 'getBookmarkTitle'])->name('bookmarks.title');
+    Route::get('bookmarks/{id}', [BookmarksController::class, 'find'])->name('bookmarks.find');
 });
 
 require __DIR__.'/settings.php';

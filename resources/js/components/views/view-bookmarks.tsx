@@ -46,6 +46,28 @@ export default function ViewBookmarks({ initialBookmarks, bookmarks, setBookmark
         };
 
         switch (dirtyBookmarksState.operation) {
+            case 'new':
+                if (dirtyBookmarksState.ids.length > 0) {
+                    const newBookmarkId = dirtyBookmarksState.ids[0];
+                    setTimeout(() => {
+                        fetch(route('bookmarks.find', newBookmarkId))
+                            .then(res => {
+                                if (!res.ok) throw new Error('Failed to load bookmark data.');
+                                return res.json();
+                            })
+                            .then((json) => {
+                                setBookmarks((prev) =>
+                                    prev.map((row) => (row.id === newBookmarkId
+                                        ? { ...row, preview_image_url: json.bookmark.preview_image_url }
+                                        :
+                                        row
+                                    ))
+                                );
+                            })
+                    }, 5000)
+                }
+                resetDirtyState();
+                break;
             case 'delete':
                 if (dirtyBookmarksState.ids.length > 0) {
                     removeViewBookmarks(setBookmarks, dirtyBookmarksState.ids)

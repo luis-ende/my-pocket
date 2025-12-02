@@ -34,6 +34,13 @@ class BookmarksController extends Controller
         ]);
     }
 
+    public function find(int $id): JsonResponse
+    {
+        return response()->json([
+            'bookmark' => Bookmark::findOrFail($id),
+        ]);
+    }
+
     public function indexArchive(): Response
     {
         $bookmarks = Bookmark::query()
