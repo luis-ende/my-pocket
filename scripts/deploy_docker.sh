@@ -2,10 +2,17 @@
 
 set -e
 
+CONTAINER_NAME=my-pocket-php-1
+
 echo "Starting My Pocket deployment"
 cd /opt/ensoo/my-pocket
 echo "---Pulling repository"
 git pull origin main
+echo "---Deleting not optimized image files"
+if [ "$(docker inspect -f '{{.State.Running}}' "$CONTAINER_NAME" 2>/dev/null)" = "true" ]; then
+    docker exec "$CONTAINER_NAME" chown -R $(id -u):$(id -g) /app/storage/app/public/media
+    find storage/app/public/media/ -mindepth 2 -maxdepth 2 -type f ! -path "*/conversions/*" -delete
+fi
 echo "---Optimizing autoloader"
 composer install --optimize-autoloader --no-dev
 echo "---Run npm install---"
@@ -28,7 +35,7 @@ echo "---Building images"
 docker compose -f docker-compose.prod.yaml build --no-cache
 echo "---Starting containers"
 docker compose -f docker-compose.prod.yaml up --wait
-docker exec my-pocket-php-1 php artisan storage:link
+docker exec "$CONTAINER_NAME" php artisan storage:link
 echo "---Running migrations"
-docker exec my-pocket-php-1 php artisan migrate --force --no-interaction
+docker exec "$CONTAINER_NAME" php artisan migrate --force --no-interaction
 echo "Deployment finished"
