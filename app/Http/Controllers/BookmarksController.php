@@ -7,10 +7,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BookmarkCollectionsPostRequest;
 use App\Http\Requests\BookmarkPatchRequest;
 use App\Http\Requests\BookmarkPostRequest;
+use App\Jobs\ProcessBookmarCoverImage;
 use App\Models\Bookmark;
 use App\Models\Scopes\BookmarkNotArchivedScope;
 use App\Services\FetchUrlTitleService;
-use App\Services\LinkPreviewImageExtractor;
 use App\Services\LinkUrlCleanService;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\JsonResponse;
@@ -90,7 +90,6 @@ class BookmarksController extends Controller
      * @throws \Throwable
      */
     public function store(BookmarkPostRequest $request,
-        LinkPreviewImageExtractor $linkPreviewImageExtractor,
         LinkUrlCleanService $linkUrlCleanService): void
     {
 
@@ -99,9 +98,10 @@ class BookmarksController extends Controller
         $validated['url'] = $linkUrlCleanService->cleanTrackingParameters($validated['url']);
         $validated['checked'] = $validated['read'] ?? true;
 
-        DB::transaction(function () use ($linkPreviewImageExtractor, $validated) {
+        DB::transaction(function () use ($validated) {
             $bookmark = Bookmark::create($validated);
-            $bookmark->savePreviewImage($linkPreviewImageExtractor);
+
+            ProcessBookmarCoverImage::dispatch($bookmark)->afterCommit();
 
             $savedBookmark = array_merge($bookmark->toArray(), [
                 'is_new' => true,
@@ -117,7 +117,7 @@ class BookmarksController extends Controller
     /**
      * @return Application|RedirectResponse|Redirector|object|void
      */
-    public function update(BookmarkPatchRequest $request, Bookmark $bookmark, LinkPreviewImageExtractor $linkPreviewImageExtractor)
+    public function update(BookmarkPatchRequest $request, Bookmark $bookmark)
     {
         $referer = $request->header('referer');
         if ($referer) {
@@ -138,7 +138,7 @@ class BookmarksController extends Controller
                 ]);
 
             if (! $bookmark->is_broken_link && $bookmark->getMedia('preview')->isEmpty()) {
-                $bookmark->savePreviewImage($linkPreviewImageExtractor);
+                ProcessBookmarCoverImage::dispatch($bookmark);
             }
 
             $savedBookmark = array_merge($bookmark->refresh()->toArray(), [

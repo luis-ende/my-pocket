@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Jobs;
+
+use App\Models\Bookmark;
+use App\Services\LinkPreviewImageExtractor;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Log;
+
+class ProcessBookmarCoverImage implements ShouldQueue
+{
+    use Queueable;
+
+    private readonly LinkPreviewImageExtractor $linkPreviewImageExtractor;
+
+    /**
+     * Create a new job instance.
+     */
+    public function __construct(public Bookmark $bookmark)
+    {
+        $this->linkPreviewImageExtractor = app()->make(LinkPreviewImageExtractor::class);
+    }
+
+    /**
+     * Execute the job.
+     */
+    public function handle(): void
+    {
+        try {
+            $imageUrl = $this->linkPreviewImageExtractor->extractPreviewImage($this->bookmark->url);
+            if (! empty($imageUrl)) {
+                $this->bookmark->addMediaFromUrl($imageUrl)->toMediaCollection('preview');
+            }
+        } catch (\Throwable $e) {
+            Log::error("Fetch bookmark ({$this->bookmark->url}) preview image failed with message: {$e->getMessage()}");
+        }
+    }
+}
