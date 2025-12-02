@@ -20,7 +20,7 @@ RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY . /app
 
 RUN mkdir -p /var/log/supervisor /etc/supervisor/conf.d
-COPY ./prod/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
+COPY ./docker/prod/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 COPY ./docker/prod/supervisor/queue-worker.conf /etc/supervisor/conf.d/queue-worker.conf
 
 COPY ./docker/prod/start.sh /usr/local/bin/start.sh
