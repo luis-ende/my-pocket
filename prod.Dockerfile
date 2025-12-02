@@ -1,19 +1,29 @@
 FROM dunglas/frankenphp
 
 RUN install-php-extensions \
-	pdo_pgsql \
-	gd \
-	intl \
-	zip \
-	opcache
+    pdo_pgsql \
+    gd \
+    intl \
+    zip \
+    opcache \
+    pcntl \
+    posix
 
-# Be sure to replace "your-domain-name.example.com" by your domain name
+RUN apt-get update && apt-get install -y supervisor && \
+    rm -rf /var/lib/apt/lists/*
+
 ENV SERVER_NAME=mypocket.ensoo.com.mx
-# If you want to disable HTTPS, use this value instead:
 ENV SERVER_NAME=:80
 
-# Enable PHP production settings
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-# Copy the PHP files of your project in the public directory
 COPY . /app
+
+RUN mkdir -p /var/log/supervisor /etc/supervisor/conf.d
+COPY ./prod/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
+COPY ./docker/prod/supervisor/queue-worker.conf /etc/supervisor/conf.d/queue-worker.conf
+
+COPY ./docker/prod/start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
+CMD ["/usr/local/bin/start.sh"]
