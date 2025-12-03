@@ -36,6 +36,7 @@ docker compose -f docker-compose.prod.yaml build --no-cache
 echo "---Starting containers"
 docker compose -f docker-compose.prod.yaml up --wait
 docker exec "$CONTAINER_NAME" php artisan storage:link
+docker exec "$CONTAINER_NAME" php artisan optimize
 echo "---Running migrations"
 docker exec "$CONTAINER_NAME" php artisan migrate --force --no-interaction
 echo "Deployment finished"

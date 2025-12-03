@@ -7,7 +7,8 @@ RUN install-php-extensions \
     zip \
     opcache \
     pcntl \
-    posix
+    posix \
+    redis
 
 RUN apt-get update && apt-get install -y supervisor && \
     rm -rf /var/lib/apt/lists/*
