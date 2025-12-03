@@ -7,7 +7,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BookmarkCollectionsPostRequest;
 use App\Http\Requests\BookmarkPatchRequest;
 use App\Http\Requests\BookmarkPostRequest;
-use App\Jobs\ProcessBookmarCoverImage;
+use App\Jobs\ProcessBookmarkCoverImage;
 use App\Models\Bookmark;
 use App\Models\Scopes\BookmarkNotArchivedScope;
 use App\Services\FetchUrlTitleService;
@@ -108,7 +108,7 @@ class BookmarksController extends Controller
         DB::transaction(function () use ($validated) {
             $bookmark = Bookmark::create($validated);
 
-            ProcessBookmarCoverImage::dispatch($bookmark)->afterCommit();
+            ProcessBookmarkCoverImage::dispatch($bookmark)->afterCommit();
 
             $savedBookmark = array_merge($bookmark->toArray(), [
                 'is_new' => true,
@@ -145,7 +145,7 @@ class BookmarksController extends Controller
                 ]);
 
             if (! $bookmark->is_broken_link && $bookmark->getMedia('preview')->isEmpty()) {
-                ProcessBookmarCoverImage::dispatch($bookmark);
+                ProcessBookmarkCoverImage::dispatch($bookmark);
             }
 
             $savedBookmark = array_merge($bookmark->refresh()->toArray(), [
