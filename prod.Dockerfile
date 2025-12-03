@@ -12,7 +12,6 @@ RUN install-php-extensions \
 RUN apt-get update && apt-get install -y supervisor && \
     rm -rf /var/lib/apt/lists/*
 
-ENV SERVER_NAME=mypocket.ensoo.com.mx
 ENV SERVER_NAME=:80
 
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
