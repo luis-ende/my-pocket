@@ -8,6 +8,7 @@ A self-made app for saving and organizing web bookmarks.
 - Inertia.js
 - React
 - PostgreSQL
+- Redis
 
 ## Features
  

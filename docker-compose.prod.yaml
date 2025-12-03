@@ -43,6 +43,22 @@ services:
       retries: 3
       timeout: 5s
 
+  redis:
+      image: 'redis:alpine'
+      ports:
+        - '${FORWARD_REDIS_PORT:-6379}:6379'
+      volumes:
+        - 'mypocket-redis:/data'
+      networks:
+        - mypocket
+      healthcheck:
+        test:
+          - CMD
+          - redis-cli
+          - ping
+        retries: 3
+        timeout: 5s
+
 networks:
   mypocket:
     driver: bridge
@@ -52,4 +68,6 @@ volumes:
   caddy_data:
   caddy_config:
   mypocket-pgsql:
+      driver: local
+  mypocket-redis:
       driver: local
