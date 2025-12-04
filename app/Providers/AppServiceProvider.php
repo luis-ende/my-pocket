@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Jobs\ProcessBookmarkCoverImage;
 use App\Models\Bookmark;
 use App\Models\Scopes\BookmarkNotArchivedScope;
+use App\Services\LinkPreviewImageExtractor;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
@@ -38,5 +41,11 @@ class AppServiceProvider extends ServiceProvider
                 return URL::current(); // will now be https:// due to forceScheme above
             });
         }
+
+        $this->app->bindMethod([ProcessBookmarkCoverImage::class, 'handle'],
+            function (ProcessBookmarkCoverImage $job, Application $app) {
+                $job->handle($app->make(LinkPreviewImageExtractor::class));
+            }
+        );
     }
 }

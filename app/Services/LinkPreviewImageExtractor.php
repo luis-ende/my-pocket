@@ -25,7 +25,7 @@ class LinkPreviewImageExtractor
                     'Accept-Language' => 'en-US,en;q=0.5',
                     'Accept-Encoding' => 'gzip, deflate',
                     'Connection' => 'keep-alive',
-                ])->timeout(30)->get($url);
+                ])->timeout(10)->get($url);
 
                 if (! $response->successful()) {
                     return null;
