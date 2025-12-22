@@ -10,8 +10,12 @@ RUN install-php-extensions \
     posix \
     redis
 
-RUN apt-get update && apt-get install -y supervisor && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get upgrade -y  \
+    && apt-get install -y supervisor \
+    && apt-get install -y postgresql-client-17 \
+    && apt-get -y autoremove \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ENV SERVER_NAME=:80
 
